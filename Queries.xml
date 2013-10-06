@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<queries>
+	<query id="OutQuery" label="Реализация товара" summary="SUM0;SUM1;SUM2;">
+		<sql>
+			select doc.docno, doc.date1,
+			get_full_name(client.fullname,client.name) as client2,
+			doc.sum0, doc.sum1, doc.sum2
+			from doc
+			left join client on client.clientid=doc.clientid2
+			where doc.clientid1=:clientid and doc.kind=1
+			/*$if clientid2*/ and doc.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc.date1&lt;=:date2 /*$endif*/
+			order by 2 , 1 
+		</sql>
+		<field name="DOCNO" label="№"/>
+		<field name="DATE1" label="от" width="10"/>
+		<field name="CLIENT2" label="Наименование покупателя" width="40"/>
+		<field name="SUM0" label="Сумма" width="15" format="0.00"/>
+		<field name="SUM1" label="НДС" width="15" format="0.00"/>
+		<field name="SUM2" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Top–\0WidthјHeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Р“СЂР°С„РёС‡РµСЃРєРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚\0AxisVisible\rFrame.VisibleLegend.VisibleMaxPointsPerPageView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
+	<query label="Реализация по датам" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;" href="id=OutQuery,date1=date1,date2=date1">
+		<sql>
+			select doc.date1,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			/*$if clientid1*/ left join doc doc2 on doc2.docid=doc_prod.indocid /*$endif*/
+			left join product on product.prodid=doc_prod.prodid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by doc.date1
+			order by 1 
+		</sql>
+		<field name="DATE1" label="Дата реализации"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Topќ\0WidthФHeightDBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.DirectiongdBottomTopGradient.EndColorclAquaGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Legend.VisibleView3DAlignalClient\nBevelOuterbvNoneTabOrder\0TAreaSeries\0Marks.ArrowLength\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclNavyTitleПриход\rXLabelsSourceDATE1DrawArea		MultiArea	maStackedPointer.InflateMargins	\rPointer.StylepsRectanglePointer.VisibleXValues.DateTimeXValues.NameXXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNoneYValues.ValueSourceINSUM\0\0TAreaSeries\0Marks.ArrowLength\nMarks.Clip	Marks.StylesmsValue\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclRedTitleНаценка\rXLabelsSourceDATE1DrawArea		MultiArea	maStackedPointer.InflateMargins	\rPointer.StylepsRectanglePointer.VisibleXValues.DateTimeXValues.NameXXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNoneYValues.ValueSourceOSTSUM\0\0\0QueryQuery]]></chart></query>
+	<query label="Реализация по видам товаров" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;">
+		<sql>
+			select product.classid,
+			get_full_name(max(class.fullname), max(class.name)) as class,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			/*$if clientid1*/ left join doc doc2 on doc2.docid=doc_prod.indocid /*$endif*/
+			left join product on product.prodid=doc_prod.prodid
+			left join class on class.classid=product.classid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by product.classid
+			order by 4 desc
+		</sql>
+		<field name="CLASSID" visible="0"/>
+		<field name="CLASS" label="Вид товара" width="30"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Topќ\0WidthЬHeight_BackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Legend.VisibleMaxPointsPerPageAlignalClient\nBevelOuterbvNoneTabOrder\0THorizBarSeries\0Marks.ArrowLength\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclNavyTitleПриход\rXLabelsSourceCLASSMultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceINSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0THorizBarSeries\0Marks.ArrowLength\nMarks.Clip	Marks.Style	smsXValue\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclRedTitleНаценка\rXLabelsSourceCLASSMultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceOSTSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0\0QueryQuery]]></chart></query>
+	<query label="Реализация по производителям" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;">
+		<sql>
+			select product.produserid,
+			get_full_name(max(produser.fullname), max(produser.name)) as produser,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			/*$if clientid1*/ left join doc doc2 on doc2.docid=doc_prod.indocid /*$endif*/
+			left join product on product.prodid=doc_prod.prodid
+			left join produser on produser.produserid=product.produserid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by product.produserid
+			order by 4 desc
+		</sql>
+		<field name="PRODUSERID" visible="0"/>
+		<field name="PRODUSER" label="Наименование производителя" width="25"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Top–\0WidthјHeightхAllowPanningpmNone	AllowZoomBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleGradient.EndColorclBlueGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0AxisVisibleChart3DPercent\nClipPoints\rFrame.VisibleMaxPointsPerPageView3DOptions.Elevation;View3DOptions.OrthogonalView3DOptions.Perspective\0View3DOptions.RotationhView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\nTPieSeries\0Marks.ArrowLengthMarks.StylesmsValue\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclNavyTitleТоварооборот\rXLabelsSourcePRODUSEROtherSlice.TextOtherPieValues.DateTimePieValues.NamePiePieValues.Multiplier\0\0\0\0\0\0\0Ђя?PieValues.OrderloNonePieValues.ValueSourceOUTSUM\0\0\0Query]]></chart></query>
+	<query label="Реализация по товарам" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;">
+		<sql>
+			select product.prodid,
+			cast(get_product_name(max(product.name), max(class.smallname), max(produser.smallname), max(product.len)) as varchar(100)) product,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			/*$if clientid1*/ left join doc doc2 on doc2.docid=doc_prod.indocid /*$endif*/
+			left join product on product.prodid=doc_prod.prodid
+			left join class on class.classid=product.classid
+			left join produser on produser.produserid=product.produserid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by product.prodid
+			order by 4 desc
+		</sql>
+		<field name="PRODID" visible="0"/>
+		<field name="PRODUCT" label="Наименование товара" width="40"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Topќ\0WidthЬHeight_BackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Legend.VisibleMaxPointsPerPageAlignalClient\nBevelOuterbvNoneTabOrder\0THorizBarSeries\0Marks.ArrowLength\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclNavyTitleПриход\rXLabelsSourcePRODUCTMultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceINSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0THorizBarSeries\0Marks.ArrowLength\nMarks.Clip	Marks.Style	smsXValue\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclRedTitleНаценка\rXLabelsSourcePRODUCTMultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceOSTSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0\0QueryQuery]]></chart></query>
+	<query label="Реализация по покупателям" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;">
+		<sql>
+			select doc1.clientid2,
+			get_full_name(max(client.fullname), max(client.name)) as client2,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			/*$if clientid1*/ left join doc doc2 on doc2.docid=doc_prod.indocid /*$endif*/
+			left join client on client.clientid=doc1.clientid2
+			left join product on product.prodid=doc_prod.prodid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by doc1.clientid2
+			order by 4 desc
+		</sql>
+		<field name="CLIENTID2" visible="0"/>
+		<field name="CLIENT2" label="Наименование покупателя" width="40"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Topќ\0WidthЬHeight_BackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Legend.VisibleMaxPointsPerPageAlignalClient\nBevelOuterbvNoneTabOrder\0THorizBarSeries\0Marks.ArrowLength\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclNavyTitleПриход\rXLabelsSourceCLIENT2MultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceINSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0THorizBarSeries\0Marks.ArrowLength\nMarks.Clip	Marks.Style	smsXValue\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclRedTitleНаценка\rXLabelsSourceCLIENT2MultiBar	mbStackedXValues.DateTimeXValues.NameBarXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneXValues.ValueSourceOSTSUMYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNone\0\0\0QueryQuery]]>
+		</chart>
+	</query>
+	<query label="Реализация по поставщикам" summary="CNT;OUTSUM;OUTNDSSUM;NALOGSUM;INSUM;INNDSSUM;OSTSUM2;OSTSUM;WEIGHT;">
+		<sql>
+			select doc2.clientid1,
+			get_full_name(max(client.fullname), max(client.name)) as client1,
+			sum(doc_prod.cnt*doc_prod.unit) as cnt,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.price)) as outsum,
+			sum(round_curr(doc_prod.cnt*doc_prod.unit*doc_prod.ndsprice)) as outndssum,
+			sum(doc_prod.nalogsum) as nalogsum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inprice) as insum,
+			sum(doc_prod.cnt*doc_prod.unit*doc_prod.inndsprice) as inndssum,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.ndsprice) - doc_prod.cnt * doc_prod.unit * (doc_prod.inprice - doc_prod.inndsprice) - doc_prod.nalogsum) as ostsum2,
+			sum(round_curr(doc_prod.cnt * doc_prod.unit * doc_prod.price) - doc_prod.cnt * doc_prod.unit * doc_prod.inprice - doc_prod.nalogsum) as ostsum,
+			safe_div(sum(doc_prod.cnt * doc_prod.unit * (doc_prod.price - doc_prod.inprice) - doc_prod.nalogsum) * 100, sum(doc_prod.cnt * doc_prod.unit * doc_prod.inprice)) as ostper,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod on doc_prod.docid=doc1.docid
+			left join doc doc2 on doc2.docid=doc_prod.indocid
+			left join client on client.clientid=doc2.clientid1
+			left join product on product.prodid=doc_prod.prodid
+			where doc1.clientid1=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc2.clientid1=:clientid1 /*$endif*/
+			/*$if clientid2*/ and doc1.clientid2=:clientid2 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by doc2.clientid1
+			order by 4 desc
+		</sql>
+		<field name="CLIENTID1" visible="0"/>
+		<field name="CLIENT1" label="Наименование поставщика" width="40"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="OUTSUM" label="Товарооборот" width="15" format="0.00"/>
+		<field name="OUTNDSSUM" label="НДС реализации" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="OSTSUM2" label="Наценка без НДС" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Наценка" width="15" format="0.00"/>
+		<field name="OSTPER" label="Наценка (%)" width="6" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Topќ\0WidthЬHeight_BackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.EndColorclWhiteGradient.StartColor	clFuchsiaGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0BottomAxis.VisibleLegend.VisibleMaxPointsPerPageAlignalClient\nBevelOuterbvNoneTabOrder\0\nTBarSeries\0ColorEachPoint	Marks.ArrowLength\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclNavyTitleТоварооборот\rXLabelsSourceCLIENT1MultiBar	mbStackedXValues.DateTimeXValues.NameXXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneYValues.DateTimeYValues.NameBarYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNoneYValues.ValueSourceINSUM\0\0\0Query]]></chart></query>
+	<query label="Приход товара" summary="SUM0;SUM1;SUM2;">
+		<sql>
+			select doc.docno, doc.date1,
+			get_full_name(client.fullname,client.name) client1,
+			doc.sum0, doc.sum1, doc.sum2
+			from doc
+			left join client on client.clientid=doc.clientid1
+			where doc.clientid2=:clientid and doc.kind=1 
+			/*$if clientid2*/ and doc.clientid1=:clientid1 /*$endif*/
+			/*$if date1*/ and doc.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc.date1&lt;=:date2 /*$endif*/
+			order by 2 , 1 
+		</sql>
+		<field name="DOCNO" label="№"/>
+		<field name="DATE1" label="от" width="10"/>
+		<field name="CLIENT1" label="Наименование поставщика" width="40"/>
+		<field name="SUM0" label="Сумма" width="15" format="0.00"/>
+		<field name="SUM1" label="НДС" width="15" format="0.00"/>
+		<field name="SUM2" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Top–\0WidthјHeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Р“СЂР°С„РёС‡РµСЃРєРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚\0AxisVisible\rFrame.VisibleLegend.VisibleMaxPointsPerPageView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
+	<query label="Приход по датам" summary="CNT;INSUM;INNDSSUM;NALOGSUM;WEIGHT;" href="id=OutQuery,date1=date1,date2=date1">
+		<sql>
+			select doc1.date1,
+			sum(doc_prod1.cnt*doc_prod1.unit) as cnt,
+			sum(round_curr(doc_prod1.cnt*doc_prod1.unit*doc_prod1.price)) as insum,
+			sum(round_curr(doc_prod1.cnt*doc_prod1.unit*doc_prod1.ndsprice)) as inndssum,
+			sum(doc_prod1.nalogsum) as nalogsum,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod doc_prod1 on doc_prod1.docid=doc1.docid
+			left join product on product.prodid=doc_prod1.prodid
+			where doc1.clientid2=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc1.clientid1=:clientid1 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod1.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by doc1.date1
+			order by 1 desc
+		</sql>
+		<field name="DATE1" label="Дата прихода"/>
+		<field name="CNT" label="Кол.-во" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Top–\0WidthЬHeightfBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.DirectiongdBottomTopGradient.EndColorclAquaGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Legend.VisibleView3DAlignalClient\nBevelOuterbvNoneTabOrder\0TAreaSeries\0Marks.ArrowLength\rMarks.Visible\nDataSourceDataSource.QuerySeriesColorclNavyTitleПриход\rXLabelsSourceDATE1DrawArea		MultiArea	maStackedPointer.InflateMargins	\rPointer.StylepsRectanglePointer.VisibleXValues.DateTimeXValues.NameXXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneYValues.DateTimeYValues.NameYYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNoneYValues.ValueSourceINSUM\0\0\0Query]]></chart></query>
+	<query label="Приход по поставщикам" summary="CNT;INSUM;INNDSSUM;NALOGSUM;WEIGHT;">
+		<sql>
+			select doc1.clientid1,
+			get_full_name(max(client.fullname), max(client.name)) as client1,
+			sum(doc_prod1.cnt*doc_prod1.unit) as cnt,
+			sum(round_curr(doc_prod1.cnt*doc_prod1.unit*doc_prod1.price)) as insum,
+			sum(round_curr(doc_prod1.cnt*doc_prod1.unit*doc_prod1.ndsprice)) as inndssum,
+			sum(doc_prod1.nalogsum) as nalogsum,
+			sum(doc_prod.cnt * doc_prod.unit * product.weight) as weight
+			from doc doc1
+			join doc_prod doc_prod1 on doc_prod1.docid=doc1.docid
+			left join client on client.clientid=doc1.clientid1
+			left join product on product.prodid=doc_prod1.prodid
+			where doc1.clientid2=:clientid and doc1.kind=1
+			/*$if clientid1*/ and doc1.clientid1=:clientid1 /*$endif*/
+			/*$if date1*/ and doc1.date1&gt;=:date1 /*$endif*/
+			/*$if date2*/ and doc1.date1&lt;=:date2 /*$endif*/
+			/*$if prodid*/ and doc_prod1.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			group by doc1.clientid1
+			order by 4 desc
+		</sql>
+		<!--(select sum(cnt*unit*inprice) from doc_prod where indocid=doc_prod1.docid and inrecid=doc_prod1.recid) as inoutsum-->
+		<field name="CLIENTID1" visible="0"/>
+		<field name="CLIENT1" label="Наименование поставщика" width="40"/>
+		<field name="CNT" label="Кол.-во" width="15" format="0.00"/>
+		<field name="INSUM" label="Приход" width="15" format="0.00"/>
+		<field name="INNDSSUM" label="НДС прихода" width="15" format="0.00"/>
+		<field name="NALOGSUM" label="Налог с продаж" visible="0" width="15" format="0.00"/>
+		<field name="INOUTSUM" label="Реализовано" width="15" format="0.00"/>
+		<field name="WEIGHT" label="Вес нетто (кг)" width="10" format="0.00"/>
+		<chart><![CDATA[TPF0TDBChartChart0Left\0Top–\0WidthјHeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearGradient.EndColorclWhiteGradient.StartColor	clFuchsiaGradient.Visible	Title.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0BottomAxis.VisibleLegend.VisibleMaxPointsPerPageAlignalClient\nBevelOuterbvNoneTabOrder\0\nTBarSeries\0ColorEachPoint	Marks.ArrowLength\rMarks.Visible	\nDataSourceDataSource.QuerySeriesColorclNavyTitle\0\0\0@8E>4\rXLabelsSourceCLIENT1MultiBar	mbStackedXValues.DateTimeXValues.NameXXValues.Multiplier\0\0\0\0\0\0\0Ђя?\rXValues.OrderloNoneYValues.DateTimeYValues.NameBarYValues.Multiplier\0\0\0\0\0\0\0Ђя?\rYValues.OrderloNoneYValues.ValueSourceINSUM\0\0\0Query]]></chart></query>
+	<query label="Остаток товара" summary="ALLCNT;OSTSUM;">
+		<sql>
+			select 		
+			class.name class, produser.name produser, product.name,
+			get_product_name(product.name, class.smallname, produser.smallname, product.len) product,
+			qry.unit, qry.cnt, qry.cnt * qry.unit allcnt, 
+			qry.inprice, qry.outprice,
+			qry.inprice * qry.unit * qry.cnt ostsum,
+			get_doc_name(doc.kind, doc.skind, doc.docno, doc.date1, doc.sum0) doc
+			from query_ostatok2(:clientid, null, null, :date2) qry
+			left join doc on doc.docid = qry.indocid
+			left join product on product.prodid = qry.prodid
+			left join class on class.classid = product.classid
+			left join produser on produser.produserid = product.produserid
+			where (cnt &lt; -0.00001 OR cnt &gt; 0.00001)
+			/*$if clientid1*/ and doc.clientid1=:clientid1 /*$endif*/
+			/*$if prodid*/ and qry.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+			order by 1, 2, 3
+		</sql>
+		<field name="NAME" visible="0"/>
+		<field name="CLASS" visible="0"/>
+		<field name="PRODUSER" visible="0"/>
+		<field name="PRODUCT" label="Наименование товара" width="40"/>
+		<field name="UNIT" label="В месте" width="8" format="0.00"/>
+		<field name="CNT" label="Кол.-во" width="8" format="0.00"/>
+		<field name="ALLCNT" label="Всего (кг/шт)" width="8" format="0.00"/>
+		<field name="INPRICE" label="Приходная цена" width="15" format="0.00"/>
+		<field name="OUTPRICE" label="Цена реализации" width="15" format="0.00"/>
+		<field name="OSTSUM" label="На сумму" width="15" format="0.00"/>
+		<field name="DOC" label="Основание" width="40"/>
+		<chart><![CDATA[TPF0TDBChartChart10Left\0Top–\0WidthјHeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightуTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Р“СЂР°С„РёС‡РµСЃРєРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚\0AxisVisible\rFrame.VisibleView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
+</queries>
