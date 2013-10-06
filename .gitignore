@@ -1,8 +1,9 @@
+/Archive
+/Source/__history
+/Source/Obj
 *.dcu
 *.~*~
 *.local
 *.identcache
-__history
 *.drc
 *.map
-bin/*
