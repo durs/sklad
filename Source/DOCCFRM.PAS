@@ -208,6 +208,7 @@ type
     procedure open(id:integer; desktop:integer=0);
     procedure setClient1(id:integer);
     procedure setClient2(id:integer);
+    procedure setParams(params:string);
     procedure setDesktop(id:integer);
   end;
 
@@ -306,6 +307,17 @@ begin
     end else begin
         qryDocCLIENTNAME2.AsVariant:=null;
     end;
+end;
+
+procedure TCreditDocForm.setParams(params:string);
+var skind:integer;
+begin
+  skind:=StrToIntDef(params,0);
+  if skind>0 then
+  begin
+    qryDoc.Edit;
+    qryDocSKIND.AsInteger:=skind;
+  end;
 end;
 
 procedure TCreditDocForm.setDesktop(id:integer);

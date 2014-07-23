@@ -101,7 +101,7 @@ object RepData: TRepData
       end>
   end
   object repDoc12: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -228,7 +228,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     ScaleWidth = 1.000000000000000000
     ScaleHeight = 1.000000000000000000
     Borders = True
@@ -247,13 +246,11 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     FixedWidth = True
     Background = False
     Centered = False
     EmptyLines = True
     Print = False
-    PictureType = gpPNG
     Left = 64
     Top = 304
   end
@@ -261,7 +258,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     ExportEMF = True
     AsText = False
     Background = True
@@ -276,7 +272,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     Background = True
     Creator = 'FastReport'
     EmptyLines = True
@@ -290,8 +285,7 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
-    PictureType = gpPNG
+    ExportEMF = True
     Wysiwyg = True
     Creator = 'FastReport http://www.fast-report.com'
     SuppressPageHeadersFooters = False
@@ -304,7 +298,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     Left = 192
     Top = 304
   end
@@ -312,7 +305,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     Left = 224
     Top = 304
   end
@@ -320,7 +312,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     Left = 256
     Top = 304
   end
@@ -328,7 +319,6 @@ object RepData: TRepData
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
-    DataOnly = False
     PrintOptimized = False
     Outline = False
     Background = False
@@ -421,7 +411,7 @@ object RepData: TRepData
     Top = 184
   end
   object repPrice: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -477,7 +467,7 @@ object RepData: TRepData
     Top = 88
   end
   object repDoc20: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -496,7 +486,7 @@ object RepData: TRepData
     Top = 16
   end
   object repEmpty: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -515,7 +505,7 @@ object RepData: TRepData
     Top = 16
   end
   object repDoc11: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -534,7 +524,7 @@ object RepData: TRepData
     Top = 16
   end
   object repDoc13: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -553,7 +543,7 @@ object RepData: TRepData
     Top = 16
   end
   object repDoc10: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'
@@ -572,7 +562,7 @@ object RepData: TRepData
     Top = 16
   end
   object repDoc: TfrxReport
-    Version = '4.12.6'
+    Version = '4.9.32'
     DotMatrixReport = False
     EngineOptions.MaxMemSize = 10000000
     IniFile = '\Software\Fast Reports'

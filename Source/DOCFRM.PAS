@@ -436,6 +436,7 @@ TDocForm = class(TBaseForm)
     procedure setClient1(id:integer);
     procedure setClient2(id:integer);
     procedure setDesktop(id:integer);
+    procedure setParams(params:string);
     procedure SaveToFile(filename:string);
     procedure LoadFromFile(filename:string; params:integer);
   end;
@@ -658,6 +659,23 @@ begin
     end else begin
         qryDocCLIENTNAME2.AsVariant:=null;
     end;
+end;
+
+procedure TDocForm.setParams(params:string);
+var
+  list:TStringList;
+  skind,param1:integer;
+begin
+  list:=TStringList.Create;
+  list.Delimiter:=';';
+  list.DelimitedText:=params;
+
+  if list.Count>0 then skind:=StrToIntDef(list[0],0) else skind:=0;
+  if list.Count>1 then param1:=StrToIntDef(list[1],0) else param1:=0;
+
+  qryDoc.Edit;
+  if skind>0 then qryDocSKIND.AsInteger:=skind;
+  if param1>0 then qryDocPARAM1.AsInteger:=qryDocPARAM1.AsInteger or param1;
 end;
 
 procedure TDocForm.setDesktop(id:integer);

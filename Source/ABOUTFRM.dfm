@@ -754,7 +754,7 @@ object AboutForm: TAboutForm
       Alignment = taCenter
       AutoSize = False
       Caption = 
-        'Copyright DY 1998 - 2013, '#1042#1077#1088#1089#1080#1103' 3.18 '#13#10'e-mail: dy@hotbox.ru   i' +
+        'Copyright DY 1998 - 2014, '#1042#1077#1088#1089#1080#1103' 3.19 '#13#10'e-mail: dy@hotbox.ru   i' +
         'cq: 125021926'
       Transparent = True
       WordWrap = True

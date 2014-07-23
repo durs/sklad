@@ -239,9 +239,10 @@ type
     SQLParser:TDySQLParser;
     filter,qryFilter:string;
     lock: boolean;
+    qryid: integer;
     procedure WMTimer(var Message:TWMTimer); message WM_TIMER;
     procedure FilterRecords(Sender:TObject; const filter:string);
-    procedure setQuery(qry:TIBQuery; fltr:string=''; prm:integer=0);
+    procedure setQuery(qry:TIBQuery; qrysid:string=''; prm:integer=0);
     function getQuery:TIBQuery;
   protected
     procedure DestroyCancel; override;
@@ -256,6 +257,24 @@ uses
     dyutils,dydbutil,config,print, repdataunit,
     docfrm,docqfrm,doccfrm;
 {$R *.DFM}
+
+const qry_filters: array [1..6] of string = (
+    'skind<>1 and sum0>0',
+    'skind<>1 and sum0<=0',
+    'skind=1',
+    'skind=2 and sum0<=0',
+    'skind=3',
+    'skind=2 and sum0>0'
+);
+const qry_params: array [1..6] of string = (
+    '2',   // docOrder
+    '2;1', // docOrder;dpVozvrat
+    '1',   // docCheck
+    '2',   // docOrder
+    '3',   // docBeznal
+    '2'    // docOrder
+);
+
 
 constructor TDocListForm.Create(AOwner:TComponent);
 var
@@ -305,8 +324,11 @@ begin
 end;
 
 procedure TDocListForm.FormShow(Sender: TObject);
+var
+    node:TfcTreeNode;
 begin
-    //treeDoc.Items.GetFirstNode.Expand(true);
+    node:=treeDoc.Items.GetFirstNode;
+    if node<>nil then node.Expand(true);
 end;
 
 procedure TDocListForm.FormActivate(Sender: TObject);
@@ -364,59 +386,53 @@ var
     CurBookmark:string;
     frm:TForm;
     id,desktop:integer;
+    doc_init_params:string;
 begin
     if Sender=actNew then begin
         qry:=getQuery;
+        if (qryid>0) and (qryid<=length(qry_params)) then doc_init_params:=qry_params[qryid];
         if qry=qryInDocProd then begin
             frm:=Load(TDocForm);
             if frm is TDocForm then with TDocForm(frm) do begin
                 open(0,deskInDoc);
                 setClient2(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
         end else if qry=qryOutDocProd then begin
             frm:=Load(TDocForm);
             if frm is TDocForm then with TDocForm(frm) do begin
                 open(0,deskOutDoc);
                 setClient1(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
         end else if qry=qryInDocCredit then begin
             frm:=Load(TCreditDocForm);
             if frm is TCreditDocForm then with TCreditDocForm(frm) do begin
                 open(0,deskInDoc);
                 setClient2(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
         end else if qry=qryOutDocCredit then begin
             frm:=Load(TCreditDocForm);
             if frm is TCreditDocForm then with TCreditDocForm(frm) do begin
                 open(0,deskOutDoc);
                 setClient1(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
         end else if qry=qryInDocQuery then begin
             frm := Load(TDocForm);
             if frm is TDocForm then with TDocForm(frm) do begin
                 open(0, deskInDoc, true);
                 setClient2(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
-            (*
-            frm:=Load(TQueryDocForm);
-            if frm is TQueryDocForm then with TQueryDocForm(frm) do begin
-                open(0,deskInDoc);
-                setClient2(SkladID);
-            end;
-            *)
         end else if qry=qryOutDocQuery then begin
             frm := Load(TDocForm);
             if frm is TDocForm then with TDocForm(frm) do begin
                 open(0, deskOutDoc, true);
                 setClient1(SkladID);
+                if doc_init_params<>'' then setParams(doc_init_params);
             end;
-            (*
-            frm:=Load(TQueryDocForm);
-            if frm is TQueryDocForm then with TQueryDocForm(frm) do begin
-                open(0,deskOutDoc);
-                setClient1(SkladID);
-            end;
-            *)
         end;
     end else if Sender=actDelete then begin
         with DataSource do if (Dataset<>nil) and Dataset.Active and not Dataset.FieldByName('DOCID').IsNull then begin
@@ -492,11 +508,13 @@ begin
     end;
 end;
 
-procedure TDocListForm.setQuery(qry:TIBQuery; fltr:string=''; prm:integer=0);
+procedure TDocListForm.setQuery(qry:TIBQuery; qrysid:string=''; prm:integer=0);
 var
-    s:string;
+    s, fltr:string;
     fld1, fld2: TField;
 begin
+    qryid:=StrToIntDef(qrysid, 0);
+    if (qryid>0) and (qryid<=length(qry_filters)) then fltr:=qry_filters[qryid];
     with DataSource do begin
         if (Dataset=qry) and (qryFilter=fltr) then exit;
         if (Dataset<>nil) then begin
