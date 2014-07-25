@@ -228,6 +228,12 @@ type
     DBEdit20: TDBEdit;
     DBEdit21: TDBEdit;
     DBEdit22: TDBEdit;
+    qryClientREASON_PKO: TIBStringField;
+    qryClientREASON_RKO: TIBStringField;
+    Label28: TLabel;
+    DBEdit23: TDBEdit;
+    Label29: TLabel;
+    DBEdit24: TDBEdit;
     procedure SeachEditChange(Sender: TObject);
     procedure ActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -407,6 +413,8 @@ begin
         DBEdit20.ReadOnly:=readonly;
         DBEdit21.ReadOnly:=readonly;
         DBEdit22.ReadOnly:=readonly;
+        DBEdit23.ReadOnly:=readonly;
+        DBEdit24.ReadOnly:=readonly;
 
         edtSkladHidden.ReadOnly:=readonly;
         edtSkladKind.ReadOnly:=readonly;

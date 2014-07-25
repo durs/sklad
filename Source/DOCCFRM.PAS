@@ -154,6 +154,8 @@ type
     qrySchetaOPLATA1: TSmallintField;
     qrySchetaOPLATA2: TSmallintField;
     lbDocID: TDBText;
+    qryClientREASON_PKO: TIBStringField;
+    qryClientREASON_RKO: TIBStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ActionExecute(Sender: TObject);
     procedure DataModified(DataSet: TDataSet);
@@ -194,6 +196,7 @@ type
     Modified:boolean;
     frmEdit:TfrmEdit;
     Desktop:integer;
+    auto_comment:string; 
     debitSKind,debitClientID1,debitClientID2:integer;
     procedure SetModified(Value:boolean);
     procedure frmEditClose(Sender: TObject);
@@ -286,6 +289,7 @@ begin
         if (btnEdit.Down and IsReadonly) then btnEdit.Down:=false;
         actEdit.Execute;
     end;
+    auto_comment:='';
     setDesktop(desktop);
 end;
 
@@ -619,10 +623,12 @@ end;
 //------------------------qryDoc-------------------------------
 procedure TCreditDocForm.srcDocDataChange(Sender: TObject; Field: TField);
 var
-  v:string;
+  v,comment:string;
   id,k:integer;
   nds,nalog:double;
+  reset_comment,is_rko:boolean;
 begin
+    reset_comment:=false;
     if (Field=nil) or (Field=qryDocKIND) then begin
         ParamLock:=true;
         try
@@ -669,6 +675,7 @@ begin
             if v<>'' then qryDocCLIENTNAME1.AsVariant:=Null;
         end;
         qryDebitRefresh();
+        reset_comment:=true;
     end else if (Field=qryDocCLIENTNAME2) then begin
         v:=qryDocCLIENTNAME2.Value;
         if (v<>'') and ((qryClientNAME.Value=v) or qryClient.Locate('NAME',v,[])) then begin
@@ -680,12 +687,14 @@ begin
             if v<>'' then qryDocCLIENTNAME2.AsVariant:=Null;
         end;
         qryDebitRefresh();
+        reset_comment:=true;
     end else if (Field=qryDocCLIENTID1) then begin
         qrySklad.Active:=false;
     end else if (Field=qryDocSKIND) then begin
         qryDebitRefresh();
         qryDocPDOCID.AsVariant:=null;
         qryDocSUM0.Value:=0;
+        reset_comment:=true;
     end else if (Field=qryDocPARAM6) then begin
         v:=qryDocPARAM6.Value;
         if (v<>'') and ((qrySchetaSCHET.Value=v) or qryScheta.Locate('SCHET',v,[])) then begin
@@ -742,6 +751,20 @@ begin
     finally
         SumLock:=false;
     end;
+
+    if Field=qryDocSUM0 then reset_comment:=true;
+    if reset_comment and (qryDocCOMMENT.AsString=auto_comment) then begin
+      is_rko:=(qryDocSKIND.AsInteger=docOrder) and (qryDocSUM0.AsFloat>0);
+      if qryClient.Locate('CLIENTID',qryDocCLIENTID2.AsInteger,[]) then begin
+        if (is_rko) then comment:=qryClientREASON_RKO.Value
+        else comment:=qryClientREASON_PKO.Value
+      end;
+      auto_comment:=comment;
+      qryDoc.DisableControls;
+      qryDocCOMMENT.Value:=auto_comment;
+      qryDoc.EnableControls;
+    end;
+
 end;
 
 procedure TCreditDocForm.DataChanged(Sender: TObject);
@@ -863,7 +886,10 @@ end;
 procedure TCreditDocForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-    case data.getKeyAction(key,shift) of
+    if Sender.InheritsFrom(TDBEdit) and (Key = VK_RETURN) and (qryDoc.State in [dsEdit,dsInsert]) then begin
+      qryDoc.Post;
+    end
+    else case data.getKeyAction(key,shift) of
         keyNew : actNew.Execute;
         keyDelete : actDelete.Execute;
         keyEdit : begin btnEdit.Down:=not btnEdit.Down; actEdit.Execute; end;

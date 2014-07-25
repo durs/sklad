@@ -26,7 +26,8 @@ uses
   RepDataUnit in 'RepDataUnit.pas' {RepData: TDataModule},
   GuardFrm in 'GuardFrm.pas' {frmGuard},
   PswdFrm in 'PswdFrm.pas' {frmPassword},
-  DispImpl in 'DispImpl.pas';
+  DispImpl in 'DispImpl.pas',
+  ForumFrm in 'ForumFrm.pas' {ForumForm};
 
 {$R *.RES}
 

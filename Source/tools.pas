@@ -34,12 +34,16 @@ begin
 end;
 
 procedure OstatokChangePrice(clientid:integer);
+var finprice:integer;
 begin
     with TParamForm.Create(nil) do
     try
         Panels := [ppPercent, ppPrice];
         if ShowModal = mrOk then with TIBStoredProc.Create(nil) do
         try
+            finprice := 0;
+            if btnInPrice.Checked then finprice := 1
+            else if btnProdPrice.Checked then finprice := 2;
             Data.msgStatus(msgWaitQuery);
             Database := data.db;
             Transaction := data.trApply;
@@ -49,7 +53,7 @@ begin
                 Prepare;
                 ParamByName('clientid').AsInteger := clientid;
                 ParamByName('per').AsFloat := StrToFloat(edtPercent.Text);
-                ParamByName('finprice').AsBoolean := btnInPrice.Checked;
+                ParamByName('finprice').AsInteger := finprice;
                 ParamByName('priceinfo').AsInteger := GetPriceInfo();
                 ExecProc;
             except

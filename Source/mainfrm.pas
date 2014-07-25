@@ -99,6 +99,9 @@ type
     miDesignPrice: TMenuItem;
     miCennik: TMenuItem;
     miCennik2: TMenuItem;
+    btnForum: TToolButton;
+    actForum: TAction;
+    actForum1: TMenuItem;
     procedure AppActionExecute(Sender: TObject);
     procedure FormActionExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -129,7 +132,7 @@ implementation
 uses
     config, dataunit, aboutfrm, optnfrm, print, tools, toolfrm, repdataunit,
     clntfrm, prodfrm, doclfrm, ostfrm, debitfrm, qryfrm, openfrm, guardfrm,
-    paramfrm;
+    forumfrm, paramfrm;
 {$R *.DFM}
 
 constructor TMainForm.Create(AOwner:TComponent);
@@ -312,6 +315,8 @@ begin
     end else if (Sender=actQuery) then begin
         Data.check_sklad;
         load(TQueryForm);
+    end else if (Sender=actForum) then begin
+        load(TForumForm);
     end;
 end;
 

@@ -38,7 +38,7 @@ object AboutForm: TAboutForm
     end
     object LogoImage: TImage
       Left = 94
-      Top = 44
+      Top = 40
       Width = 129
       Height = 113
       Picture.Data = {
@@ -747,17 +747,18 @@ object AboutForm: TAboutForm
     end
     object Label4: TLabel
       Left = 0
-      Top = 169
+      Top = 158
       Width = 310
-      Height = 32
+      Height = 43
       Align = alBottom
       Alignment = taCenter
       AutoSize = False
       Caption = 
-        'Copyright DY 1998 - 2014, '#1042#1077#1088#1089#1080#1103' 3.19 '#13#10'e-mail: dy@hotbox.ru   i' +
-        'cq: 125021926'
+        'Yuri Dursin (C) 1998 - 2014, '#1042#1077#1088#1089#1080#1103' 3.19 '#13#10'e-mail: dy@hotbox.ru ' +
+        '  icq: 125021926 https://github.com/durs/sklad'
       Transparent = True
       WordWrap = True
+      ExplicitTop = 157
     end
     object Label1: TLabel
       Left = -2

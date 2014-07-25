@@ -3,7 +3,7 @@ object CreditDocForm: TCreditDocForm
   Top = 103
   ActiveControl = edtOplata
   Caption = #1055#1083#1072#1090#1105#1078#1085#1086' - '#1088#1072#1089#1095#1105#1090#1085#1099#1081' '#1076#1086#1082#1091#1084#1077#1085#1090
-  ClientHeight = 395
+  ClientHeight = 398
   ClientWidth = 593
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -111,7 +111,7 @@ object CreditDocForm: TCreditDocForm
   end
   object lbNalog: TLabel
     Left = 14
-    Top = 359
+    Top = 311
     Width = 81
     Height = 13
     Alignment = taRightJustify
@@ -119,7 +119,7 @@ object CreditDocForm: TCreditDocForm
   end
   object lbNds: TLabel
     Left = 71
-    Top = 335
+    Top = 287
     Width = 24
     Height = 13
     Alignment = taRightJustify
@@ -127,7 +127,7 @@ object CreditDocForm: TCreditDocForm
   end
   object Label1: TLabel
     Left = 61
-    Top = 298
+    Top = 250
     Width = 34
     Height = 13
     Alignment = taRightJustify
@@ -135,14 +135,14 @@ object CreditDocForm: TCreditDocForm
   end
   object lbNdsSum: TLabel
     Left = 298
-    Top = 338
+    Top = 290
     Width = 61
     Height = 13
     Caption = #1057#1091#1084#1084#1072' '#1053#1044#1057
   end
   object lbNalogSum: TLabel
     Left = 235
-    Top = 363
+    Top = 315
     Width = 122
     Height = 13
     Caption = #1057#1091#1084#1084#1072' '#1085#1072#1083#1086#1075#1072' '#1089' '#1087#1088#1086#1076#1072#1078
@@ -165,7 +165,7 @@ object CreditDocForm: TCreditDocForm
   end
   object lbComment: TLabel
     Left = 31
-    Top = 259
+    Top = 347
     Width = 64
     Height = 13
     Alignment = taRightJustify
@@ -464,7 +464,7 @@ object CreditDocForm: TCreditDocForm
   end
   object edtNalog: TDBComboBox
     Left = 101
-    Top = 359
+    Top = 311
     Width = 105
     Height = 21
     DataField = 'PARAM3'
@@ -476,13 +476,13 @@ object CreditDocForm: TCreditDocForm
       '3 %'
       '5 %')
     ReadOnly = True
-    TabOrder = 14
+    TabOrder = 13
     OnChange = edtChange
     OnKeyDown = FormKeyDown
   end
   object edtNDS: TDBComboBox
     Left = 101
-    Top = 332
+    Top = 284
     Width = 105
     Height = 21
     DataField = 'PARAM2'
@@ -494,41 +494,41 @@ object CreditDocForm: TCreditDocForm
       '18 %'
       '20 %')
     ReadOnly = True
-    TabOrder = 12
+    TabOrder = 11
     OnChange = edtChange
     OnKeyDown = FormKeyDown
   end
   object edtSum: TDBEdit
     Left = 101
-    Top = 295
+    Top = 247
     Width = 105
     Height = 21
     DataField = 'SUM0'
     DataSource = srcDoc
     ReadOnly = True
-    TabOrder = 11
+    TabOrder = 10
     OnKeyDown = FormKeyDown
   end
   object edtNdsSum: TDBEdit
     Left = 365
-    Top = 332
+    Top = 284
     Width = 105
     Height = 21
     DataField = 'SUM1'
     DataSource = srcDoc
     ReadOnly = True
-    TabOrder = 13
+    TabOrder = 12
     OnKeyDown = FormKeyDown
   end
   object edtNalogSum: TDBEdit
     Left = 365
-    Top = 359
+    Top = 311
     Width = 105
     Height = 21
     DataField = 'SUM2'
     DataSource = srcDoc
     ReadOnly = True
-    TabOrder = 15
+    TabOrder = 14
     OnKeyDown = FormKeyDown
   end
   object edtOplata: TwwDBComboBox
@@ -617,12 +617,12 @@ object CreditDocForm: TCreditDocForm
   end
   object edtComment: TDBEdit
     Left = 101
-    Top = 256
+    Top = 344
     Width = 372
     Height = 21
     DataField = 'COMMENT'
     DataSource = srcDoc
-    TabOrder = 10
+    TabOrder = 15
     OnKeyDown = FormKeyDown
   end
   object qryDoc: TIBQuery
@@ -1037,6 +1037,16 @@ object CreditDocForm: TCreditDocForm
       FieldName = 'CLIENT'
       Visible = False
       Size = 200
+    end
+    object qryClientREASON_PKO: TIBStringField
+      FieldName = 'REASON_PKO'
+      Origin = '"CLIENT"."REASON_PKO"'
+      Size = 100
+    end
+    object qryClientREASON_RKO: TIBStringField
+      FieldName = 'REASON_RKO'
+      Origin = '"CLIENT"."REASON_RKO"'
+      Size = 100
     end
   end
   object updClient: TIBUpdateSQL

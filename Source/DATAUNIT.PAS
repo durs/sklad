@@ -243,6 +243,8 @@ type
     qrySkladActiveID: TIntegerField;
     updSkladActive: TIBUpdateSQL;
     srcSkladActive: TDataSource;
+    qrySkladREASON_PKO: TIBStringField;
+    qrySkladREASON_RKO: TIBStringField;
     procedure appHint(Sender: TObject);
     procedure dbAfterConnect(Sender: TObject);
     procedure dbBeforeDisconnect(Sender: TObject);

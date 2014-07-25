@@ -45,9 +45,11 @@ type
     Label6: TLabel;
     btnPrice4: TCheckBox;
     btnPrice5: TCheckBox;
+    btnProdPrice: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnInPriceClick(Sender: TObject);
   private
   public
     Panels: set of(ppSklad, ppClient, ppDate, ppDate1, ppDate2, ppPercent, ppKassa, ppPreview, ppPrice);
@@ -61,6 +63,14 @@ var
 implementation
 uses DataUnit, config;
 {$R *.DFM}
+
+procedure TParamForm.btnInPriceClick(Sender: TObject);
+begin
+  if (Sender=btnInPrice) then btnProdPrice.Enabled := not btnInPrice.Checked;
+  if (Sender=btnProdPrice) then btnInPrice.Enabled := not btnProdPrice.Checked;
+  if (not btnInPrice.Enabled) then btnInPrice.Checked := false;
+  if (not btnProdPrice.Enabled) then btnProdPrice.Checked := false;
+end;
 
 procedure TParamForm.FormCreate(Sender: TObject);
 var
