@@ -17,10 +17,19 @@ h2
     font-size: 21px;
 }
 
+.toolbar{
+	height: 40px;
+}
+.toolbar td{
+	padding: 10px;
+	margin: 2px;
+	vertical-align: middle;
+}
+
 .page{
 	position: absolute;
-	left: 10px;
 	top: 60px;
+	left: 10px;
 	right: 10px;
 	bottom: 10px;
 	width: auto;
@@ -32,19 +41,27 @@ h2
 .page.active{
 	display: block;
 }
-.page iframe{
-	frameborder: 0;
-	width: 100%;
-	height: 100%;
+.changes{
+	position: absolute;
+	top: 100px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: auto;
+	height: auto;
+}
+
+.verinfo{
+    color: #2f2f2f;
+    font-family:arial;
+    font-size:12px;
+    font-style:normal;
+    text-decoration:none;
+    text-align:right;
+    text-shadow:1px 1px 0px #ffffff;	
 }
 
 /* Button */
-.toolbar td{
-	padding: 10px;
-	margin: 2px;
-	vertical-align: middle;
-}
-
 .button{
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;

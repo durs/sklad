@@ -27,7 +27,8 @@ uses
   GuardFrm in 'GuardFrm.pas' {frmGuard},
   PswdFrm in 'PswdFrm.pas' {frmPassword},
   DispImpl in 'DispImpl.pas',
-  ForumFrm in 'ForumFrm.pas' {ForumForm};
+  ForumFrm in 'ForumFrm.pas' {ForumForm},
+  MSHTML_TLB in 'MSHTML_TLB.pas';
 
 {$R *.RES}
 

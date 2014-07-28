@@ -1,13 +1,26 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-<title>СКЛАД</title>
-<link rel="icon" href="favico.ico" type="image/x-icon"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
+<title>СКЛАД</title>
+<link rel="icon" href="favico.ico" type="image/x-icon"/>
 <link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
 <script src="http://vk.com/js/api/openapi.js" type="text/javascript" charset="windows-1251"></script>
 <script type="text/javascript">
+
+	var curver = '3.19';
+	function appInit(info){
+		if (typeof(info)!='object') info={};
+		var elm = document.getElementById('version');
+		if (elm){
+			var text = 'Версия '+ (info.version||'?');
+			if (info.version == curver) text += ' (Вы испоьзуете последнюю версию ПО)';
+			else text += ' <font color="red">(Имеется обновление ПО версии '+ curver +')</font>';	
+			elm.innerHTML = text;
+		}
+	}
 
 	var mode,btn;
 	function show(id){
@@ -24,7 +37,6 @@
 			else if(id=='download') document.getElementById('changes_content', div).src = 'changes.html';
 		}		
 	}
-
 	window.onload = function(){
 		// VK init
 		VK.init({apiId: 4477147, onlyWidgets: true});
@@ -43,6 +55,8 @@
 
 		// Init page
 		show.call(document.getElementById('btn_news'), 'news');
+		
+		//alert(navigator.userAgent)
 	};
 	
 </script>	
@@ -55,6 +69,7 @@
 <td id="btn_news" class="button" onclick="show.call(this,'news');">Новости</td>
 <td class="button" onclick="show.call(this,'manual');">Руководство</td>
 <td class="button" onclick="show.call(this,'download');">Загрузки</td>
+<td class="verinfo" id="version"></td>
 </tr>
 </table>
 
@@ -63,7 +78,7 @@
 </div>
 
 <div id="manual" class="page inactive">
-	<iframe id="manual_content" src="" frameborder="">
+	<iframe id="manual_content" src="" frameborder="" style="width:100%; height:100%;">
 	</iframe>
 </div>
 
@@ -74,21 +89,23 @@
 	<table border="0" cellpadding="10", height="100%", width="100%">
 	<tr>
 	<td width="50px", height="50px">
-	<a href="./sklad_2014_07_25.zip">
+	<a href="./sklad_2014_07_28.zip">
 		<img src="./images/download.png" title="Загрузить последнюю версию прлограммы" width="60" height="60" border="0"/>
 	</a>
 	</td>
 	<td>
-	<li><a href="sklad_2014_07_25.zip">Версия от 2014-07</a></li>
-	<li><a href="sklad_2013_09_10.zip">Версия от 2013-09</a></li>
+	<li><a href="sklad_2014_07_28.zip">Версия 3.19 (от 2014-07-28)</a></li>
+	<li><a href="sklad_2013_09_10.zip">Версия 3.18 (от 2013-09-10)</a></li>
 	<li><a href="/pub/Firebird-1.5.6.5026-0-Win32.exe">Сервер БД Firebird 1.5.6</a></li>	
 	<li><a href="https://github.com/durs/sklad" target="_blank">Исходники</a></li>	
 	</td>
 	</tr>
 	<tr>
-	<td colspan="2">
-	<iframe id="changes_content" src="" frameborder="">
+	<td colspan="2" height="100%">
+	<div class="changes">
+	<iframe id="changes_content" src="" frameborder="" style="width:100%; height:100%;">
 	</iframe>
+	</div>
 	</td>
 	</tr>
 	</table>

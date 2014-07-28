@@ -9,11 +9,12 @@ object AboutForm: TAboutForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -745,20 +746,17 @@ object AboutForm: TAboutForm
       Stretch = True
       Transparent = True
     end
-    object Label4: TLabel
+    object lbInfo: TLabel
       Left = 0
-      Top = 158
+      Top = 151
       Width = 310
-      Height = 43
-      Align = alBottom
+      Height = 45
       Alignment = taCenter
       AutoSize = False
-      Caption = 
-        'Yuri Dursin (C) 1998 - 2014, '#1042#1077#1088#1089#1080#1103' 3.19 '#13#10'e-mail: dy@hotbox.ru ' +
-        '  icq: 125021926 https://github.com/durs/sklad'
+      Caption = 'lbInfo'
       Transparent = True
+      Layout = tlBottom
       WordWrap = True
-      ExplicitTop = 157
     end
     object Label1: TLabel
       Left = -2

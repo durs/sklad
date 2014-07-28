@@ -301,6 +301,7 @@ var
     Data: TData;
     AppPath: string;
     AppCfgPath: string;
+    AppVersion: string;
     //readed from config
     Databases: TStrings;
     DatabaseIndex: integer = -1;
@@ -440,9 +441,9 @@ end;
 
 procedure TData.DataModuleCreate(Sender: TObject);
 begin
-    if db.SQLDialect = 3 then QuoteChar := '''' else QuoteChar := '"';
-    AppTitle := Application.Title;
-    lookup := TDyQuickLookup.Create;
+  if db.SQLDialect = 3 then QuoteChar := '''' else QuoteChar := '"';
+  AppTitle := Application.Title;
+  lookup := TDyQuickLookup.Create;
 end;
 
 procedure TData.DataModuleDestroy(Sender: TObject);
@@ -1367,8 +1368,32 @@ begin
     end;
 end;
 
+procedure InitAppVersion();
+var
+  filename: string;
+  pVerInfo: Pointer;
+  dwInfoLength, dwDummy: Cardinal;
+  FileInformation: PVSFixedFileInfo;
+  ptr: Pointer;
+
+begin
+  try
+    filename := Forms.Application.ExeName;
+    dwInfoLength := GetFileVersionInfoSize(PChar(filename), dwDummy);
+    GetMem(pVerInfo, dwInfoLength);
+    GetFileVersionInfo(PChar(filename), dwDummy, dwInfoLength, pVerInfo);
+    if VerQueryValue(pVerInfo, '\', ptr, dwInfoLength) then begin
+      FileInformation := PVSFixedFileInfo(ptr);
+      //AppVersion := Format('%d.%d.%d.%d', [(FileInformation.dwFileVersionMS shr 16) and $FFFF, FileInformation.dwFileVersionMS and $FFFF, (FileInformation.dwFileVersionLS shr 16) and $FFFF, FileInformation.dwFileVersionLS and $FFFF]);
+      AppVersion := Format('%d.%d', [(FileInformation.dwFileVersionMS shr 16) and $FFFF, FileInformation.dwFileVersionMS and $FFFF, (FileInformation.dwFileVersionLS shr 16) and $FFFF, FileInformation.dwFileVersionLS and $FFFF]);
+    end;
+    FreeMem(pVerInfo);
+  except
+  end;
+end;
 
 initialization
+    InitAppVersion;
     Databases:=TStringList.Create;
     AppPath:=AnsiLowerCase(ExtractFilePath(Application.ExeName));
     if ParamCount >= 1 then AppCfgPath := ExpandFileName(ParamStr(1))

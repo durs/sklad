@@ -10,9 +10,10 @@ type
   TAboutForm = class(TForm)
     Panel1: TPanel;
     LogoImage: TImage;
-    Label4: TLabel;
+    lbInfo: TLabel;
     Label1: TLabel;
     Bevel1: TBevel;
+    procedure FormCreate(Sender: TObject);
   private
   public
   end;
@@ -25,7 +26,7 @@ procedure AboutShow;
 procedure AboutHide;
 
 implementation
-
+uses dataunit;
 {$R *.DFM}
 
 procedure AboutExecute;
@@ -58,6 +59,24 @@ begin
     Destroy;
   end;
   AboutForm:=nil;
+end;
+
+procedure TAboutForm.FormCreate(Sender: TObject);
+var
+  dt:TDateTime;
+  y,m,d : Word;
+begin
+  try
+    dt := Now;
+    DecodeDate(dt, y, m, d);
+    if y < 2014 then y:=2014;    
+    lbInfo.Caption := Format(
+      'Yuri Dursin (C) 1998-%d Версия %s'#10#13+
+      'e-mail: dy@hotbox.ru   icq: 125021926'#10#13+
+      'https://github.com/durs/sklad',
+      [y, AppVersion])
+  except
+  end;
 end;
 
 end.
