@@ -44,7 +44,8 @@ end;
 procedure TForumForm.FormShow(Sender: TObject);
 begin
   //browser.Navigate('C:\Projects\_Sklad\HTML\index.html');
-  browser.Navigate('http://www.ujsw.net/sklad/index.html');
+  //browser.Navigate('http://www.ujsw.net/sklad/index.html');
+  browser.Navigate('http://durs.github.io/sklad');
   intialized:=false;
 end;
 
