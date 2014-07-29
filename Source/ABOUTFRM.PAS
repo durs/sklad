@@ -69,11 +69,11 @@ begin
   try
     dt := Now;
     DecodeDate(dt, y, m, d);
-    if y < 2014 then y:=2014;    
+    if y < 2014 then y:=2014;
     lbInfo.Caption := Format(
       'Yuri Dursin (C) 1998-%d Версия %s'#10#13+
       'e-mail: dy@hotbox.ru   icq: 125021926'#10#13+
-      'https://github.com/durs/sklad',
+      'http://durs.github.io/sklad',
       [y, AppVersion])
   except
   end;
