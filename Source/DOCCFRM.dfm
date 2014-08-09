@@ -127,7 +127,7 @@ object CreditDocForm: TCreditDocForm
   end
   object Label1: TLabel
     Left = 61
-    Top = 250
+    Top = 253
     Width = 34
     Height = 13
     Alignment = taRightJustify
@@ -172,7 +172,7 @@ object CreditDocForm: TCreditDocForm
     Caption = #1055#1088#1080#1083#1086#1078#1077#1085#1080#1077
   end
   object btnScheta: TSpeedButton
-    Left = 168
+    Left = 192
     Top = 193
     Width = 19
     Height = 19
@@ -190,9 +190,9 @@ object CreditDocForm: TCreditDocForm
     OnClick = btnEditClick
   end
   object lbSchetName: TDBText
-    Left = 200
-    Top = 194
-    Width = 273
+    Left = 222
+    Top = 195
+    Width = 251
     Height = 17
     DataField = 'SCHETNAME'
     DataSource = srcDoc
@@ -500,7 +500,7 @@ object CreditDocForm: TCreditDocForm
   end
   object edtSum: TDBEdit
     Left = 101
-    Top = 247
+    Top = 250
     Width = 105
     Height = 21
     DataField = 'SUM0'
@@ -557,8 +557,8 @@ object CreditDocForm: TCreditDocForm
   end
   object edtScheta: TwwDBLookupCombo
     Left = 101
-    Top = 189
-    Width = 65
+    Top = 192
+    Width = 88
     Height = 21
     DropDownAlignment = taLeftJustify
     Selected.Strings = (

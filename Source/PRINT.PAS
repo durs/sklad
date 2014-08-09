@@ -46,32 +46,21 @@ uses
 
 procedure printReport(rep:TQuickRep; preview:boolean);
 begin
+    if rep.DataSet<>nil then rep.DataSet.DisableControls;
     try
         if preview or (GetKeyState(VK_SHIFT) and $80 <> 0) then
         begin
           rep.PreviewInitialState := wsMaximized;
-          rep.PrevInitialZoom := qrZoomToWidth; 
-          //rep.PrevFormStyle := fsStayOnTop;
-          //rep.PrevShowSearch := false;
-          //rep.PrevShowThumbs := false;
+          rep.PrevInitialZoom := qrZoomToWidth;
           rep.PreviewModal;
           rep.Cancel;
         end
         else begin
           rep.Print;
         end;
-    except
-        raise;
-    end;
-    {
-    if PreviewReports then with TPreviewForm.Create(nil) do begin
-        Execute(rep);
-    end else try
-        rep.Print;
     finally
-        rep.Free;
+        if rep.DataSet<>nil then rep.DataSet.EnableControls;
     end;
-    }
 end;
 
 procedure ChangeReportDataset(R:TQuickRep; Old,New:TDataset);

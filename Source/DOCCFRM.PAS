@@ -196,7 +196,8 @@ type
     Modified:boolean;
     frmEdit:TfrmEdit;
     Desktop:integer;
-    auto_comment:string; 
+    auto_comment:string;
+    auto_schet:string;
     debitSKind,debitClientID1,debitClientID2:integer;
     procedure SetModified(Value:boolean);
     procedure frmEditClose(Sender: TObject);
@@ -218,6 +219,34 @@ type
 implementation
 uses dataunit,config,dyutils,print;
 {$R *.DFM}
+
+function CommentParse(var comment: string): string;
+var
+  i,j,len:integer;
+  ch: char;
+begin
+  len:=Length(comment);
+  i:=1; j:=1;
+  while i<=len do begin
+    ch:=comment[i];
+    if (ch=' ') or (ch=#9) then begin
+      if j=i then inc(j) else break;
+    end
+    else if ((ch<'0') or (ch>'9')) and (ch<>'.') then begin
+      j:=i;
+      break;
+    end;
+    inc(i);
+  end;
+  if(j<i) then begin
+    result:=copy(comment,j,i-j);
+    if i<len then comment:=copy(comment,i+1,len-i)
+    else comment:='';
+  end else begin
+    result:='';
+  end;
+end;
+
 
 constructor TCreditDocForm.Create(AOwner:TComponent);
 begin
@@ -290,6 +319,7 @@ begin
         actEdit.Execute;
     end;
     auto_comment:='';
+    auto_schet:='';
     setDesktop(desktop);
 end;
 
@@ -623,12 +653,13 @@ end;
 //------------------------qryDoc-------------------------------
 procedure TCreditDocForm.srcDocDataChange(Sender: TObject; Field: TField);
 var
-  v,comment:string;
+  v,comment,schet:string;
   id,k:integer;
   nds,nalog:double;
-  reset_comment,is_rko:boolean;
+  reset_comment,reset_schet,is_rko:boolean;
 begin
     reset_comment:=false;
+    reset_schet:=false;
     if (Field=nil) or (Field=qryDocKIND) then begin
         ParamLock:=true;
         try
@@ -696,19 +727,7 @@ begin
         qryDocSUM0.Value:=0;
         reset_comment:=true;
     end else if (Field=qryDocPARAM6) then begin
-        v:=qryDocPARAM6.Value;
-        if (v<>'') and ((qrySchetaSCHET.Value=v) or qryScheta.Locate('SCHET',v,[])) then begin
-            qryDocSCHETNAME.Value:=qrySchetaNAME.Value;
-            qryDocSCHETNDS.Value:=qrySchetaNDS.Value;
-            qryDocSCHETNALOG.Value:=qrySchetaNALOG.Value;
-            qryDocSCHETDEBIT.Value:=qrySchetaDEBIT.Value;
-        end else begin
-            qryDocSCHETNAME.AsVariant:=Null;
-            qryDocSCHETNDS.AsVariant:=Null;
-            qryDocSCHETNALOG.AsVariant:=Null;
-            qryDocSCHETDEBIT.AsVariant:=Null;
-            if v<>'' then qryDocPARAM6.AsVariant:=Null;
-        end;
+        reset_schet:=true;
     end else if (Field=qryDocPDOCID) then begin
         id:=qryDocPDOCID.Value;
         if (id<>0) and ((qryDebitDOCID.Value=id) or qryDebit.Locate('DOCID',id,[])) then begin
@@ -752,19 +771,44 @@ begin
         SumLock:=false;
     end;
 
+    // Auto refresh COMMENT and SCHET by current client2
     if Field=qryDocSUM0 then reset_comment:=true;
-    if reset_comment and (qryDocCOMMENT.AsString=auto_comment) then begin
+    if reset_comment then begin
       is_rko:=(qryDocSKIND.AsInteger=docOrder) and (qryDocSUM0.AsFloat>0);
       if qryClient.Locate('CLIENTID',qryDocCLIENTID2.AsInteger,[]) then begin
         if (is_rko) then comment:=qryClientREASON_RKO.Value
         else comment:=qryClientREASON_PKO.Value
       end;
-      auto_comment:=comment;
+      schet:=CommentParse(comment);
       qryDoc.DisableControls;
-      qryDocCOMMENT.Value:=auto_comment;
+      if (qryDocPARAM6.AsString=auto_schet) then begin
+        reset_schet:=true;
+        auto_schet:=schet;
+        qryDocPARAM6.Value:=auto_schet;
+      end;
+      if (qryDocCOMMENT.AsString=auto_comment) then begin
+        auto_comment:=comment;
+        qryDocCOMMENT.Value:=auto_comment;
+      end;
       qryDoc.EnableControls;
     end;
 
+    // Refresh fields relative by SCHET (PARAM6)
+    if reset_schet then begin
+        v:=qryDocPARAM6.Value;
+        if (v<>'') and ((qrySchetaSCHET.Value=v) or qryScheta.Locate('SCHET',v,[])) then begin
+            qryDocSCHETNAME.Value:=qrySchetaNAME.Value;
+            qryDocSCHETNDS.Value:=qrySchetaNDS.Value;
+            qryDocSCHETNALOG.Value:=qrySchetaNALOG.Value;
+            qryDocSCHETDEBIT.Value:=qrySchetaDEBIT.Value;
+        end else begin
+            qryDocSCHETNAME.AsVariant:=Null;
+            qryDocSCHETNDS.AsVariant:=Null;
+            qryDocSCHETNALOG.AsVariant:=Null;
+            qryDocSCHETDEBIT.AsVariant:=Null;
+            if v<>'' then qryDocPARAM6.AsVariant:=Null;
+        end;
+    end;
 end;
 
 procedure TCreditDocForm.DataChanged(Sender: TObject);
