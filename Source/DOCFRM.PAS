@@ -389,11 +389,13 @@ TDocForm = class(TBaseForm)
     procedure qryRecAfterEdit(DataSet: TDataSet);
     procedure qryRecBeforeCancel(DataSet: TDataSet);
     procedure edtProdDropDown(Sender: TObject);
+    procedure qryDocUpdateRecord(DataSet: TDataSet; UpdateKind: TUpdateKind;
+      var UpdateAction: TIBUpdateAction);
   private
     IsQuery: boolean;
     IsReadonly: boolean;
 
-    lock, ParamLock, PriceLock, CalcLock, FieldCalcLock, RecalcData, LoadLock: boolean;
+    lock, ParamLock, PriceLock, CalcLock, FieldCalcLock, RecalcData, LoadLock, ClientLock: boolean;
     DocParams, ExportParams: integer;
     PriceRoundKoef, PriceRoundKoef2, PriceRoundKoef3, PriceRoundKoef4, PriceRoundKoef5, PriceParam: integer;
     PriceRoundKoefIn, PriceRoundKoefIn2, PriceRoundKoefIn3, PriceRoundKoefIn4, PriceRoundKoefIn5, NewParams:integer;
@@ -449,6 +451,7 @@ uses dataunit, config, dyutils, dydbutil, print, repdataunit,
 constructor TDocForm.Create(AOwner:TComponent);
 begin
     LoadLock := false;
+    ClientLock := false;
     lock := false;
     inherited;
     SetIsQuery(false);
@@ -1134,8 +1137,8 @@ end;
 procedure TDocForm.qryDOCNOSetText(Sender: TField; const Text: String);
 begin
     if (Text='') or (Text=docSAutoNo) then Sender.AsVariant:=null else Sender.AsString:=Text;
+end;
 
-    end;
 
 procedure TDocForm.qryCreditSUM0GetText(Sender: TField; var Text: String;
   DisplayText: Boolean);
@@ -1220,7 +1223,7 @@ procedure TDocForm.UpdateClient1;
 var index: integer;
 begin
     if data.setActiveSklad(qryDocCLIENTID1.Value) then begin
-        edtProductSrc.LookupValue:=qryDocCLIENTID1.AsString;
+        if not ClientLock and not LoadLock then edtProductSrc.LookupValue:=qryDocCLIENTID1.AsString;
 
         PriceVisibleIn := (data.qrySkladPRICE_NAME.AsString <> '') and not data.qrySkladPRICE_PERCENT.IsNull;
         PriceVisibleIn2 := (data.qrySkladPRICE_NAME2.AsString <> '') and not data.qrySkladPRICE_PERCENT2.IsNull;
@@ -1246,7 +1249,7 @@ begin
         PriceRoundKoefIn4 := data.qrySkladPRICE_ROUND4.Value;
         PriceRoundKoefIn5 := data.qrySkladPRICE_ROUND5.Value;
     end else begin
-        edtProductSrc.LookupValue := '';
+        if not ClientLock and not LoadLock then edtProductSrc.LookupValue := '';
 
         PriceVisibleIn := false;
         PriceVisibleIn2 := false;
@@ -1494,6 +1497,14 @@ begin
         if qryCreditSUM1.IsNull then qryCreditSUM1.Value:=0;
         if qryCreditSUM2.IsNull then qryCreditSUM2.Value:=0;
     end;
+end;
+
+procedure TDocForm.qryDocUpdateRecord(DataSet: TDataSet;
+  UpdateKind: TUpdateKind; var UpdateAction: TIBUpdateAction);
+begin
+  if UpdateKind = ukInsert then exit; begin
+
+  end;
 end;
 
 procedure TDocForm.srcDocDataChange(Sender: TObject; Field: TField);
@@ -1753,9 +1764,11 @@ begin
             else qryDocKIND.Value := qryDocKIND.Value and not docRezervMask
         end else if Sender=btnCredit then begin
             if btnCredit.Checked then begin
-                if qryDocPDOCID.IsNull then qryDocPDOCID.Value:=0;
+              if qryDocPDOCID.IsNull then qryDocPDOCID.Value:=0;
+              Include(docProductOplataListDef, qryDocSKIND.AsInteger);
             end else begin
-                qryDocPDOCID.AsVariant:=Null;
+              qryDocPDOCID.AsVariant:=Null;
+              Exclude(docProductOplataListDef, qryDocSKIND.AsInteger);
             end;
         end;
     finally
@@ -1863,19 +1876,24 @@ begin
     sum0 := qryDocSUM0.Value + qryRecSUMM.Value - OldSum - sum3;
     sum0_nds := qryDocSUM1.Value + qryRecNDSSUM.Value - OldNdsSum - sum3_nds;
 
-    qryDoc.Edit;
-    if (qryDocPARAM7.Value <> 0) then
+    ClientLock := true;
     try
-        ParamLock := true;
-        sum3 := CurrRound(FloatPer(sum0, qryDocPARAM7.Value));
-        sum3_nds := CurrRound(FloatInPer(sum3, TransportNDS));
-        qryDocSUM3.Value := sum3;
+      qryDoc.Edit;
+      if (qryDocPARAM7.Value <> 0) then
+      try
+          ParamLock := true;
+          sum3 := CurrRound(FloatPer(sum0, qryDocPARAM7.Value));
+          sum3_nds := CurrRound(FloatInPer(sum3, TransportNDS));
+          qryDocSUM3.Value := sum3;
+      finally
+          ParamLock := false;
+      end;
+      qryDocSUM0.Value := sum0 + sum3;
+      qryDocSUM1.Value := sum0_nds + sum3_nds;
+      qryDocSUM2.Value := qryDocSUM2.Value + qryRecNALOGSUM.Value - OldNalogSum;
     finally
-        ParamLock := false;
+       ClientLock := false;
     end;
-    qryDocSUM0.Value := sum0 + sum3;
-    qryDocSUM1.Value := sum0_nds + sum3_nds;
-    qryDocSUM2.Value := qryDocSUM2.Value + qryRecNALOGSUM.Value - OldNalogSum;
 end;
 
 procedure TDocForm.qryRecAfterPost(DataSet: TDataSet);
@@ -2636,9 +2654,12 @@ begin
     else if (sender = mLoad) then begin
         btnEdit.Down := true;
         actEdit.Execute;
-        if (qryRec.RecordCount > 0) then begin
+        if (qryRec.RecordCount > 0) then try begin
             if MessageBox('¬ документе уже имеютс€ данные,'#13#10'они будут заменены на новые, продолжить?', MsgQuestion, MB_ICONQUESTION or MB_YESNO) = mrNo then Exit;
+            ClientLock := true;
             while not qryRec.Eof or not qryRec.Bof do qryRec.Delete;
+        end finally
+            ClientLock := false;
         end;
 
         dlg2 := TOpenDialog.Create(nil);
@@ -2739,9 +2760,11 @@ var
     root, elm: IXMLDOMElement;
     list:IXMLDOMNodeList;
     err: IXMLDOMParseError;
-    i, j, cnt: integer;
-    ostcnt, needcnt: double;
+    i, j, cnt, qryProdClientId: integer;
+    ostcnt, ostcnt_min, needcnt: double;
     v: string;
+    bm: TBookmark;
+
 begin
 
     // open xml
@@ -2819,6 +2842,7 @@ begin
         // activate product query
         if Desktop = deskInDoc then edtProductSrc.LookupValue := '';
         qryProd.Active:=true;
+        qryProdClientId := qryProd.Params[0].AsInteger;
 
         // read rec fields
         list := root.getElementsByTagName('rec');
@@ -2836,22 +2860,28 @@ begin
                 end
             end;
 
-            qryRecCLIENTID1.AsInteger := qryProd.Params[0].AsInteger;
+            qryRecCLIENTID1.AsInteger := qryProdClientId;
 
             v := qryRecPRODUCT2.Value;
-            if (v <> '') and ((qryProdPRODUCT2.Value = v) or qryProd.Locate('PRODUCT2', v, [])) then begin
-                // test for product count
-                needcnt := qryRecUNIT.AsFloat * qryRecCNT.AsFloat;
-                ostcnt := qryProdUNIT.AsFloat * qryProdCNT.AsFloat;
-                while (ostcnt < needcnt) do begin
-                    qryProd.Next;
-                    if qryProdPRODUCT2.Value <> v then begin
-                        qryProd.Prior;
-                        break;
-                    end;
-                    ostcnt := qryProdUNIT.AsFloat * qryProdCNT.AsFloat;
-                end;
+            qryProd.First;
+            if (v <> '') and qryProd.Locate('PRODUCT2', v, []) then begin
 
+                // Search product with need count
+                needcnt := qryRecUNIT.AsFloat * qryRecCNT.AsFloat;
+                ostcnt_min := qryProdUNIT.AsFloat * qryProdCNT.AsFloat;
+                bm := qryProd.GetBookmark;
+                while not qryProd.Eof do begin
+                    qryProd.Next;
+                    if qryProdPRODUCT2.Value <> v then break;
+                    ostcnt := qryProdUNIT.AsFloat * qryProdCNT.AsFloat;
+                    if (needcnt <= ostcnt) and (ostcnt_min > ostcnt) then begin
+                      ostcnt_min := ostcnt;
+                      bm := qryProd.GetBookmark;
+                    end;
+                end;
+                qryProd.GotoBookmark(bm);
+
+                // Apply product
                 qryRecPRODID.AsVariant := qryProdPRODID.AsVariant;
                 qryRecINDOCID.AsVariant := qryProdINDOCID.AsVariant;
                 qryRecINRECID.AsVariant := qryProdINRECID.AsVariant;

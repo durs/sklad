@@ -382,6 +382,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -398,6 +399,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -420,7 +422,6 @@ object DocListForm: TDocListForm
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         ParentFont = False
         RoundRectBias = 25

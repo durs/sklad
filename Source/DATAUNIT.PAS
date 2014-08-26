@@ -66,9 +66,6 @@ const
     docZachet=4;
     docBarter=5;
 
-    //doc product oplata
-    docProductOplataList=     [docCheck,docOrder,docBeznal];
-    docProductOplataListDef=  [docCheck,docOrder];
     docSKindMin=-1;
     docSKindMax=5;
     //for doc prod
@@ -148,6 +145,11 @@ const
 
     QueriesFileName='queries.xml';
     UpdateFileName='script\update_v';
+
+
+//doc product oplata
+const docProductOplataList =  [docCheck,docOrder,docBeznal];
+var docProductOplataListDef: TIntegerSet = [docCheck,docOrder];
 
 type
   TCrackLookup = class (TwwDBCustomLookupCombo)
@@ -1207,7 +1209,8 @@ procedure TData.srcSkladDataChange(Sender: TObject; Field: TField);
 begin
   if (Field = nil) or (Field = qrySkladActiveID) then
   begin
-    MainForm.appEventPost(self, appSkladSelect, nil);
+    if qrySkladCLIENTID.IsNull and not qrySklad.Eof then qrySklad.First
+    else MainForm.appEventPost(self, appSkladSelect, nil);
   end;
 end;
 
@@ -1425,34 +1428,10 @@ initialization
         'view.colors.date='+IntToStr(clPastelGreen)+#13+#10+
         'view.colors.rezerv='+IntToStr(clSilver)+#13+#10+
         'view.colors.archiv='+IntToStr(clSilver)+#13+#10
-        {+
-        'forms.TDocForm.0.rec.NEWPRICE.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.PRICEPER.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.NEWPRICE2.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.PRICEPER2.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.NEWPRICE3.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.PRICEPER3.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.NTD.Visible=1'+#13+#10+
-        'forms.TDocForm.0.rec.RECID.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.NEWPRICE.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.PRICEPER.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.NEWPRICE2.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.PRICEPER2.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.NEWPRICE3.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.PRICEPER3.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.NTD.Visible=1'+#13+#10+
-        'forms.TDocForm.1.rec.RECID.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.NEWPRICE.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.PRICEPER.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.NEWPRICE2.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.PRICEPER2.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.NEWPRICE3.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.PRICEPER3.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.NTD.Visible=0'+#13+#10+
-        'forms.TDocForm.2.rec.RECID.Visible=0'+#13+#10
-        }
     );
+    Integer(docProductOplataListDef):=CurrentConfig.getInteger('doc_oplata_list_def', Integer(docProductOplataListDef));
 finalization
+    CurrentConfig.setInteger('doc_oplata_list_def', Integer(docProductOplataListDef));
     CurrentConfig.Free;
     Databases.Free;
 end.

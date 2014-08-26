@@ -1313,6 +1313,7 @@ object DocForm: TDocForm
     BeforeInsert = DataModified
     BeforeOpen = qryBeforeOpen
     BeforePost = qryBeforePost
+    OnUpdateRecord = qryDocUpdateRecord
     CachedUpdates = True
     SQL.Strings = (
       'select doc.*,'
