@@ -132,7 +132,7 @@ implementation
 uses
     config, dataunit, aboutfrm, optnfrm, print, tools, toolfrm, repdataunit,
     clntfrm, prodfrm, doclfrm, ostfrm, debitfrm, qryfrm, openfrm, guardfrm,
-    forumfrm, paramfrm;
+    forumfrm, paramfrm, dylook;
 {$R *.DFM}
 
 constructor TMainForm.Create(AOwner:TComponent);
@@ -205,6 +205,7 @@ begin
             FormatNum:=CurrentConfig.getString('view.format.num');
             FormatInt:=CurrentConfig.getString('view.format.int');
             FormatPer:=CurrentConfig.getString('view.format.per');
+            UseFullSearch:=CurrentConfig.getBoolean('view.fullsearch', UseFullSearch);
             //read colors
             UseColorSelection:=CurrentConfig.getBoolean('view.colors.use');
             clNameField:=CurrentConfig.getInteger('view.colors.name');

@@ -1,11 +1,11 @@
 object OptionsForm: TOptionsForm
   Left = 253
   Top = 154
-  Width = 511
-  Height = 360
   ActiveControl = Inspector
   BorderStyle = bsSizeToolWin
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072
+  ClientHeight = 326
+  ClientWidth = 495
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,10 +20,10 @@ object OptionsForm: TOptionsForm
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
-    Left = 396
+    Left = 388
     Top = 0
     Width = 107
-    Height = 333
+    Height = 326
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 0
@@ -78,14 +78,16 @@ object OptionsForm: TOptionsForm
   object Inspector: TwwDataInspector
     Left = 0
     Top = 0
-    Width = 396
-    Height = 333
+    Width = 388
+    Height = 326
+    DisableThemes = False
     Align = alClient
     TabOrder = 1
     Items = <
       item
         Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077
         ReadOnly = True
+        Expanded = True
         Items = <
           item
             Caption = #1041#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
@@ -343,6 +345,16 @@ object OptionsForm: TOptionsForm
               end>
             TagString = 'colors'
             WordWrap = True
+          end
+          item
+            Caption = #1055#1086#1083#1085#1086#1090#1077#1082#1089#1090#1086#1074#1072#1103' '#1092#1080#1083#1100#1090#1088#1072#1094#1080#1103
+            EditText = '1'
+            PickList.Items.Strings = (
+              '1'
+              '0')
+            PickList.DisplayAsCheckbox = True
+            TagString = 'fullsearch'
+            WordWrap = False
           end>
         TagString = 'view'
         WordWrap = True
@@ -361,6 +373,7 @@ object OptionsForm: TOptionsForm
     CaptionFont.Name = 'MS Sans Serif'
     CaptionFont.Style = []
     OnAfterSelectCell = InspectorAfterSelectCell
+    ExplicitLeft = 6
     object edtMemo: TwwDBRichEdit
       Left = 192
       Top = 16
@@ -384,10 +397,22 @@ object OptionsForm: TOptionsForm
       EditorPosition.Width = 0
       EditorPosition.Height = 0
       MeasurementUnits = muInches
-      PrintMargins.Top = 1
-      PrintMargins.Bottom = 1
-      PrintMargins.Left = 1
-      PrintMargins.Right = 1
+      PrintMargins.Top = 1.000000000000000000
+      PrintMargins.Bottom = 1.000000000000000000
+      PrintMargins.Left = 1.000000000000000000
+      PrintMargins.Right = 1.000000000000000000
+      PrintHeader.VertMargin = 0.500000000000000000
+      PrintHeader.Font.Charset = DEFAULT_CHARSET
+      PrintHeader.Font.Color = clWindowText
+      PrintHeader.Font.Height = -11
+      PrintHeader.Font.Name = 'Tahoma'
+      PrintHeader.Font.Style = []
+      PrintFooter.VertMargin = 0.500000000000000000
+      PrintFooter.Font.Charset = DEFAULT_CHARSET
+      PrintFooter.Font.Color = clWindowText
+      PrintFooter.Font.Height = -11
+      PrintFooter.Font.Name = 'Tahoma'
+      PrintFooter.Font.Style = []
       RichEditVersion = 2
       Data = {
         640000007B5C727466315C616E73695C64656666307B5C666F6E7474626C7B5C
