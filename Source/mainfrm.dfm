@@ -112,8 +112,6 @@ object MainForm: TMainForm
     Color = clBtnShadow
     ParentBackground = False
     TabOrder = 1
-    ExplicitLeft = 76
-    ExplicitTop = 1
   end
   object barCool: TCoolBar
     Left = 0
@@ -127,19 +125,19 @@ object MainForm: TMainForm
         Control = barTool
         ImageIndex = -1
         MinHeight = 70
-        Width = 476
+        Width = 474
       end>
     EdgeInner = esNone
     Vertical = True
     object barTool: TToolBar
       Left = 0
       Top = 9
-      Width = 70
+      Width = 66
       Height = 467
       Align = alLeft
       AutoSize = True
-      ButtonHeight = 54
-      ButtonWidth = 70
+      ButtonHeight = 52
+      ButtonWidth = 66
       Caption = 'barTool'
       GradientEndColor = 10194876
       Images = Images32
@@ -155,37 +153,37 @@ object MainForm: TMainForm
       end
       object ToolButton2: TToolButton
         Left = 0
-        Top = 54
+        Top = 52
         Action = actOstatok
         Wrap = True
       end
       object ToolButton3: TToolButton
         Left = 0
-        Top = 108
+        Top = 104
         Action = actDebit
         Wrap = True
       end
       object btnClient: TToolButton
         Left = 0
-        Top = 162
+        Top = 156
         Action = actClient
         Wrap = True
       end
       object btnMap: TToolButton
         Left = 0
-        Top = 216
+        Top = 208
         Action = actProduct
         Wrap = True
       end
       object ToolButton4: TToolButton
         Left = 0
-        Top = 270
+        Top = 260
         Action = actQuery
         Wrap = True
       end
       object btnForum: TToolButton
         Left = 0
-        Top = 324
+        Top = 312
         Action = actForum
         Wrap = True
       end
@@ -503,7 +501,7 @@ object MainForm: TMainForm
     Left = 241
     Top = 16
     Bitmap = {
-      494C0101110024000C0010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010111002400100010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000008B65
       54FF5A260DFF5A260DFF5A260DFF5A260DFF5A260DFF5A260DFF5A260DFF774D
@@ -1167,7 +1165,8 @@ object MainForm: TMainForm
       F903F001C00F0401FCEFF00080070401FCE7F00000030401FC8FF00000018C01
       FC03F0008000FC01FC012000C000FC01BC330000E0000403CC0F0000F0000407
       F05F0000F801040FF01FF800F80107FFF87FF800F8010603F9FFF800F807FF07
-      F8FFF801F807FF8FFDFFF803FC7FFFDF}
+      F8FFF801F807FF8FFDFFF803FC7FFFDF00000000000000000000000000000000
+      000000000000}
   end
   object Images32: TImageList
     Height = 32
@@ -1175,7 +1174,7 @@ object MainForm: TMainForm
     Left = 184
     Top = 16
     Bitmap = {
-      494C0101110024000C0020002000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010111002400100020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
       0100000000000000000000000000000000000000000000000000000000000000
       00000000000000000000D4C7C1FF8B6554FF623119FF5A260DFF5A260DFF5A26
@@ -3819,13 +3818,14 @@ object MainForm: TMainForm
       FFF07FFFFFC00000E000FF1FE0000001FFE3FFFFFFC00000F001FFFFFFE3C7FF
       FFC0FFFFFFC00000F803FFFFFFE3C7FFFFC0FFFFFFC00001FC07FFFFFFE187FF
       FFE1FFFFFFC00003FE0FFFFFFFF00FFFFFF3FFFFFFC00007FF1FFFFFFFF81FFF
-      FFFFFFFFFFC0000FFFBFFFFFFFFC3FFF}
+      FFFFFFFFFFC0000FFFBFFFFFFFFC3FFF00000000000000000000000000000000
+      000000000000}
   end
   object ImagesLog: TImageList
     Left = 281
     Top = 16
     Bitmap = {
-      494C0101070009000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107000900100010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

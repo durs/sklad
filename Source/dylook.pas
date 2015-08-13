@@ -5,7 +5,8 @@ uses
     DB,DBCtrls,IBCustomDataSet,Variants;
 
 var
-  DefLookupPause:integer=1000;
+  DefLookupPause: integer = 500;
+  UseFullSearch: boolean = true;
 
 type
   TDyLookupStyle = set of (lsFiltered,lsAllowScroll,lsAllowScrollOut,lsSQLFilter);
@@ -187,8 +188,16 @@ end;
 
 procedure TDyDBLookup.RefreshFilter;
 var
-    filter,fname:string;
-    p:integer;
+  filter,fname:string;
+  p:integer;
+
+  function sql_prepare(val: string): string;
+  begin
+    result := FQuoteChar;
+    if UseFullSearch then result := result + '%';
+    result := result + val + '%' + FQuoteChar;
+  end;
+
 begin
   filter:='';
   if FValue<>'' then with FDataLink do begin
@@ -207,12 +216,13 @@ begin
     end;
   end;
   if FValue<>'' then with FDataLink do begin
+    //
     if lsSQLFilter in FStyle then begin
       fname:=Field.Origin; if fname='' then fname:=Field.FieldName;
-      if Field is TStringField then filter := 'upper(' + fname + ' collate pxw_cyrl) like ' + FQuoteChar + AnsiUpperCase(FValue) + '%' + FQuoteChar
+      if Field is TStringField then filter := 'upper(' + fname + ' collate pxw_cyrl) like ' + sql_prepare(AnsiUpperCase(FValue))
       else if Field is TDateTimeField then filter := fname + '=' + FQuoteChar + FValue + FQuoteChar
       else if Field is TFloatField then filter := fname + '>' + FValue + '-0.00001 and ' + fname + '<' + FValue + '+0.00001'
-      else filter := fname+' like ' + FQuoteChar + FValue + '%' + FQuoteChar;
+      else filter := fname+' like ' + sql_prepare(FValue);
     end else begin
       if Field is TStringField then FValue := FValue + '*';
       filter := '['+FieldName+'] = ''' + FValue + '''';
