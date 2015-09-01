@@ -175,6 +175,7 @@ begin
     rep.AddFunction('Function CurrToText(Curr:Extended):String', 'Склад', 'Преобразование денежной суммы в текстовую строку - деньги прописью');
     rep.AddFunction('Function GetSkladInfo:String', 'Склад', 'Получить текст с описанием реквизитов текущего склада');
     rep.AddFunction('Function AssignSkladImage(Img:Pointer):Boolean', 'Склад', 'Установить изображение логотипа текущего склада');
+    rep.AddFunction('Function AssignSkladStamp(Img:Pointer):Boolean', 'Склад', 'Установить изображение штампа текущего склада');
     rep.AddFunction('Function GetClient1Info:String', 'Склад', 'Получить текст с описанием реквизитов продавца');
     rep.AddFunction('Function AssignClient1Image(Img:Pointer):Boolean', 'Склад', 'Установить изображение логотипа продавца');
     if category in [2, 21, 22, 23] then rep.AddFunction('Function GetCreditInfo():String', 'Склад', 'Информация о плат.-расч. документе');
@@ -346,6 +347,19 @@ begin
         if ((img <> nil) and (img is TfrxPictureView)) then
         begin
             data.getBlobImage(Data.qrySkladLOGO, (img as TfrxPictureView).Picture);
+            result := ((img as TfrxPictureView).Picture.Graphic <> nil) and not (img as TfrxPictureView).Picture.Graphic.Empty;
+        end;
+    except
+        result := false;
+    end
+
+    else if CompareText(MethodName, 'AssignSkladStamp') = 0 then
+    try
+        result := false;
+        if (pcnt > 0) then img := TObject(Integer(Params[0])) else img := nil;
+        if ((img <> nil) and (img is TfrxPictureView)) then
+        begin
+            data.getBlobImage(Data.qrySkladSTAMP, (img as TfrxPictureView).Picture);
             result := ((img as TfrxPictureView).Picture.Graphic <> nil) and not (img as TfrxPictureView).Picture.Graphic.Empty;
         end;
     except

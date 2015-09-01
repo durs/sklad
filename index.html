@@ -10,7 +10,7 @@
 <script src="http://vk.com/js/api/openapi.js" type="text/javascript" charset="windows-1251"></script>
 <script type="text/javascript">
 
-	var curver = '3.22';
+	var curver = '3.23';
 	function appInit(info){
 		if (typeof(info)!='object') info={};
 		var elm = document.getElementById('version');
@@ -22,7 +22,7 @@
 		}
 	}
 
-	var mode,btn;
+	var mode,btn,vk_init;
 	function show(id){
 		if(btn) btn.className = 'button';
 		btn = this;
@@ -35,13 +35,14 @@
 			div.className = 'page active';
 			if(id=='manual') document.getElementById('manual_content', div).src = 'HTML/manual.html';
 			else if(id=='download') document.getElementById('changes_content', div).src = 'HTML/changes.html';
+			else if(id=='news') if (!vk_init) {
+				vk_init = true;
+				VK.init({apiId: 4477147, onlyWidgets: true});
+				VK.Widgets.Comments('vk_comments', {width: '90%', limit: 15}, 321);			
+			}
 		}		
 	}
 	window.onload = function(){
-		// VK init
-		VK.init({apiId: 4477147, onlyWidgets: true});
-		VK.Widgets.Comments('vk_comments', {width: '90%', limit: 15}, 321);
-			
 		// Google analitics
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -51,11 +52,9 @@
 		ga('send', 'pageview');
 		
 		// Init page
-		show.call(document.getElementById('btn_news'), 'news');
-		
-		//alert(navigator.userAgent)
+		show.call(document.getElementById('btn_download'), 'download');
 	};
-	
+
 </script>	
 
 </head>
@@ -63,14 +62,14 @@
 	
 <table class="toolbar">
 <tr>
-<td id="btn_news" class="button" onclick="show.call(this,'news');">Новости</td>
-<td class="button" onclick="show.call(this,'manual');">Руководство</td>
-<td class="button" onclick="show.call(this,'download');">Загрузки</td>
+<td id="btn_download" class="button" onclick="show.call(this,'download');">Загрузки</td>
+<td id="btn_manual" class="button" onclick="show.call(this,'manual');">Руководство</td>
+<td id="btn_news" class="button" onclick="show.call(this,'news');">Обсуждение</td>
 <td class="verinfo" id="version"></td>
 </tr>
 </table>
 
-<div id="news" class="page active">
+<div id="news" class="page inactive">
 	<div id="vk_comments"></div>
 </div>
 
@@ -82,16 +81,16 @@
 <div id="install" class="page inactive">
 </div>
 	
-<div id="download" class="page inactive">
+<div id="download" class="page active">
 	<table border="0" cellpadding="10" height="100%" width="100%">
 	<tr>
 	<td width="50px" height="50px" valign="top">
-	<a href="Distrib/sklad_2015_08_13.zip">
-		<img src="HTML/images/download.png" title="Загрузить последнюю версию прлограммы" width="60" height="60" border="0"/>
+	<a href="Distrib/sklad_2015_09_01.zip">
+		<img src="HTML/images/download.png" title="Загрузить последнюю версию программы" width="60" height="60" border="0"/>
 	</a>
 	</td>
 	<td valign="top" nowrap>
-	<li><a href="Distrib/sklad_2015_08_13.zip">Версия 3.22 (от 2015-08-13)</a></li>
+	<li><a href="Distrib/sklad_2015_09_01.zip">Версия 3.23 (от 2015-09-01)</a></li>
 	<li><a href="Distrib/sklad_2014_09_04.zip">Версия 3.21 (от 2014-09-04)</a></li>
 	<li><a href="Distrib/sklad_2013_09_10.zip">Версия 3.18 (от 2013-09-10)</a></li>
 	<li><a href="Distrib/Firebird-1.5.6.5026-0-Win32.exe">Сервер БД Firebird 1.5.6</a></li>	

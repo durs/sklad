@@ -234,6 +234,9 @@ type
     DBEdit23: TDBEdit;
     Label29: TLabel;
     DBEdit24: TDBEdit;
+    qrySkladSTAMP: TBlobField;
+    tsStamp: TTabSheet;
+    pnlStamp: TPanel;
     procedure SeachEditChange(Sender: TObject);
     procedure ActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -273,7 +276,7 @@ type
     DBLookup: TDyDBLookup;
     SQLParser: TDySQLParser;
     filter: string;
-    imgLogo: TDyImage;
+    imgLogo, imgStamp: TDyImage;
     procedure SetModified(Value:boolean);
     procedure WMTimer(var Message:TWMTimer); message WM_TIMER;
     procedure FilterRecords(Sender:TObject; const filter:string);
@@ -302,6 +305,10 @@ begin
   imgLogo.Parent:=pnlImage;
   imgLogo.Align:=alClient;
   imgLogo.OnChange:=DataChanged;
+  imgStamp := TDyImage.Create(self);
+  imgStamp.Parent:=pnlStamp;
+  imgStamp.Align:=alClient;
+  imgStamp.OnChange:=DataChanged;
   DBLookup:=TDyDBLookup.Create(Data.QuoteChar);
   DBLookup.Style:=DBLookup.Style+[lsSQLFilter];
   DBLookup.RecordCount:=5;
@@ -453,6 +460,7 @@ begin
         edtSkladComment3.ReadOnly:=readonly;
         edtSkladFont.ReadOnly:=readonly;
         imgLogo.ReadOnly:=readonly;
+        imgStamp.ReadOnly:=readonly;
     end else if (Sender=actApply) then begin
         if not Modified then Exit;
         //if qryClient.Active then qryClient.CheckBrowseMode; b1:=qryClient.Active and qryClient.UpdatesPending;
@@ -549,6 +557,18 @@ begin
             SavePropertyToStream(imgLogo,'Picture',S);
             S.Position:=0;
             qrySkladLOGO.LoadFromStream(S);
+        finally
+            ParamLock:=false;
+            S.Free;
+        end;
+    end else if (Sender=imgStamp) then begin
+        qrySklad.Edit;
+        S:=TMemoryStream.Create;
+        try
+            ParamLock:=true;
+            SavePropertyToStream(imgStamp,'Picture',S);
+            S.Position:=0;
+            qrySkladSTAMP.LoadFromStream(S);
         finally
             ParamLock:=false;
             S.Free;
@@ -709,6 +729,18 @@ begin
             if S.Size>0 then try
                 S.Position:=0;
                 LoadPropertyFromStream(imgLogo,S);
+            except
+            end;
+        finally
+            S.Free;
+        end;
+        imgStamp.Picture.Graphic:=nil;
+        S:=TMemoryStream.Create;
+        try
+            qrySkladSTAMP.SaveToStream(S);
+            if S.Size>0 then try
+                S.Position:=0;
+                LoadPropertyFromStream(imgStamp,S);
             except
             end;
         finally
