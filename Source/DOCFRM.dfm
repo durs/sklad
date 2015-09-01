@@ -2,7 +2,7 @@ object DocForm: TDocForm
   Left = 291
   Top = 66
   Caption = 'DocForm'
-  ClientHeight = 492
+  ClientHeight = 509
   ClientWidth = 730
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -316,12 +316,13 @@ object DocForm: TDocForm
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 434
+    Top = 451
     Width = 730
     Height = 58
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 5
+    ExplicitTop = 434
     object Label1: TLabel
       Left = 35
       Top = 10
@@ -436,36 +437,36 @@ object DocForm: TDocForm
     Left = 0
     Top = 272
     Width = 730
-    Height = 162
+    Height = 179
     LineStyle = gls3D
     ControlType.Strings = (
       'PRODUCT;CustomEdit;edtProd'
       'PRODUCTNAME;CustomEdit;edtProd'
       'PRODUCT2;CustomEdit;edtProd;F')
     Selected.Strings = (
-      'RECID'#9'5'#9#1050#1086#1076
-      'PRODUCT2'#9'30'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1090#1086#1074#1072#1088#1072'~'#1080#1083#1080' '#1091#1089#1083#1091#1075#1080
-      'UNIT'#9'10'#9#1042' '#1084#1077#1089#1090#1077
-      'CNT'#9'10'#9#1050#1086#1083'.-'#1074#1086'~'#1084#1077#1089#1090
-      'ALLCNT'#9'10'#9#1042#1089#1077#1075#1086'~('#1082#1075'/'#1096#1090')'
-      'INPRICE'#9'10'#9#1055#1088#1080#1093#1086#1076#1085#1072#1103'~'#1094#1077#1085#1072
-      'OUTPRICE'#9'10'#9'OUTPRICE'
-      'PRICE'#9'10'#9#1062#1077#1085#1072
-      'SUMM'#9'10'#9#1057#1091#1084#1084#1072
-      'NDSPRICE'#9'10'#9#1062#1077#1085#1072'~'#1053#1044#1057
-      'NDSSUM'#9'10'#9#1057#1091#1084#1084#1072'~'#1053#1044#1057
-      'NALOGSUM'#9'10'#9#1053#1072#1083#1086#1075'~'#1089' '#1087#1088#1086#1076#1072#1078
-      'NTD'#9'20'#9#8470' '#1090#1072#1084#1086#1078#1077#1085#1085#1086#1081'~'#1076#1077#1082#1083#1072#1088#1072#1094#1080#1080
-      'NEWPRICE'#9'10'#9'NEWPRICE'
-      'PRICEPER'#9'10'#9'PRICEPER'
-      'NEWPRICE2'#9'10'#9'NEWPRICE2'
-      'PRICEPER2'#9'10'#9'PRICEPER2'
-      'NEWPRICE3'#9'10'#9'NEWPRICE3'
-      'PRICEPER3'#9'10'#9'PRICEPER3'
-      'NEWPRICE4'#9'10'#9'NEWPRICE4'
-      'PRICEPER4'#9'10'#9'PRICEPER4'
-      'NEWPRICE5'#9'10'#9'NEWPRICE5'
-      'PRICEPER5'#9'10'#9'PRICEPER5')
+      'RECID'#9'5'#9#1050#1086#1076#9#9
+      'PRODUCT2'#9'50'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1090#1086#1074#1072#1088#1072'~'#1080#1083#1080' '#1091#1089#1083#1091#1075#1080#9'F'#9
+      'UNIT'#9'10'#9#1042' '#1084#1077#1089#1090#1077#9#9
+      'CNT'#9'10'#9#1050#1086#1083'.-'#1074#1086'~'#1084#1077#1089#1090#9#9
+      'ALLCNT'#9'10'#9#1042#1089#1077#1075#1086'~('#1082#1075'/'#1096#1090')'#9#9
+      'INPRICE'#9'10'#9#1055#1088#1080#1093#1086#1076#1085#1072#1103'~'#1094#1077#1085#1072#9#9
+      'OUTPRICE'#9'10'#9'OUTPRICE'#9#9
+      'PRICE'#9'10'#9#1062#1077#1085#1072#9#9
+      'SUMM'#9'10'#9#1057#1091#1084#1084#1072#9#9
+      'NDSPRICE'#9'10'#9#1062#1077#1085#1072'~'#1053#1044#1057#9#9
+      'NDSSUM'#9'10'#9#1057#1091#1084#1084#1072'~'#1053#1044#1057#9#9
+      'NALOGSUM'#9'10'#9#1053#1072#1083#1086#1075'~'#1089' '#1087#1088#1086#1076#1072#1078#9#9
+      'NTD'#9'20'#9#8470' '#1090#1072#1084#1086#1078#1077#1085#1085#1086#1081'~'#1076#1077#1082#1083#1072#1088#1072#1094#1080#1080#9#9
+      'NEWPRICE'#9'10'#9'NEWPRICE'#9#9
+      'PRICEPER'#9'10'#9'PRICEPER'#9#9
+      'NEWPRICE2'#9'10'#9'NEWPRICE2'#9#9
+      'PRICEPER2'#9'10'#9'PRICEPER2'#9#9
+      'NEWPRICE3'#9'10'#9'NEWPRICE3'#9#9
+      'PRICEPER3'#9'10'#9'PRICEPER3'#9#9
+      'NEWPRICE4'#9'10'#9'NEWPRICE4'#9#9
+      'PRICEPER4'#9'10'#9'PRICEPER4'#9#9
+      'NEWPRICE5'#9'10'#9'NEWPRICE5'#9#9
+      'PRICEPER5'#9'10'#9'PRICEPER5'#9#9)
     IniAttributes.Delimiter = ';;'
     TitleColor = clBtnFace
     FixedCols = 0
@@ -493,6 +494,7 @@ object DocForm: TDocForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitHeight = 162
   end
   object edtProd: TwwDBLookupCombo
     Left = 16
@@ -501,7 +503,7 @@ object DocForm: TDocForm
     Height = 21
     DropDownAlignment = taLeftJustify
     Selected.Strings = (
-      'PRODUCT2'#9'40'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077#9'F'
+      'PRODUCT2'#9'50'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077#9'F'
       'UNIT'#9'5'#9#1042' '#1084#1077#1089#1090#1077#9'F'
       'CNT'#9'5'#9#1050#1086#1083'.-'#1074#1086#9'F'
       'INPRICE_Calc'#9'10'#9#1055#1088#1080#1093'.'#1094#1077#1085#1072#9'F'
@@ -515,7 +517,7 @@ object DocForm: TDocForm
     DataSource = srcRec
     LookupTable = qryProd
     LookupField = 'PRODUCT2'
-    Options = [loColLines, loTitles]
+    Options = [loColLines, loTitles, loSearchOnBackspace]
     DropDownCount = 6
     TabOrder = 6
     AutoDropDown = True
@@ -1100,7 +1102,7 @@ object DocForm: TDocForm
       end>
     object qryProdPRODUCT2: TIBStringField
       DisplayLabel = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
-      DisplayWidth = 40
+      DisplayWidth = 50
       FieldName = 'PRODUCT2'
       Size = 99
     end
@@ -1533,7 +1535,7 @@ object DocForm: TDocForm
     end
     object qryRecPRODUCT2: TIBStringField
       DisplayLabel = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1090#1086#1074#1072#1088#1072'~'#1080#1083#1080' '#1091#1089#1083#1091#1075#1080
-      DisplayWidth = 30
+      DisplayWidth = 50
       FieldName = 'PRODUCT2'
       Origin = 'PRODUCT.NAME'
       Size = 99

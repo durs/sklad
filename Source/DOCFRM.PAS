@@ -391,6 +391,9 @@ TDocForm = class(TBaseForm)
     procedure edtProdDropDown(Sender: TObject);
     procedure qryDocUpdateRecord(DataSet: TDataSet; UpdateKind: TUpdateKind;
       var UpdateAction: TIBUpdateAction);
+    procedure edtProdPerformCustomSearch(Sender: TObject; LookupTable: TDataSet;
+      SearchField, SearchValue: string; PerformLookup: Boolean;
+      var Found: Boolean);
   private
     IsQuery: boolean;
     IsReadonly: boolean;
@@ -410,6 +413,7 @@ TDocForm = class(TBaseForm)
     Modified: boolean;
     OldSum, OldNdsSum, OldNalogSum, OldSum3: Double;
     OldRecID: integer;
+    ProdSQL, ProdFilter: string;
 
     SQLParser: TDySQLParser;
     DBLookup: TDyDBLookup;
@@ -515,6 +519,12 @@ begin
     qryProdCNT.DisplayFormat:=FormatNum;
     btnExportPrice.Checked:=CurrentConfig.getBoolean(key+'.export_price',true);
 
+    ProdSQL:=qryProd.SQL.Text;
+    if UseFullSearch then begin
+      edtProd.ShowMatchText := false;
+      edtProd.OnPerformCustomSearch := edtProdPerformCustomSearch;
+    end;
+
     btnEdit.Down:=false;
     actEdit.Execute;
 end;
@@ -570,6 +580,10 @@ begin
         end;
         appProductChange: if qryProd.Active and qryProd.Params[0].IsNull then qryProdRefresh;
         appProductSelect: if not (fsInactive in self.State) and btnEdit.Down and not qryRec.Locate('PRODID',TDataset(Data)['PRODID'],[]) then begin
+            if ProdFilter<>'' then begin
+              ProdFilter:='';
+              qryProd.Active:=false;
+            end;
             qryProd.Active:=true;
             if not qryProd.Params[0].IsNull then exit;
             if qryProd.Locate('PRODID',TDataset(Data)['PRODID'],[]) then begin
@@ -581,6 +595,10 @@ begin
         appOstatokChange: if qryProd.Active and not qryProd.Params[0].IsNull then qryProdRefresh;
         appOstatokSelect: if not (fsInactive in self.State) and btnEdit.Down then begin
             if not qryRec.Locate('INDOCID;INRECID', VarArrayOf([TDataset(Data)['DOCID'], TDataset(Data)['RECID']]), []) then begin
+                if ProdFilter<>'' then begin
+                  ProdFilter:='';
+                  qryProd.Active:=false;
+                end;
                 qryProd.Active:=true;
                 if qryProd.Locate('INDOCID;INRECID', VarArrayOf([TDataset(Data)['DOCID'], TDataset(Data)['RECID']]), []) then begin
                     qryRec.Append;
@@ -736,7 +754,13 @@ begin
         edtTransportSum.ReadOnly:=readonly;
         grdRec.ReadOnly:=readonly;
         with grdRec do if readonly then Options:=Options - [dgEditing] else Options:=Options + [dgEditing];
-        if not readonly and grdRec.Focused then qryProd.Active:=true;
+        if not readonly and grdRec.Focused then begin
+          if ProdFilter<>'' then begin
+            ProdFilter:='';
+            qryProd.Active:=false;
+          end;
+          qryProd.Active:=true;
+        end;
     end else if Sender=actApply then begin
         if not Modified then Exit;
         if Visible then SetFocus;
@@ -867,6 +891,7 @@ begin
             appEventPost(Self,appOstatokChange,nil);
             appEventPost(Self,appDebitChange,nil);
             qryProd.Active:=false;
+            ProdFilter:='';
         end;
         SetModified(false);
         Close;
@@ -1069,7 +1094,13 @@ end;
 procedure TDocForm.edtEnter(Sender: TObject);
 begin
     if (Sender=edtClient1) or (Sender=edtClient2) then qryClient.Active:=true
-    else if (Sender=grdRec) and not grdRec.ReadOnly then qryProd.Active:=true;
+    else if (Sender=grdRec) and not grdRec.ReadOnly then begin
+      if ProdFilter<>'' then begin
+        ProdFilter:='';
+        qryProd.Active:=false;
+      end;
+      qryProd.Active:=true;
+    end;
 end;
 
 procedure TDocForm.edtProductSrcChange(Sender: TObject);
@@ -1155,7 +1186,8 @@ end;
 procedure TDocForm.qryProdRefresh;
 begin
     qryProd.Active:=false;
-    if grdRec.Focused and not grdRec.ReadOnly then qryProd.Active:=true;
+    if grdRec.Focused and not grdRec.ReadOnly then qryProd.Active:=true
+    else ProdFilter:='';
 end;
 
 procedure TDocForm.qryClientRefresh;
@@ -1391,8 +1423,15 @@ end;
 //-------------------------qryProd-----------------------------
 
 procedure TDocForm.qryProdBeforeOpen(DataSet: TDataSet);
-var id,id2:variant;
+var
+  id,id2:variant;
+  sql: string;
 begin
+    sql := ProdSQL;
+    //sql := 'select query_ostatok.*, cast(get_product_name(produsername, classname, productname,len) as varchar(100)) product2 from query_ostatok(:clientid,:clientid2)';
+    if (ProdFilter<>'') then sql := sql + ' where upper(product collate pxw_cyrl) like ''%' + AnsiUpperCase(ProdFilter) + '%''';
+    qryProd.SQL.Text := sql;
+
     if (DocParams and dpVozvrat=0) then begin
         if edtProductSrc.Text='' then id:=null else id:=edtProductSrc.LookupValue;
         id2:=null;
@@ -1402,6 +1441,7 @@ begin
     end;
     qryProd.ParamByName('CLIENTID').Value:=id;
     qryProd.ParamByName('CLIENTID2').Value:=id2;
+
     UpdateSklad;
 end;
 
@@ -1447,6 +1487,26 @@ begin
     qryProdOUTPRICE3_Calc.DisplayLabel := PriceNameIn3 + ' цена';
     qryProdOUTPRICE4_Calc.DisplayLabel := PriceNameIn4 + ' цена';
     qryProdOUTPRICE5_Calc.DisplayLabel := PriceNameIn5 + ' цена';
+end;
+
+procedure TDocForm.edtProdPerformCustomSearch(Sender: TObject;
+  LookupTable: TDataSet; SearchField, SearchValue: string;
+  PerformLookup: Boolean; var Found: Boolean);
+var filter: string;
+begin
+  if PerformLookup or (SearchValue='') then filter := ''
+  else filter := SearchValue;
+  if filter <> ProdFilter then begin
+    ProdFilter := filter;
+    qryProd.Active := false;
+  end;
+  qryProd.Active := true;
+  if PerformLookup then
+    Found := qryProd.Locate(SearchField, SearchValue, [loCaseInsensitive, loPartialKey])
+  else begin
+    qryProd.First;
+    Found := not qryProd.Eof;
+  end;
 end;
 
 //------------------------qryDoc-------------------------------

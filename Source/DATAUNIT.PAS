@@ -247,6 +247,7 @@ type
     srcSkladActive: TDataSource;
     qrySkladREASON_PKO: TIBStringField;
     qrySkladREASON_RKO: TIBStringField;
+    qrySkladSTAMP: TBlobField;
     procedure appHint(Sender: TObject);
     procedure dbAfterConnect(Sender: TObject);
     procedure dbBeforeDisconnect(Sender: TObject);

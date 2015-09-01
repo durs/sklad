@@ -297,7 +297,7 @@ object ClientForm: TClientForm
       Top = 36
       Width = 626
       Height = 274
-      ActivePage = tsClient
+      ActivePage = tsSklad
       Align = alClient
       TabOrder = 1
       OnChange = pcClientChange
@@ -639,7 +639,7 @@ object ClientForm: TClientForm
           Top = 0
           Width = 618
           Height = 246
-          ActivePage = TabSheet1
+          ActivePage = tsOptions
           Align = alClient
           TabOrder = 0
           object tsOptions: TTabSheet
@@ -767,6 +767,10 @@ object ClientForm: TClientForm
           object TabSheet1: TTabSheet
             Caption = #1053#1091#1084#1077#1088#1072#1094#1080#1103
             ImageIndex = 4
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object Label8: TLabel
               Left = 71
               Top = 37
@@ -915,6 +919,10 @@ object ClientForm: TClientForm
           object tsPrice: TTabSheet
             Caption = #1062#1077#1085#1099
             ImageIndex = 1
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object GroupBox2: TGroupBox
               Left = 8
               Top = 3
@@ -1214,7 +1222,7 @@ object ClientForm: TClientForm
                 Height = 21
                 DataField = 'DOCPARAM2'
                 DataSource = srcSklad
-                ItemHeight = 13
+                ItemHeight = 0
                 Items.Strings = (
                   '-50 %'
                   '-25 %'
@@ -1257,7 +1265,7 @@ object ClientForm: TClientForm
                 Height = 21
                 DataField = 'DOCPARAM3'
                 DataSource = srcSklad
-                ItemHeight = 13
+                ItemHeight = 0
                 Items.Strings = (
                   '0 %'
                   '2 %'
@@ -1292,6 +1300,10 @@ object ClientForm: TClientForm
           object tsReport: TTabSheet
             Caption = #1054#1090#1095#1077#1090#1099
             ImageIndex = 2
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object ScrollBox2: TScrollBox
               Left = 0
               Top = 0
@@ -1449,9 +1461,31 @@ object ClientForm: TClientForm
               TabOrder = 0
             end
           end
+          object tsStamp: TTabSheet
+            Caption = #1064#1090#1072#1084#1087
+            ImageIndex = 6
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
+            object pnlStamp: TPanel
+              Left = 0
+              Top = 0
+              Width = 610
+              Height = 218
+              Align = alClient
+              BevelOuter = bvNone
+              BorderStyle = bsSingle
+              TabOrder = 0
+            end
+          end
           object tsOffice: TTabSheet
             Caption = #1060#1080#1083#1080#1072#1083
             ImageIndex = 5
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object Label21: TLabel
               Left = 39
               Top = 48
@@ -1866,7 +1900,8 @@ object ClientForm: TClientForm
       '  PRICE_NAME5 = :PRICE_NAME5,'
       '  TOWN=:TOWN,'
       '  MANAGER=:MANAGER,'
-      '  DOVEREN=:DOVEREN'
+      '  DOVEREN=:DOVEREN,'
+      '  STAMP=:STAMP'
       'where'
       '  CLIENTID = :OLD_CLIENTID')
     InsertSQL.Strings = (
@@ -1889,7 +1924,7 @@ object ClientForm: TClientForm
       
         '   PRICE_PERCENT5, PRICE_ROUND5, PRICE_NAME, PRICE_NAME2, PRICE_' +
         'NAME3, PRICE_NAME4,'
-      '   PRICE_NAME5,TOWN,MANAGER,DOVEREN)'
+      '   PRICE_NAME5,TOWN,MANAGER,DOVEREN,STAMP)'
       'values'
       
         '  (:CLIENTID, :HIDDEN, :DOCPARAM1, :DOCPARAM2, :DOCPARAM3, :TITL' +
@@ -1911,7 +1946,7 @@ object ClientForm: TClientForm
         '5, :PRICE_NAME, '
       
         '   :PRICE_NAME2, :PRICE_NAME3, :PRICE_NAME4, :PRICE_NAME5,:TOWN,' +
-        ':MANAGER,:DOVEREN)')
+        ':MANAGER,:DOVEREN,:STAMP)')
     DeleteSQL.Strings = (
       'delete from sklad'
       'where'
@@ -2113,6 +2148,12 @@ object ClientForm: TClientForm
       FieldName = 'DOVEREN'
       Origin = '"SKLAD"."DOVEREN"'
       Size = 100
+    end
+    object qrySkladSTAMP: TBlobField
+      FieldName = 'STAMP'
+      Origin = '"SKLAD"."STAMP"'
+      ProviderFlags = [pfInUpdate]
+      Size = 8
     end
   end
   object srcSklad: TDataSource
