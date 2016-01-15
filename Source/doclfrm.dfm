@@ -382,7 +382,6 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -399,7 +398,6 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -422,6 +420,7 @@ object DocListForm: TDocListForm
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         ParentFont = False
         RoundRectBias = 25
@@ -577,6 +576,7 @@ object DocListForm: TDocListForm
     end
     object N3: TMenuItem
       Caption = #1060#1086#1088#1084#1099' '#1087#1088#1077#1076'.'#1074#1077#1088#1089#1080#1081
+      Visible = False
       object miPrintDoc1: TMenuItem
         Tag = 1
         Caption = #1053#1072#1082#1083#1072#1076#1085#1072#1103
@@ -598,6 +598,7 @@ object DocListForm: TDocListForm
     end
     object N2: TMenuItem
       Caption = '-'
+      Visible = False
     end
     object miPrintFile: TMenuItem
       Caption = #1042' '#1092#1072#1081#1083' ...'

@@ -322,7 +322,6 @@ object DocForm: TDocForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 5
-    ExplicitTop = 434
     object Label1: TLabel
       Left = 35
       Top = 10
@@ -494,7 +493,6 @@ object DocForm: TDocForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
-    ExplicitHeight = 162
   end
   object edtProd: TwwDBLookupCombo
     Left = 16
@@ -2022,6 +2020,7 @@ object DocForm: TDocForm
     end
     object N5: TMenuItem
       Caption = #1060#1086#1088#1084#1099' '#1087#1088#1077#1076'.'#1074#1077#1088#1089#1080#1081
+      Visible = False
       object mReportDoc1: TMenuItem
         Tag = 1
         Caption = #1053#1072#1082#1083#1072#1076#1085#1072#1103
@@ -2045,6 +2044,7 @@ object DocForm: TDocForm
     end
     object N3: TMenuItem
       Caption = '-'
+      Visible = False
     end
     object miPrintFile: TMenuItem
       Caption = #1042' '#1092#1072#1081#1083' ...'
