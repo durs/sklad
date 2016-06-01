@@ -152,8 +152,8 @@ begin
     repeat
         ext := ExtractFileExt(F.Name);
         if CompareText(ext, '.fr3') = 0 then kind := 1
-        else if CompareText(ext, '.xlt') = 0 then kind := 2
-        else if CompareText(ext, '.dot') = 0 then kind := 3
+        else if (CompareText(ext, '.xlt') = 0) or (CompareText(ext, '.xltm') = 0) or (CompareText(ext, '.xltx') = 0) then kind := 2
+        else if (CompareText(ext, '.dot') = 0) or (CompareText(ext, '.dotm') = 0) or (CompareText(ext, '.dotx') = 0) then kind := 3
         else kind := 0;
         if kind <> 0 then
         begin

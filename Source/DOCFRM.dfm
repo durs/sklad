@@ -465,7 +465,9 @@ object DocForm: TDocForm
       'NEWPRICE4'#9'10'#9'NEWPRICE4'#9#9
       'PRICEPER4'#9'10'#9'PRICEPER4'#9#9
       'NEWPRICE5'#9'10'#9'NEWPRICE5'#9#9
-      'PRICEPER5'#9'10'#9'PRICEPER5'#9#9)
+      'PRICEPER5'#9'10'#9'PRICEPER5'#9#9
+      'PRODUCTNAME'#9'50'#9'PRODUCTNAME'#9'F'#9
+      'PRODUSER'#9'30'#9'PRODUSER'#9'F'#9)
     IniAttributes.Delimiter = ';;'
     TitleColor = clBtnFace
     FixedCols = 0
@@ -1508,7 +1510,8 @@ object DocForm: TDocForm
         'me, product.len) product,'
       
         'cast(get_product_name(produser.smallname, class.smallname, produ' +
-        'ct.name, product.len) as varchar(100)) product2'
+        'ct.name, product.len) as varchar(100)) product2,'
+      'produser.fullname produser,class.name classname'
       'from doc_prod'
       'left join product on product.prodid=doc_prod.prodid'
       'left join class on class.classid=product.classid'
@@ -1769,6 +1772,23 @@ object DocForm: TDocForm
       Origin = 'PRODUCT.LEN'
       Visible = False
       Size = 10
+    end
+    object qryRecPRODUCTNAME: TIBStringField
+      DisplayWidth = 50
+      FieldName = 'PRODUCTNAME'
+      Origin = '"PRODUCT"."NAME"'
+      Size = 50
+    end
+    object qryRecPRODUSER: TIBStringField
+      DisplayWidth = 30
+      FieldName = 'PRODUSER'
+      Origin = '"PRODUSER"."NAME"'
+      Size = 30
+    end
+    object qryRecCLASSNAME: TIBStringField
+      FieldName = 'CLASSNAME'
+      Origin = '"CLASS"."NAME"'
+      Size = 30
     end
   end
   object srcDoc: TDataSource

@@ -313,6 +313,9 @@ TDocForm = class(TBaseForm)
     qryRecPRICEPER5: TFloatField;
     qrySkladNODOCSCHET: TIntegerField;
     qryDocDOCNO2: TStringField;
+    qryRecPRODUCTNAME: TIBStringField;
+    qryRecPRODUSER: TIBStringField;
+    qryRecCLASSNAME: TIBStringField;
     procedure edtDebitExit(Sender: TObject);
     procedure btnSelectCreditClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

@@ -40,7 +40,10 @@ object RepData: TRepData
         'me, product.len) product,'
       
         'product.nds, product.dim, product.len, product.weight, product.s' +
-        'ertificat, produser.country'
+        'ertificat, produser.country,'
+      
+        'product.name productname, produser.fullname produser,class.name ' +
+        'classname'
       'from doc_prod'
       'left join product on product.prodid=doc_prod.prodid'
       'left join class on class.classid=product.classid'

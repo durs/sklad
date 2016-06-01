@@ -4,7 +4,7 @@ object DocListForm: TDocListForm
   ActiveControl = grdDoc
   Caption = #1044#1086#1082#1091#1084#1077#1085#1090#1099
   ClientHeight = 411
-  ClientWidth = 629
+  ClientWidth = 873
   Color = clBtnFace
   DefaultMonitor = dmDesktop
   Font.Charset = DEFAULT_CHARSET
@@ -76,7 +76,7 @@ object DocListForm: TDocListForm
   object grdDoc: TwwDBGrid
     Left = 136
     Top = 99
-    Width = 493
+    Width = 737
     Height = 312
     LineStyle = gls3D
     IniAttributes.Delimiter = ';;'
@@ -107,11 +107,12 @@ object DocListForm: TDocListForm
     OnCalcTitleImage = grdDocCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitWidth = 493
   end
   object ControlBar: TControlBar
     Left = 0
     Top = 0
-    Width = 629
+    Width = 873
     Height = 99
     Align = alTop
     AutoSize = True
@@ -123,6 +124,7 @@ object DocListForm: TDocListForm
     RowSize = 42
     RowSnap = False
     TabOrder = 1
+    ExplicitWidth = 629
     object barNavigator: TDBNavigator
       Left = 276
       Top = 2
@@ -149,7 +151,7 @@ object DocListForm: TDocListForm
     object pnlSearch: TPanel
       Left = 12
       Top = 44
-      Width = 614
+      Width = 661
       Height = 53
       BevelOuter = bvNone
       TabOrder = 3
@@ -327,17 +329,18 @@ object DocListForm: TDocListForm
     object pnlSklad: TPanel
       Left = 421
       Top = 2
-      Width = 205
+      Width = 252
       Height = 38
       BevelOuter = bvNone
       TabOrder = 2
       object edtSklad: TDBLookupComboBox
         Left = 8
         Top = 9
-        Width = 185
+        Width = 233
         Height = 21
         DataField = 'CLIENTID'
         DataSource = Data.srcSkladActive
+        DropDownRows = 20
         KeyField = 'CLIENTID'
         ListField = 'NAME'
         ListSource = Data.srcSklad
@@ -382,6 +385,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -398,6 +402,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -420,7 +425,6 @@ object DocListForm: TDocListForm
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         ParentFont = False
         RoundRectBias = 25

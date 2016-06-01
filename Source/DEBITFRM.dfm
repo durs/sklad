@@ -4,7 +4,7 @@ object DebitForm: TDebitForm
   ActiveControl = grdRec
   Caption = #1044#1086#1083#1075#1080
   ClientHeight = 412
-  ClientWidth = 591
+  ClientWidth = 745
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -46,7 +46,7 @@ object DebitForm: TDebitForm
   object barControl: TControlBar
     Left = 0
     Top = 0
-    Width = 591
+    Width = 745
     Height = 107
     Align = alTop
     AutoSize = True
@@ -58,6 +58,7 @@ object DebitForm: TDebitForm
     RowSize = 21
     RowSnap = False
     TabOrder = 0
+    ExplicitWidth = 591
     object barTool: TToolBar
       Left = 11
       Top = 2
@@ -116,7 +117,7 @@ object DebitForm: TDebitForm
     object pnlSearch: TPanel
       Left = 11
       Top = 44
-      Width = 574
+      Width = 624
       Height = 61
       BevelOuter = bvNone
       TabOrder = 3
@@ -249,17 +250,18 @@ object DebitForm: TDebitForm
     object pnlSklad: TPanel
       Left = 383
       Top = 2
-      Width = 202
+      Width = 252
       Height = 38
       BevelOuter = bvNone
       TabOrder = 2
       object edtSklad: TDBLookupComboBox
         Left = 8
         Top = 8
-        Width = 185
+        Width = 233
         Height = 21
         DataField = 'CLIENTID'
         DataSource = Data.srcSkladActive
+        DropDownRows = 20
         KeyField = 'CLIENTID'
         ListField = 'NAME'
         ListSource = Data.srcSklad
@@ -273,7 +275,7 @@ object DebitForm: TDebitForm
   object grdRec: TwwDBGrid
     Left = 0
     Top = 107
-    Width = 591
+    Width = 745
     Height = 305
     LineStyle = gls3D
     Selected.Strings = (
@@ -306,6 +308,7 @@ object DebitForm: TDebitForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitWidth = 591
   end
   object DataSource: TDataSource
     Left = 24

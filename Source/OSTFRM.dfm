@@ -216,17 +216,18 @@ object OstatokForm: TOstatokForm
     object pnlSklad: TPanel
       Left = 420
       Top = 2
-      Width = 213
+      Width = 252
       Height = 38
       BevelOuter = bvNone
       TabOrder = 3
       object edtSklad: TDBLookupComboBox
         Left = 8
         Top = 8
-        Width = 185
+        Width = 233
         Height = 21
         DataField = 'CLIENTID'
         DataSource = Data.srcSkladActive
+        DropDownRows = 20
         KeyField = 'CLIENTID'
         ListField = 'NAME'
         ListSource = Data.srcSklad

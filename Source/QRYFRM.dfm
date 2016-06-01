@@ -3,7 +3,7 @@ object QueryForm: TQueryForm
   Top = 116
   Caption = #1040#1085#1072#1083#1080#1079
   ClientHeight = 368
-  ClientWidth = 550
+  ClientWidth = 588
   Color = clGray
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -55,7 +55,7 @@ object QueryForm: TQueryForm
   object ControlBar: TControlBar
     Left = 0
     Top = 0
-    Width = 550
+    Width = 588
     Height = 148
     Align = alTop
     AutoSize = True
@@ -69,10 +69,11 @@ object QueryForm: TQueryForm
     RowSize = 42
     RowSnap = False
     TabOrder = 0
+    ExplicitWidth = 550
     object barTool: TToolBar
       Left = 11
       Top = 2
-      Width = 390
+      Width = 398
       Height = 38
       AutoSize = True
       ButtonHeight = 38
@@ -153,7 +154,7 @@ object QueryForm: TQueryForm
     object pnlSelect: TPanel
       Left = 11
       Top = 44
-      Width = 533
+      Width = 540
       Height = 21
       BevelOuter = bvNone
       Caption = 'pnlSelect'
@@ -195,6 +196,7 @@ object QueryForm: TQueryForm
         Height = 21
         DataField = 'CLIENTID'
         DataSource = Data.srcSkladActive
+        DropDownRows = 20
         KeyField = 'CLIENTID'
         ListField = 'NAME'
         ListSource = Data.srcSklad
@@ -204,7 +206,7 @@ object QueryForm: TQueryForm
       end
     end
     object barNavigator: TPanel
-      Left = 415
+      Left = 422
       Top = 2
       Width = 129
       Height = 38
@@ -260,7 +262,7 @@ object QueryForm: TQueryForm
     object pnlParam: TPanel
       Left = 11
       Top = 69
-      Width = 533
+      Width = 540
       Height = 77
       Align = alTop
       BevelOuter = bvNone
