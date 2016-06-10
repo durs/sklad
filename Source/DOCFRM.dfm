@@ -440,7 +440,7 @@ object DocForm: TDocForm
     LineStyle = gls3D
     ControlType.Strings = (
       'PRODUCT;CustomEdit;edtProd'
-      'PRODUCTNAME;CustomEdit;edtProd'
+      'PRODUCTNAME;CustomEdit;edtProd;F'
       'PRODUCT2;CustomEdit;edtProd;F')
     Selected.Strings = (
       'RECID'#9'5'#9#1050#1086#1076#9#9
@@ -465,9 +465,7 @@ object DocForm: TDocForm
       'NEWPRICE4'#9'10'#9'NEWPRICE4'#9#9
       'PRICEPER4'#9'10'#9'PRICEPER4'#9#9
       'NEWPRICE5'#9'10'#9'NEWPRICE5'#9#9
-      'PRICEPER5'#9'10'#9'PRICEPER5'#9#9
-      'PRODUCTNAME'#9'50'#9'PRODUCTNAME'#9'F'#9
-      'PRODUSER'#9'30'#9'PRODUSER'#9'F'#9)
+      'PRICEPER5'#9'10'#9'PRICEPER5'#9#9)
     IniAttributes.Delimiter = ';;'
     TitleColor = clBtnFace
     FixedCols = 0
@@ -1777,17 +1775,21 @@ object DocForm: TDocForm
       DisplayWidth = 50
       FieldName = 'PRODUCTNAME'
       Origin = '"PRODUCT"."NAME"'
+      Visible = False
       Size = 50
     end
     object qryRecPRODUSER: TIBStringField
       DisplayWidth = 30
       FieldName = 'PRODUSER'
       Origin = '"PRODUSER"."NAME"'
+      Visible = False
       Size = 30
     end
     object qryRecCLASSNAME: TIBStringField
+      DisplayWidth = 30
       FieldName = 'CLASSNAME'
       Origin = '"CLASS"."NAME"'
+      Visible = False
       Size = 30
     end
   end
