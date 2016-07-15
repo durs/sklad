@@ -1509,7 +1509,8 @@ object DocForm: TDocForm
       
         'cast(get_product_name(produser.smallname, class.smallname, produ' +
         'ct.name, product.len) as varchar(100)) product2,'
-      'produser.fullname produser,class.name classname'
+      'get_full_name(produser.fullname,produser.name) produser,'
+      'class.name classname'
       'from doc_prod'
       'left join product on product.prodid=doc_prod.prodid'
       'left join class on class.classid=product.classid'
@@ -1779,11 +1780,11 @@ object DocForm: TDocForm
       Size = 50
     end
     object qryRecPRODUSER: TIBStringField
-      DisplayWidth = 30
+      DisplayWidth = 50
       FieldName = 'PRODUSER'
       Origin = '"PRODUSER"."NAME"'
       Visible = False
-      Size = 30
+      Size = 200
     end
     object qryRecCLASSNAME: TIBStringField
       DisplayWidth = 30
