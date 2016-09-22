@@ -4,7 +4,7 @@ object ProductForm: TProductForm
   ActiveControl = edtSearch
   Caption = #1058#1086#1074#1072#1088#1099
   ClientHeight = 497
-  ClientWidth = 659
+  ClientWidth = 780
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -45,18 +45,19 @@ object ProductForm: TProductForm
   object splitter: TSplitter
     Left = 0
     Top = 331
-    Width = 659
+    Width = 780
     Height = 3
     Cursor = crVSplit
     Align = alBottom
     ResizeStyle = rsUpdate
     Visible = False
     ExplicitTop = 333
+    ExplicitWidth = 659
   end
   object ControlBar: TControlBar
     Left = 0
     Top = 0
-    Width = 659
+    Width = 780
     Height = 84
     Align = alTop
     AutoSize = True
@@ -68,6 +69,7 @@ object ProductForm: TProductForm
     RowSize = 21
     RowSnap = False
     TabOrder = 0
+    ExplicitWidth = 659
     object ToolBar: TToolBar
       Left = 11
       Top = 2
@@ -249,30 +251,31 @@ object ProductForm: TProductForm
   object pnlView: TScrollBox
     Left = 0
     Top = 334
-    Width = 659
+    Width = 780
     Height = 163
-    VertScrollBar.Position = 156
+    VertScrollBar.Position = 58
     Align = alBottom
     Constraints.MinHeight = 85
     TabOrder = 2
     Visible = False
+    ExplicitWidth = 659
     object Label3: TLabel
       Left = 117
-      Top = 31
+      Top = 129
       Width = 44
       Height = 13
       Caption = #1047#1072#1084#1077#1090#1082#1080
     end
     object Label1: TLabel
       Left = 81
-      Top = -146
+      Top = -48
       Width = 76
       Height = 13
       Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
     end
     object lbId: TDBText
       Left = 7
-      Top = -150
+      Top = -52
       Width = 17
       Height = 13
       AutoSize = True
@@ -287,14 +290,14 @@ object ProductForm: TProductForm
     end
     object Label17: TLabel
       Left = 100
-      Top = -119
+      Top = -21
       Width = 57
       Height = 13
       Caption = #1058#1080#1087' '#1090#1086#1074#1072#1088#1072
     end
     object btnClass: TSpeedButton
       Left = 447
-      Top = -121
+      Top = -23
       Width = 19
       Height = 19
       Hint = #1058#1080#1087#1099' '#1090#1086#1074#1072#1088#1086#1074'|'
@@ -312,14 +315,14 @@ object ProductForm: TProductForm
     end
     object Label2: TLabel
       Left = 78
-      Top = -97
+      Top = 1
       Width = 79
       Height = 13
       Caption = #1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100
     end
     object btnProduser: TSpeedButton
       Left = 447
-      Top = -99
+      Top = -1
       Width = 19
       Height = 19
       Hint = #1058#1080#1087#1099' '#1090#1086#1074#1072#1088#1086#1074'|'
@@ -337,7 +340,7 @@ object ProductForm: TProductForm
     end
     object Label27: TLabel
       Left = 28
-      Top = 11
+      Top = 109
       Width = 133
       Height = 13
       Caption = #1057#1077#1088#1090#1080#1092#1080#1082#1072#1090' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1103
@@ -345,21 +348,21 @@ object ProductForm: TProductForm
     end
     object Label4: TLabel
       Left = 110
-      Top = -48
+      Top = 51
       Width = 47
       Height = 13
       Caption = #1060#1072#1089#1086#1074#1082#1072
     end
     object Label5: TLabel
       Left = 115
-      Top = -70
+      Top = 28
       Width = 42
       Height = 13
       Caption = #1045#1076' '#1080#1079#1084'. '
     end
     object Label6: TLabel
       Left = 300
-      Top = -67
+      Top = 31
       Width = 41
       Height = 13
       Alignment = taRightJustify
@@ -367,14 +370,14 @@ object ProductForm: TProductForm
     end
     object Label23: TLabel
       Left = 116
-      Top = -16
+      Top = 82
       Width = 41
       Height = 13
       Caption = #1053#1044#1057' (%)'
     end
     object Label7: TLabel
       Left = 284
-      Top = -45
+      Top = 51
       Width = 57
       Height = 13
       Alignment = taRightJustify
@@ -382,14 +385,14 @@ object ProductForm: TProductForm
     end
     object Label8: TLabel
       Left = 75
-      Top = 61
+      Top = 159
       Width = 86
       Height = 13
       Caption = #1052#1077#1089#1090#1086' '#1085#1072' '#1089#1082#1083#1072#1076#1077
     end
     object Label9: TLabel
       Left = 93
-      Top = 93
+      Top = 191
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -397,7 +400,7 @@ object ProductForm: TProductForm
     end
     object Label10: TLabel
       Left = 93
-      Top = 117
+      Top = 215
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -405,7 +408,7 @@ object ProductForm: TProductForm
     end
     object Label11: TLabel
       Left = 93
-      Top = 141
+      Top = 239
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -413,7 +416,7 @@ object ProductForm: TProductForm
     end
     object Label12: TLabel
       Left = 280
-      Top = 93
+      Top = 191
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -421,26 +424,34 @@ object ProductForm: TProductForm
     end
     object Label13: TLabel
       Left = 280
-      Top = 117
+      Top = 215
       Width = 68
       Height = 13
       Alignment = taRightJustify
       Caption = #1055#1088#1072#1081#1089' 5 '#1094#1077#1085#1072
     end
+    object Label14: TLabel
+      Left = 469
+      Top = 51
+      Width = 37
+      Height = 13
+      Alignment = taRightJustify
+      Caption = #1050#1086#1083'.-'#1074#1086
+    end
     object edtComment: TDBEdit
       Left = 168
-      Top = 28
+      Top = 126
       Width = 281
       Height = 21
       DataField = 'COMMENT'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 10
+      TabOrder = 11
       OnKeyDown = FormKeyDown
     end
     object edtName: TDBEdit
       Left = 168
-      Top = -149
+      Top = -51
       Width = 225
       Height = 21
       DataField = 'NAME'
@@ -451,7 +462,7 @@ object ProductForm: TProductForm
     end
     object edtClass: TwwDBLookupCombo
       Left = 168
-      Top = -122
+      Top = -24
       Width = 281
       Height = 21
       DropDownAlignment = taLeftJustify
@@ -475,7 +486,7 @@ object ProductForm: TProductForm
     end
     object edtProduser: TwwDBLookupCombo
       Left = 168
-      Top = -100
+      Top = -2
       Width = 281
       Height = 21
       DropDownAlignment = taLeftJustify
@@ -499,18 +510,18 @@ object ProductForm: TProductForm
     end
     object edtSert: TDBEdit
       Left = 168
-      Top = 6
+      Top = 104
       Width = 281
       Height = 21
       DataField = 'SERTIFICAT'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 9
+      TabOrder = 10
       OnKeyDown = FormKeyDown
     end
     object edtLen: TwwDBComboBox
       Left = 168
-      Top = -50
+      Top = 48
       Width = 97
       Height = 21
       ShowButton = True
@@ -536,7 +547,7 @@ object ProductForm: TProductForm
     end
     object edtDim: TwwDBComboBox
       Left = 168
-      Top = -72
+      Top = 26
       Width = 97
       Height = 21
       ShowButton = True
@@ -560,7 +571,7 @@ object ProductForm: TProductForm
     end
     object edtUnit: TDBEdit
       Left = 352
-      Top = -72
+      Top = 26
       Width = 97
       Height = 21
       DataField = 'UNIT'
@@ -571,18 +582,18 @@ object ProductForm: TProductForm
     end
     object edtNDS: TDBEdit
       Left = 168
-      Top = -22
+      Top = 76
       Width = 97
       Height = 21
       DataField = 'NDS'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 8
+      TabOrder = 9
       OnKeyDown = FormKeyDown
     end
     object edtWeight: TDBEdit
       Left = 352
-      Top = -50
+      Top = 48
       Width = 97
       Height = 21
       DataField = 'WEIGHT'
@@ -593,29 +604,29 @@ object ProductForm: TProductForm
     end
     object edtSpot: TDBEdit
       Left = 168
-      Top = 58
+      Top = 156
       Width = 281
       Height = 21
       DataField = 'SPOT'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 11
+      TabOrder = 12
       OnKeyDown = FormKeyDown
     end
     object edtPrice: TDBEdit
       Left = 168
-      Top = 90
+      Top = 188
       Width = 97
       Height = 21
       DataField = 'PRICE'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 12
+      TabOrder = 13
       OnKeyDown = FormKeyDown
     end
     object btnPrice: TDBCheckBox
       Left = 402
-      Top = -147
+      Top = -49
       Width = 62
       Height = 17
       Caption = #1042' '#1087#1088#1072#1081#1089
@@ -627,66 +638,77 @@ object ProductForm: TProductForm
     end
     object edtPrice2: TDBEdit
       Left = 168
-      Top = 114
+      Top = 212
       Width = 97
       Height = 21
       DataField = 'PRICE2'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 13
+      TabOrder = 14
       OnKeyDown = FormKeyDown
     end
     object edtPrice3: TDBEdit
       Left = 168
-      Top = 138
+      Top = 236
       Width = 97
       Height = 21
       DataField = 'PRICE3'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 14
+      TabOrder = 15
       OnKeyDown = FormKeyDown
     end
     object edtPrice4: TDBEdit
       Left = 352
-      Top = 90
+      Top = 188
       Width = 97
       Height = 21
       DataField = 'PRICE4'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 15
+      TabOrder = 16
       OnKeyDown = FormKeyDown
     end
     object edtPrice5: TDBEdit
       Left = 352
-      Top = 114
+      Top = 212
       Width = 97
       Height = 21
       DataField = 'PRICE5'
       DataSource = srcProduct
       ReadOnly = True
-      TabOrder = 16
+      TabOrder = 17
+      OnKeyDown = FormKeyDown
+    end
+    object edtWeightCount: TDBEdit
+      Left = 512
+      Top = 48
+      Width = 73
+      Height = 21
+      DataField = 'WCNT'
+      DataSource = srcProduct
+      ReadOnly = True
+      TabOrder = 8
       OnKeyDown = FormKeyDown
     end
   end
   object grdProduct: TwwDBGrid
     Left = 0
     Top = 84
-    Width = 659
+    Width = 780
     Height = 247
     LineStyle = gls3D
     ControlType.Strings = (
       'KIND;CheckBox;1;0')
     Selected.Strings = (
-      'KIND'#9'2'#9' '
-      'CLASSNAME'#9'15'#9#1058#1080#1087' '#1090#1086#1074#1072#1088#1072
-      'PRODUSERNAME'#9'15'#9#1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100
-      'LEN'#9'10'#9#1060#1072#1089'.'
-      'UNIT'#9'10'#9#1042' '#1084#1077#1089#1090#1077
-      'NAME'#9'30'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1077#1085#1080#1077
-      'SERTIFICAT'#9'10'#9#1057#1077#1088#1090'.'
-      'COMMENT'#9'10'#9#1047#1072#1084#1077#1090#1082#1080)
+      'KIND'#9'2'#9' '#9#9
+      'CLASSNAME'#9'15'#9#1058#1080#1087' '#1090#1086#1074#1072#1088#1072#9#9
+      'PRODUSERNAME'#9'15'#9#1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100#9#9
+      'LEN'#9'10'#9#1060#1072#1089'.'#9#9
+      'UNIT'#9'10'#9#1042' '#1084#1077#1089#1090#1077#9#9
+      'NAME'#9'30'#9#1053#1072#1080#1084#1077#1085#1086#1074#1072#1077#1085#1080#1077#9#9
+      'SERTIFICAT'#9'10'#9#1057#1077#1088#1090'.'#9#9
+      'COMMENT'#9'10'#9#1047#1072#1084#1077#1090#1082#1080#9#9)
     IniAttributes.Delimiter = ';;'
     TitleColor = clBtnFace
     FixedCols = 0
@@ -904,6 +926,12 @@ object ProductForm: TProductForm
       Visible = False
       Calculated = True
     end
+    object qryProductWCNT: TFloatField
+      DisplayWidth = 10
+      FieldName = 'WCNT'
+      Origin = '"PRODUCT"."WCNT"'
+      Visible = False
+    end
   end
   object ActionList: TActionList
     Left = 406
@@ -1009,7 +1037,8 @@ object ProductForm: TProductForm
       '  PRICE2 = :PRICE2,'
       '  PRICE3 = :PRICE3,'
       '  PRICE4 = :PRICE4,'
-      '  PRICE5 = :PRICE5'
+      '  PRICE5 = :PRICE5,'
+      '  WCNT = :WCNT'
       'where'
       '  PRODID = :OLD_PRODID')
     InsertSQL.Strings = (
@@ -1019,14 +1048,14 @@ object ProductForm: TProductForm
         'T, COMMENT, '
       
         '   SERTIFICAT, SPOT, KIND, PRICE, PRICE2, PRICE3, PRICE4, PRICE5' +
-        ')'
+        ', WCNT)'
       'values'
       
         '  (:PRODID, :CLASSID, :PRODUSERID, :NAME, :DIM, :LEN, :UNIT, :ND' +
         'S, :WEIGHT, '
       
         '   :COMMENT, :SERTIFICAT, :SPOT, :KIND, :PRICE, :PRICE2, :PRICE3' +
-        ', :PRICE4, :PRICE5)')
+        ', :PRICE4, :PRICE5, :WCNT)')
     DeleteSQL.Strings = (
       'delete from product'
       'where'

@@ -39,8 +39,8 @@ object RepData: TRepData
         'get_product_name(product.name, class.smallname, produser.smallna' +
         'me, product.len) product,'
       
-        'product.nds, product.dim, product.len, product.weight, product.s' +
-        'ertificat, produser.country,'
+        'product.nds, product.dim, product.len, product.weight, product.w' +
+        'cnt, product.sertificat, produser.country,'
       
         'product.name productname, get_full_name(produser.fullname,produs' +
         'er.name) produser,class.name classname'

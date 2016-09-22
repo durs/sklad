@@ -448,6 +448,7 @@ object DocForm: TDocForm
       'UNIT'#9'10'#9#1042' '#1084#1077#1089#1090#1077#9#9
       'CNT'#9'10'#9#1050#1086#1083'.-'#1074#1086'~'#1084#1077#1089#1090#9#9
       'ALLCNT'#9'10'#9#1042#1089#1077#1075#1086'~('#1082#1075'/'#1096#1090')'#9#9
+      'ALLWCNT'#9'10'#9#1064#1090#1091#1082#9'F'#9
       'INPRICE'#9'10'#9#1055#1088#1080#1093#1086#1076#1085#1072#1103'~'#1094#1077#1085#1072#9#9
       'OUTPRICE'#9'10'#9'OUTPRICE'#9#9
       'PRICE'#9'10'#9#1062#1077#1085#1072#9#9
@@ -1303,6 +1304,10 @@ object DocForm: TDocForm
       Origin = 'QUERY_OSTATOK.LASTPRICE5'
       Visible = False
     end
+    object qryProdWCNT: TFloatField
+      FieldName = 'WCNT'
+      Origin = '"QUERY_OSTATOK"."WCNT"'
+    end
   end
   object qryDoc: TIBQuery
     Database = Data.db
@@ -1484,9 +1489,10 @@ object DocForm: TDocForm
       
         'doc_prod.docid, doc_prod.recid, doc_prod.indocid, doc_prod.inrec' +
         'id, doc_prod.pdocid, doc_prod.precid, doc_prod.prodid,'
-      
-        'doc_prod.kind, doc_prod.unit, doc_prod.cnt, doc_prod.unit * doc_' +
-        'prod.cnt allcnt, doc_prod.rcnt, doc_prod.ucnt,'
+      'doc_prod.kind, doc_prod.unit, doc_prod.cnt, '
+      'doc_prod.unit * doc_prod.cnt allcnt,'
+      'doc_prod.unit * doc_prod.cnt * product.wcnt allwcnt,'
+      'doc_prod.rcnt, doc_prod.ucnt,'
       'cast(doc_prod.inprice as double precision) inprice, '
       'cast(doc_prod.inndsprice as double precision) inndsprice, '
       'cast(doc_prod.outprice as double precision) outprice, '
@@ -1510,7 +1516,8 @@ object DocForm: TDocForm
         'cast(get_product_name(produser.smallname, class.smallname, produ' +
         'ct.name, product.len) as varchar(100)) product2,'
       'get_full_name(produser.fullname,produser.name) produser,'
-      'class.name classname'
+      'class.name classname,'
+      'product.wcnt wcnt'
       'from doc_prod'
       'left join product on product.prodid=doc_prod.prodid'
       'left join class on class.classid=product.classid'
@@ -1560,6 +1567,36 @@ object DocForm: TDocForm
       FieldName = 'ALLCNT'
       OnChange = DocSumChange
     end
+    object qryRecWCNT: TFloatField
+      DisplayLabel = #1064#1090#1091#1082' '#1074' '#1077#1076'.'
+      DisplayWidth = 10
+      FieldName = 'WCNT'
+      Origin = '"PRODUCT"."WCNT"'
+      ReadOnly = True
+      Visible = False
+    end
+    object qryRecALLWCNT: TFloatField
+      DisplayLabel = #1042#1089#1077#1075#1086' '#1096#1090#1091#1082
+      DisplayWidth = 10
+      FieldName = 'ALLWCNT'
+      Visible = False
+      OnChange = DocSumChange
+    end
+    object qryRecWEIGHT: TFloatField
+      DisplayLabel = #1042#1077#1089' '#1077#1076'.~('#1082#1075')'
+      DisplayWidth = 10
+      FieldName = 'WEIGHT'
+      ReadOnly = True
+      Visible = False
+    end
+    object qryRecALLWEIGHT: TFloatField
+      DisplayLabel = #1054#1073#1097#1080#1081' '#1074#1077#1089'~('#1082#1075')'
+      FieldKind = fkCalculated
+      FieldName = 'ALLWEIGHT'
+      ReadOnly = True
+      Visible = False
+      Calculated = True
+    end
     object qryRecINPRICE: TFloatField
       DisplayLabel = #1055#1088#1080#1093#1086#1076#1085#1072#1103'~'#1094#1077#1085#1072
       DisplayWidth = 10
@@ -1568,6 +1605,7 @@ object DocForm: TDocForm
       ReadOnly = True
     end
     object qryRecOUTPRICE: TFloatField
+      DisplayLabel = #1062#1077#1085#1072'~'#1085#1072' '#1088#1077#1072#1083#1080#1079#1072#1094#1080#1102
       DisplayWidth = 10
       FieldName = 'OUTPRICE'
       OnChange = DocSumChange
@@ -1677,6 +1715,44 @@ object DocForm: TDocForm
       Visible = False
       Size = 100
     end
+    object qryRecPRODUCTNAME: TIBStringField
+      DisplayLabel = #1053#1072#1079#1074#1072#1085#1080#1077'~'#1090#1086#1074#1072#1088#1072
+      DisplayWidth = 50
+      FieldName = 'PRODUCTNAME'
+      Origin = '"PRODUCT"."NAME"'
+      Visible = False
+      Size = 50
+    end
+    object qryRecCLASSNAME: TIBStringField
+      DisplayLabel = #1058#1080#1087'~'#1090#1086#1074#1072#1088#1072
+      DisplayWidth = 30
+      FieldName = 'CLASSNAME'
+      Origin = '"CLASS"."NAME"'
+      Visible = False
+      Size = 30
+    end
+    object qryRecPRODUSER: TIBStringField
+      DisplayLabel = #1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100
+      DisplayWidth = 50
+      FieldName = 'PRODUSER'
+      Origin = '"PRODUSER"."NAME"'
+      Visible = False
+      Size = 200
+    end
+    object qryRecLEN: TIBStringField
+      DisplayLabel = #1060#1072#1089#1086#1074#1082#1072
+      FieldName = 'LEN'
+      Origin = 'PRODUCT.LEN'
+      Visible = False
+      Size = 10
+    end
+    object qryRecDIM: TIBStringField
+      Tag = 1
+      DisplayLabel = #1045#1076'.'#1080#1079#1084'.'
+      FieldName = 'DIM'
+      Visible = False
+      Size = 10
+    end
     object qryRecNDS: TFloatField
       DisplayLabel = #1057#1090#1072#1074#1082#1072'~'#1053#1044#1057
       FieldName = 'NDS'
@@ -1714,6 +1790,11 @@ object DocForm: TDocForm
       Required = True
       Visible = False
     end
+    object qryRecCLIENTID1: TIntegerField
+      Tag = 1
+      FieldName = 'CLIENTID1'
+      Visible = False
+    end
     object qryRecPDOCID: TIntegerField
       FieldName = 'PDOCID'
       Visible = False
@@ -1722,12 +1803,12 @@ object DocForm: TDocForm
       FieldName = 'PRECID'
       Visible = False
     end
-    object qryRecINDOCID: TIntegerField
-      FieldName = 'INDOCID'
-      Visible = False
-    end
     object qryRecINRECID: TIntegerField
       FieldName = 'INRECID'
+      Visible = False
+    end
+    object qryRecINDOCID: TIntegerField
+      FieldName = 'INDOCID'
       Visible = False
     end
     object qryRecPRODID: TIntegerField
@@ -1745,53 +1826,6 @@ object DocForm: TDocForm
     object qryRecUCNT: TFloatField
       FieldName = 'UCNT'
       Visible = False
-    end
-    object qryRecDIM: TIBStringField
-      Tag = 1
-      DisplayLabel = #1045#1076'.'#1080#1079#1084'.'
-      FieldName = 'DIM'
-      Visible = False
-      Size = 10
-    end
-    object qryRecCLIENTID1: TIntegerField
-      Tag = 1
-      FieldName = 'CLIENTID1'
-      Visible = False
-    end
-    object qryRecWEIGHT: TFloatField
-      Tag = 1
-      DisplayLabel = #1042#1077#1089
-      DisplayWidth = 10
-      FieldName = 'WEIGHT'
-      Visible = False
-    end
-    object qryRecLEN: TIBStringField
-      DisplayLabel = #1060#1072#1089#1086#1074#1082#1072
-      FieldName = 'LEN'
-      Origin = 'PRODUCT.LEN'
-      Visible = False
-      Size = 10
-    end
-    object qryRecPRODUCTNAME: TIBStringField
-      DisplayWidth = 50
-      FieldName = 'PRODUCTNAME'
-      Origin = '"PRODUCT"."NAME"'
-      Visible = False
-      Size = 50
-    end
-    object qryRecPRODUSER: TIBStringField
-      DisplayWidth = 50
-      FieldName = 'PRODUSER'
-      Origin = '"PRODUSER"."NAME"'
-      Visible = False
-      Size = 200
-    end
-    object qryRecCLASSNAME: TIBStringField
-      DisplayWidth = 30
-      FieldName = 'CLASSNAME'
-      Origin = '"CLASS"."NAME"'
-      Visible = False
-      Size = 30
     end
   end
   object srcDoc: TDataSource

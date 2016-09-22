@@ -137,6 +137,9 @@ type
     edtPrice4: TDBEdit;
     Label13: TLabel;
     edtPrice5: TDBEdit;
+    qryProductWCNT: TFloatField;
+    Label14: TLabel;
+    edtWeightCount: TDBEdit;
     procedure SeachEditChange(Sender: TObject);
     procedure ActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -327,6 +330,7 @@ begin
         edtUnit.ReadOnly:=readonly;
         edtLen.ReadOnly:=readonly;
         edtWeight.ReadOnly:=readonly;
+        edtWeightCount.ReadOnly:=readonly;
         edtNds.ReadOnly:=readonly;
         edtPrice.ReadOnly:=readonly;
         edtPrice2.ReadOnly:=readonly;
@@ -512,6 +516,7 @@ begin
         qryProductDIM.AsString:='רע';
         qryProductUNIT.AsFloat:=1;
         qryProductNDS.AsFloat:=18;
+        qryProductWCNT.AsInteger:=1;
         qryProductKIND.AsInteger:=1;
         qryProductSERTIFICAT.AsVariant:=null;
         qryProductCOMMENT.AsVariant:=null;

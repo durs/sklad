@@ -260,6 +260,7 @@ type
   private
     AppTitle:string;
     queryUpdate:boolean;
+    inUpdate:boolean;
     function updateVersion(ver:integer):boolean;
   public
     QuoteChar:char;
@@ -447,6 +448,7 @@ begin
   if db.SQLDialect = 3 then QuoteChar := '''' else QuoteChar := '"';
   AppTitle := Application.Title;
   lookup := TDyQuickLookup.Create;
+  inUpdate := false;
 end;
 
 procedure TData.DataModuleDestroy(Sender: TObject);
@@ -653,26 +655,32 @@ procedure TData.dbAfterConnect(Sender: TObject);
 var
     ver:integer;
 begin
-    // read database version
-    with proc do try
-        StoredProcName:='GET_VERSION';
-        if not trDefault.InTransaction then trDefault.StartTransaction;
-        Prepare;
-        ParamByName('INCR').AsInteger:=0;
-        ExecProc;
-        ver:=ParamByName('ID').Value;
-    except
-        ver:=0;
-    end;
 
-    // update version
-    try
-        queryUpdate:=false;
-        while updateVersion(ver) do inc(ver);
-    except
-        on E:Exception do begin
-            Application.MessageBox(PChar(msgUpdateError+#13#10+E.Message+#13#10+msgUpdateWarning), msgError, MB_ICONERROR+MB_OK);
-        end;
+    if not inUpdate then begin
+
+      // read database version
+      with proc do try
+          StoredProcName:='GET_VERSION';
+          if not trDefault.InTransaction then trDefault.StartTransaction;
+          Prepare;
+          ParamByName('INCR').AsInteger:=0;
+          ExecProc;
+          ver:=ParamByName('ID').Value;
+      except
+          ver:=0;
+      end;
+
+      // update version
+      inUpdate:=true;
+      try
+          queryUpdate:=false;
+          while updateVersion(ver) do inc(ver);
+      except
+          on E:Exception do begin
+              Application.MessageBox(PChar(msgUpdateError+#13#10+E.Message+#13#10+msgUpdateWarning), msgError, MB_ICONERROR+MB_OK);
+          end;
+      end;
+      inUpdate:=false;
     end;
 
     // read configuration
@@ -704,112 +712,6 @@ begin
     qry.Active := false;
     if (TransportName = '') then TransportName := 'Транспортные услуги';
 end;
-
-
-{
-function DbVersionUpdate(db:TIBDatabase; tr: TIBTransaction; ver:integer; queryUpdate: boolean):boolean;
-var
-    filename,script,term,cmd:string;
-    strm:TFileStream;
-    qry:TIBSQL;
-    pscript,pcmd,ptr:PChar;
-    len:integer;
-begin
-    result:=false;
-    filename:=AppPath+UpdateFileName+IntToStr(ver)+'.txt';
-    if not FileExists(filename) then exit;
-    if not queryUpdate then begin
-        queryUpdate:=true;
-        if Application.MessageBox(msgUpdate, msgQuestion, MB_ICONQUESTION+MB_YESNO)<>mrYes then begin
-            Application.MessageBox(PChar(msgUpdateWarning), msgWarning, MB_ICONWARNING+MB_OK);
-            exit;
-        end;
-        //msgStatus(msgUpdateWait);
-    end;
-
-    strm:=TFileStream.Create(filename, fmOpenRead);
-    try
-        setLength(script, strm.Size);
-        strm.ReadBuffer(PChar(script)^, strm.Size);
-    finally
-        strm.Destroy;
-    end;
-    qry:=TIBSQL.Create(nil);
-    try
-        qry.Database:=db;
-        qry.Transaction:=tr;
-        qry.ParamCheck:=false;
-        if not tr.InTransaction then tr.StartTransaction;
-        try
-            //pscript:=StrUpper(PChar(script));
-            pscript:=PChar(script);
-            term:=';';
-            repeat
-                ptr:=StrPos(pscript, PChar(term));
-                if ptr=nil then len:=StrLen(pscript) else len:=ptr-pscript;
-                SetLength(cmd,len);
-                Move(pscript^, PChar(cmd)^, len);
-                pscript:=pscript+len+StrLen(PChar(term));
-                cmd:=Trim(cmd);
-                pcmd:=PChar(cmd);
-                if CompareText(copy(cmd,1,8), 'SET TERM')=0 then begin
-                    pcmd:=pcmd+8;
-                    while pcmd[0] in [' ',#10,#13,#9] do pcmd:=pcmd+1;
-                    if pcmd[0]<>#0 then term:=pcmd;
-                end else if CompareText(cmd, 'COMMIT WORK')=0 then begin
-                    tr.CommitRetaining;
-                end else if pcmd[0]<>#0 then begin
-                    if Copy(pcmd, 1, 3) <> 'TRY' then begin
-                        qry.SQL.Text := pcmd;
-                        qry.ExecQuery;
-                    end else try
-                        qry.SQL.Text := pcmd + 3;
-                        qry.ExecQuery;
-                    except end;
-                end;
-            until (ptr=nil) or (pscript[0]=#0);
-        except
-            tr.Rollback;
-            raise;
-        end;
-        tr.Rollback;
-    finally
-        qry.Destroy;
-    end;
-    result:=true;
-end;
-
-function DbVersionCheck(db:TIBDatabase; tr: TIBTransaction):boolean;
-var
-  ver: integer;
-  proc: TIBStoredProc;
-  queryUpdate: boolean;
-begin
-
-    // read database version
-    proc:=TIBStoredProc.Create(nil);
-    proc.Database := db;
-    with proc do try
-        StoredProcName:='GET_VERSION';
-        Prepare;
-        ParamByName('INCR').AsInteger:=0;
-        ExecProc;
-        ver:=ParamByName('ID').Value;
-    except
-        ver:=0;
-    end;
-
-    // update version
-    try
-        queryUpdate:=false;
-        while DbVersionUpdate(db, nil, ver, queryUpdate) do inc(ver);
-    except
-        on E:Exception do begin
-            Application.MessageBox(PChar(msgUpdateError+#13#10+E.Message+#13#10+msgUpdateWarning), msgError, MB_ICONERROR+MB_OK);
-        end;
-    end;
-end;
-}
 
 function TData.updateVersion(ver:integer):boolean;
 var
@@ -861,7 +763,10 @@ begin
                     while pcmd[0] in [' ',#10,#13,#9] do pcmd:=pcmd+1;
                     if pcmd[0]<>#0 then term:=pcmd;
                 end else if CompareText(cmd, 'COMMIT WORK')=0 then begin
-                    trApply.CommitRetaining;
+                    trApply.Commit;
+                    db.Connected := false;
+                    db.Connected := true;
+                    trApply.StartTransaction;
                 end else if pcmd[0]<>#0 then begin
                     if Copy(pcmd, 1, 3) <> 'TRY' then begin
                         qry.SQL.Text := pcmd;

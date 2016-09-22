@@ -316,6 +316,10 @@ TDocForm = class(TBaseForm)
     qryRecPRODUCTNAME: TIBStringField;
     qryRecPRODUSER: TIBStringField;
     qryRecCLASSNAME: TIBStringField;
+    qryProdWCNT: TFloatField;
+    qryRecWCNT: TFloatField;
+    qryRecALLWCNT: TFloatField;
+    qryRecALLWEIGHT: TFloatField;
     procedure edtDebitExit(Sender: TObject);
     procedure btnSelectCreditClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -496,6 +500,10 @@ begin
     qryRecCNT.EditFormat:=FormatEditCur;
     qryRecALLCNT.DisplayFormat:=FormatNum;
     qryRecALLCNT.EditFormat:=FormatEditCur;
+    qryRecWCNT.DisplayFormat:=FormatNum;
+    qryRecALLWCNT.DisplayFormat:=FormatNum;
+    qryRecWEIGHT.DisplayFormat:=FormatNum2;
+    qryRecALLWEIGHT.DisplayFormat:=FormatNum;
     qryRecINPRICE.DisplayFormat:=FormatCur;
     qryRecNDSPRICE.DisplayFormat:=FormatCur;
     qryRecOUTPRICE.DisplayFormat:=FormatCur;
@@ -2010,7 +2018,9 @@ var X, X2, X3, X4, X5: double;
 begin
     FieldCalcLock := true;
     try
-        //qryRecALLCNT.Value := qryRecCNT.Value * qryRecUNIT.Value;
+        X := qryRecWEIGHT.Value;
+        if X > 0 then qryRecALLWEIGHT.Value := qryRecALLCNT.Value * X
+        else qryRecALLWEIGHT.AsVariant := null;
 
         if qryRecPRICE.Value = 0 then begin
             qryRecPRICEPER.AsVariant := null;
@@ -2050,7 +2060,7 @@ end;
 procedure TDocForm.srcRecDataChange(Sender: TObject; Field: TField);
 var
     id: integer;
-    X, cnt, ostcnt: double;
+    X, cnt, ostcnt, wcnt: double;
 begin
     if (Field = nil) then begin
         edtProd.ReadOnly := not qryRecPRODID.IsNull and (qryRec.UpdateStatus <> usInserted);
@@ -2082,6 +2092,11 @@ begin
             end;
             qryRecALLCNT.value:=qryRecUNIT.value * qryRecCNT.value;
 
+            wcnt := qryProdWCNT.value;
+            if wcnt > 0 then qryRecALLWCNT.value:=qryRecALLCNT.value * wcnt;
+            qryRecWCNT.value:=qryProdWCNT.value;
+            qryRecWEIGHT.value:=qryProdWEIGHT.value;
+
             qryRecINPRICE.value:=qryProdINPRICE_Calc.value;
             case edtPrice.ItemIndex of
             0: qryRecOUTPRICE.value:=CurrRound(qryProdINPRICE_Calc.value);
@@ -2107,7 +2122,6 @@ begin
                 qryRecNEWPRICE5.Clear;
             end;
             qryRecDIM.value:=qryProdDIM.value;
-            qryRecWEIGHT.value:=qryProdWEIGHT.value;
             qryRecNDS.value:=qryProdNDS.value;
             qryRecCOUNTRY.value:=qryProdCOUNTRY.value;
             qryRecNTD.AsVariant:=qryProdNTD.AsVariant;
@@ -2170,7 +2184,9 @@ end;
 procedure TDocForm.DocSumChange(Sender: TField);
 const EPS = 0.000001;
 var
-    skidka, nalog, nds, X, X2, N, OstCount, OstUnit, OldCount, OldUnit: Double;
+    skidka, nalog, nds,
+    wcnt, X, X2, N,
+    OstCount, OstUnit, OldCount, OldUnit: Double;
 begin
     if PriceLock or LoadLock then Exit;
     PriceLock:=true;
@@ -2179,7 +2195,13 @@ begin
         nalog := qryDocPARAM3.Value;
         if (DocParams and dpNds <> 0) then nds:=qryRecNDS.Value else nds:=0;
 
-        if (Sender = qryRecCNT) or (Sender = qryRecUNIT) or (Sender = qryRecALLCNT) then begin
+        if (Sender = qryRecCNT) or (Sender = qryRecUNIT) or (Sender = qryRecALLCNT) or (Sender = qryRecALLWCNT) then begin
+
+            wcnt := qryRecWCNT.Value;
+            if (Sender = qryRecALLWCNT) and (wcnt > 0) then begin
+                qryRecALLCNT.Value := qryRecALLWCNT.Value / wcnt;
+                Sender := qryRecALLCNT;
+            end;
             if (Sender = qryRecALLCNT) then begin
                 if qryRecUNIT.Value = 0 then qryRecCNT.Value := qryRecALLCNT.Value
                 else qryRecCNT.Value := qryRecALLCNT.Value / qryRecUNIT.Value;
@@ -2217,6 +2239,9 @@ begin
             end;
 
             qryRecALLCNT.Value := qryRecCNT.Value * qryRecUNIT.Value;
+            if wcnt > 0 then  qryRecALLWCNT.Value := qryRecALLCNT.Value * wcnt
+            else qryRecALLWCNT.AsVariant := null;
+
         end;
 
         N := qryRecCNT.Value * qryRecUNIT.Value;
