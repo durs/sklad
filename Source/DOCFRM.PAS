@@ -320,6 +320,9 @@ TDocForm = class(TBaseForm)
     qryRecWCNT: TFloatField;
     qryRecALLWCNT: TFloatField;
     qryRecALLWEIGHT: TFloatField;
+    MenuItem3: TMenuItem;
+    actUpdateWCNT: TAction;
+    qryProd2: TIBQuery;
     procedure edtDebitExit(Sender: TObject);
     procedure btnSelectCreditClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -437,9 +440,11 @@ TDocForm = class(TBaseForm)
     procedure UpdateClient2;
     procedure UpdateSklad;
     procedure UpdateGrid;
+    procedure GridCalcCellColors(Sender:TObject; Field:TField; State:TGridDrawState; Highlight:Boolean; AFont:TFont; ABrush:TBrush);
     procedure FilterRecords(Sender:TObject; const filter:string);
     procedure WMTimer(var Message:TWMTimer); message WM_TIMER;
   protected
+    rec_status: TStringList;
     procedure DestroyCancel; override;
   public
     procedure appEvent(Sender:TObject; var Event:word; Data:pointer); override;
@@ -464,6 +469,7 @@ begin
     LoadLock := false;
     ClientLock := false;
     lock := false;
+    rec_status := TStringList.Create;
     inherited;
     SetIsQuery(false);
     
@@ -476,7 +482,7 @@ begin
     DBLookup.OnFilter := FilterRecords;
     SQLParser := TDySQLParser.Create(qryRec.SQL.Text);
 
-    grdRec.OnCalcCellColors := Data.GridCalcCellColors;
+    grdRec.OnCalcCellColors := GridCalcCellColors;
     TCrackLookup(edtProd).Grid.OnCalcCellColors := Data.GridCalcCellColors;
 
     cbFields.Items.Text := getSearchFieldsMapped(qryRec);
@@ -552,6 +558,7 @@ begin
     //CurrentConfig.setString(Key+'.orderby', SQLParser.OrderBy);
     SQLParser.Free;
     DBLookup.Free;
+    rec_status.Free;
     inherited;
 end;
 
@@ -720,6 +727,20 @@ end;
 
 //-----------------action routens--------------------------
 
+procedure TDocForm.GridCalcCellColors(Sender:TObject; Field:TField; State:TGridDrawState; Highlight:Boolean; AFont:TFont; ABrush:TBrush);
+var status: string;
+begin
+  Data.GridCalcCellColors(Sender, Field, State, Highlight, AFont, ABrush);
+  if rec_status.Count = 0 then exit;
+  status := rec_status.values[qryRecRECID.AsString];
+  if status='' then exit;
+  if status = '2' then AFont.Color := clRed
+  else if status = '1' then AFont.Color := clBlue;
+  AFont.Style := [fsbold];
+end;
+
+//-----------------action routens--------------------------
+
 procedure TDocForm.SetModified(Value:boolean);
 begin
     Modified:=Value;
@@ -729,10 +750,10 @@ end;
 
 procedure TDocForm.ActionExecute(Sender: TObject);
 var
-    readonly: boolean;
+    readonly, changed: boolean;
     B1,B2,B3,B4: boolean;
-    CurBookmark: string;
-    Sum,SumNDS,SumNalog: double;
+    CurBookmark,status: string;
+    Value,Cnt,Sum,SumNDS,SumNalog: double;
     id, kind: integer;
     frm: TForm;
 begin
@@ -931,39 +952,73 @@ begin
             TCrackDataSet(qryRec).RefreshControls;  //refresh
         end;
         SetModified(false);
-    end else if (Sender=actRecalcAll) or (Sender=actRecalcSum) then begin
+    end else if (Sender=actRecalcAll) or (Sender=actRecalcSum) or (Sender=actUpdateWCNT) then begin
         if not qryRec.Active then Exit;
         if not btnEdit.Down then begin
             btnEdit.Down:=true;
             actEdit.Execute;
         end;
+        rec_status.Clear;
         Screen.Cursor:=crHourGlass;
         try
             CalcLock:=true;
+            if Sender=actUpdateWCNT then begin
+              qryProd.Active:=true;
+              qryProd2.Active:=true;
+            end;
             qryRec.DisableControls;
             if not qryRecRECID.IsNull then CurBookmark:=qryRec.Bookmark;
+            changed := false;
             Sum:=0; SumNDS:=0; SumNalog:=0;
             qryRec.First;
             while not qryRec.EOF do begin
                 if (qryRecRECID.AsInteger > 0) then begin
-                    qryRec.Edit;
-                    if (Sender=actRecalcAll) then DocSumChange(qryRecOUTPRICE);
+                    if Sender=actUpdateWCNT then begin
+                      if qryProd2.Locate('PRODID', qryRecPRODID.Value, []) then begin
+                        value := qryProd2.FindField('WCNT').AsFloat;
+                        if qryRecWCNT.Value <> Value then begin
+                          changed := true;
+                          cnt := qryRecALLCNT.Value;
+                          qryRec.Edit;
+                          qryRecWCNT.Value := value;
+
+                          if qryProd.Locate('PRODID', qryRecPRODID.Value, []) then value := qryProdCNT.Value * qryProdUNIT.Value else value := 0;
+                          cnt := qryRecALLCNT.Value - cnt;
+                          value := value - cnt;
+
+                          if value < 0 then status := '2'
+                          else if cnt <> 0 then status := '1'
+                          else status := '0';
+                          rec_status.Values[qryRecRECID.AsString] := status;
+                        end;
+                      end;
+                    end
+                    else if Sender=actRecalcAll then begin
+                      changed := true;
+                      qryRec.Edit;
+                      DocSumChange(qryRecOUTPRICE);
+                    end else begin
+                      changed := true;
+                    end;
                     Sum := Sum + qryRecSUMM.value;
                     SumNDS := SumNDS + qryRecNDSSUM.value;
                     SumNalog := SumNalog+qryRecNALOGSUM.value;
                 end;
                 qryRec.Next;
             end;
-            qryDoc.Edit;
-            if (qryDocPARAM7.Value <> 0) then qryDocSUM3.Value := CurrRound(FloatPer(Sum, qryDocPARAM7.Value));
-            qryDocSUM0.Value := Sum + qryDocSUM3.Value;
-            qryDocSUM1.Value := SumNDS + CurrRound(FloatInPer(qryDocSUM3.Value, TransportNDS));
-            qryDocSUM2.Value := SumNalog;
+            if changed then begin
+              qryDoc.Edit;
+              if (qryDocPARAM7.Value <> 0) then qryDocSUM3.Value := CurrRound(FloatPer(Sum, qryDocPARAM7.Value));
+              qryDocSUM0.Value := Sum + qryDocSUM3.Value;
+              qryDocSUM1.Value := SumNDS + CurrRound(FloatInPer(qryDocSUM3.Value, TransportNDS));
+              qryDocSUM2.Value := SumNalog;
+            end;
             qryRec.Bookmark:=CurBookmark;
         finally
             CalcLock:=false;
             qryRec.EnableControls;
             TCrackDataSet(qryRec).RefreshControls;  //refresh
+            qryProd2.Active:=false;
             Screen.Cursor:=crDefault;
         end;
         if Sender = actRecalcAll then RecalcData := false;
@@ -1855,6 +1910,7 @@ end;
 
 procedure TDocForm.qryRecBeforeOpen(DataSet: TDataSet);
 begin
+    rec_status.Clear;
     qryRec.SQL.Text := SQLParser.SQL;
     if Length(SQLParser.OrderBy) = 0 then qryRec.SQL.Text := qryRec.SQL.Text + 'order by docid, recid';
     qryRec.Params[0].Value := qryDocDOCID.Value;
@@ -2187,6 +2243,7 @@ var
     skidka, nalog, nds,
     wcnt, X, X2, N,
     OstCount, OstUnit, OldCount, OldUnit: Double;
+    is_wcnt_recalc: boolean;
 begin
     if PriceLock or LoadLock then Exit;
     PriceLock:=true;
@@ -2195,11 +2252,15 @@ begin
         nalog := qryDocPARAM3.Value;
         if (DocParams and dpNds <> 0) then nds:=qryRecNDS.Value else nds:=0;
 
-        if (Sender = qryRecCNT) or (Sender = qryRecUNIT) or (Sender = qryRecALLCNT) or (Sender = qryRecALLWCNT) then begin
+        if (Sender = qryRecCNT) or (Sender = qryRecUNIT) or (Sender = qryRecALLCNT) or (Sender = qryRecWCNT) or (Sender = qryRecALLWCNT) then begin
 
             wcnt := qryRecWCNT.Value;
-            if (Sender = qryRecALLWCNT) and (wcnt > 0) then begin
-                qryRecALLCNT.Value := qryRecALLWCNT.Value / wcnt;
+            is_wcnt_recalc := CalcLock and (Sender = qryRecWCNT);
+            if (Sender = qryRecWCNT) or (Sender = qryRecALLWCNT) then begin
+                if qryRecALLWCNT.Value > 0 then begin
+                  if (wcnt > 0) then qryRecALLCNT.Value := qryRecALLWCNT.Value / wcnt
+                  else qryRecALLCNT.Value := 0;
+                end;
                 Sender := qryRecALLCNT;
             end;
             if (Sender = qryRecALLCNT) then begin
@@ -2213,7 +2274,8 @@ begin
                 if qryRecCNT.OldValue = Null then OldCount := 0 else OldCount := qryRecCNT.OldValue;
                 if qryRecUNIT.OldValue = Null then OldUnit := 0 else OldUnit := qryRecUNIT.OldValue;
             end;
-            if not IsQuery and not qryRecINDOCID.IsNull and not qryRecINRECID.IsNull
+
+            if not is_wcnt_recalc and not IsQuery and not qryRecINDOCID.IsNull and not qryRecINRECID.IsNull
                and (((qryProdINDOCID.Value = qryRecINDOCID.Value) and (qryProdINRECID.Value = qryRecINRECID.Value))
                     or qryProd.Locate('INDOCID;INRECID', VarArrayOf([qryRecINDOCID.Value, qryRecINRECID.Value]), []))
             then begin

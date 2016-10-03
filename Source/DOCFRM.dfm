@@ -494,6 +494,7 @@ object DocForm: TDocForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitTop = 273
   end
   object edtProd: TwwDBLookupCombo
     Left = 16
@@ -1491,8 +1492,8 @@ object DocForm: TDocForm
         'id, doc_prod.pdocid, doc_prod.precid, doc_prod.prodid,'
       'doc_prod.kind, doc_prod.unit, doc_prod.cnt, '
       'doc_prod.unit * doc_prod.cnt allcnt,'
-      'doc_prod.unit * doc_prod.cnt * product.wcnt allwcnt,'
-      'doc_prod.rcnt, doc_prod.ucnt,'
+      'doc_prod.unit * doc_prod.cnt * doc_prod.wcnt allwcnt,'
+      'doc_prod.rcnt, doc_prod.ucnt, doc_prod.wcnt wcnt,'
       'cast(doc_prod.inprice as double precision) inprice, '
       'cast(doc_prod.inndsprice as double precision) inndsprice, '
       'cast(doc_prod.outprice as double precision) outprice, '
@@ -1516,8 +1517,7 @@ object DocForm: TDocForm
         'cast(get_product_name(produser.smallname, class.smallname, produ' +
         'ct.name, product.len) as varchar(100)) product2,'
       'get_full_name(produser.fullname,produser.name) produser,'
-      'class.name classname,'
-      'product.wcnt wcnt'
+      'class.name classname'
       'from doc_prod'
       'left join product on product.prodid=doc_prod.prodid'
       'left join class on class.classid=product.classid'
@@ -1572,8 +1572,8 @@ object DocForm: TDocForm
       DisplayWidth = 10
       FieldName = 'WCNT'
       Origin = '"PRODUCT"."WCNT"'
-      ReadOnly = True
       Visible = False
+      OnChange = DocSumChange
     end
     object qryRecALLWCNT: TFloatField
       DisplayLabel = #1042#1089#1077#1075#1086' '#1096#1090#1091#1082
@@ -1866,6 +1866,7 @@ object DocForm: TDocForm
       '  KIND = :KIND,'
       '  UNIT = :UNIT,'
       '  CNT = :CNT,'
+      '  WCNT = :WCNT,'
       '  INPRICE = :INPRICE,'
       '  INNDSPRICE = :INNDSPRICE,'
       '  OUTPRICE = :OUTPRICE,'
@@ -1888,16 +1889,16 @@ object DocForm: TDocForm
         '  (DOCID, RECID, INDOCID, INRECID, PDOCID, PRECID, PRODID, KIND,' +
         ' UNIT, '
       
-        '   CNT, INPRICE, INNDSPRICE, OUTPRICE, PRICE, NDSPRICE, NEWPRICE' +
-        ', NEWPRICE2, '
+        '   CNT, WCNT, INPRICE, INNDSPRICE, OUTPRICE, PRICE, NDSPRICE, NE' +
+        'WPRICE, NEWPRICE2, '
       '  NEWPRICE3, NEWPRICE4, NEWPRICE5, NALOGSUM, COMMENT, NTD)'
       'values'
       
         '  (:DOCID, :RECID, :INDOCID, :INRECID, :PDOCID, :PRECID, :PRODID' +
         ', :KIND, '
       
-        '   :UNIT, :CNT, :INPRICE, :INNDSPRICE, :OUTPRICE, :PRICE, :NDSPR' +
-        'ICE, :NEWPRICE, '
+        '   :UNIT, :CNT, :WCNT, :INPRICE, :INNDSPRICE, :OUTPRICE, :PRICE,' +
+        ' :NDSPRICE, :NEWPRICE, '
       
         '   :NEWPRICE2, :NEWPRICE3, :NEWPRICE4, :NEWPRICE5, :NALOGSUM, :C' +
         'OMMENT, :NTD)')
@@ -1997,6 +1998,11 @@ object DocForm: TDocForm
     object actCreateDoc: TAction
       Category = 'Data'
       Caption = #1057#1086#1079#1076#1072#1090#1100' '#1085#1072#1082#1083#1072#1076#1085#1091#1102' '#1087#1086' '#1080#1084#1077#1102#1097#1080#1084#1089#1103' '#1085#1072' '#1089#1082#1083#1072#1076#1077' '#1090#1086#1074#1072#1088#1072#1084
+      OnExecute = ActionExecute
+    end
+    object actUpdateWCNT: TAction
+      Category = 'Data'
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1082#1086#1083#1080#1095#1077#1089#1090#1074#1086' '#1096#1090#1091#1082' '#1080#1079' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1072' '#1090#1086#1074#1072#1088#1086#1074
       OnExecute = ActionExecute
     end
   end
@@ -2601,6 +2607,9 @@ object DocForm: TDocForm
       Tag = 2
       Action = actRecalcSum
     end
+    object MenuItem3: TMenuItem
+      Action = actUpdateWCNT
+    end
     object N4: TMenuItem
       Caption = '-'
     end
@@ -2731,5 +2740,13 @@ object DocForm: TDocForm
       FieldName = 'PARAM3'
       Visible = False
     end
+  end
+  object qryProd2: TIBQuery
+    Database = Data.db
+    Transaction = Data.trDefault
+    SQL.Strings = (
+      'select prodid, wcnt from product')
+    Left = 280
+    Top = 304
   end
 end

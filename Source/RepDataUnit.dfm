@@ -32,15 +32,17 @@ object RepData: TRepData
     CachedUpdates = True
     DataSource = srcDoc
     SQL.Strings = (
-      'select doc_prod.*, doc_prod.unit*doc_prod.cnt as allcnt,'
+      'select doc_prod.*, '
+      'doc_prod.unit * doc_prod.cnt as allcnt,'
+      'doc_prod.unit * doc_prod.cnt * doc_prod.wcnt allwcnt,'
       'round_curr(doc_prod.unit*doc_prod.cnt*doc_prod.price) summ,'
       'round_curr(doc_prod.unit*doc_prod.cnt*doc_prod.ndsprice) ndssum,'
       
         'get_product_name(product.name, class.smallname, produser.smallna' +
         'me, product.len) product,'
       
-        'product.nds, product.dim, product.len, product.weight, product.w' +
-        'cnt, product.sertificat, produser.country,'
+        'product.nds, product.dim, product.len, product.weight, product.s' +
+        'ertificat, produser.country,'
       
         'product.name productname, get_full_name(produser.fullname,produs' +
         'er.name) produser,class.name classname'
