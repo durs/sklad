@@ -494,7 +494,6 @@ object DocForm: TDocForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
-    ExplicitTop = 273
   end
   object edtProd: TwwDBLookupCombo
     Left = 16

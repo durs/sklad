@@ -33,6 +33,8 @@ function FloatAddPer(const Value,Per:Double):Double;
 function FloatAddPerCor(const Value,Per:Double):Double;
 function FloatRemovePer(const Value,Per:Double):Double;
 
+function xml_correct(str:string): string;
+
 //color routens
 function getHighlightColor(color:integer; ofs:byte=$A0):integer;
 
@@ -705,6 +707,27 @@ begin
       break;
     end;
   until size<BufSize;
+end;
+
+function xml_correct(str:string): string;
+var
+    i, pos: integer;
+    s: string;
+begin
+    pos := 1;
+    result := '';
+    str := trim(str);
+    for i := 1 to Length(str) do begin
+        case str[i] of
+        '"': s := '&quot;';
+        '>': s := '&gt;';
+        '<': s := '&lt;';
+        else continue;
+        end;
+        result := result + copy(str, pos, i - pos) + s;
+        pos := i + 1;
+    end;
+    result := result + copy(str, pos, Length(str));
 end;
 
 //--------------------color routens------------------------

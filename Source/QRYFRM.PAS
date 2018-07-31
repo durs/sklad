@@ -650,7 +650,7 @@ begin
     end;
     if Chart<>nil then printChart(Title, Caption, Chart)
     else if DataSource.Dataset<>nil then begin
-        if (Sender = miPrintFile) and (Grid <> nil) then Data.save(Grid, Title + ' ' + Caption)
+        if (Sender = miPrintFile) and (Grid <> nil) then Data.save(Grid, Title + ' ' + Caption, 'query', edtDate1.Date, edtDate2.Date, 0)
         else printAuto(Title, Caption, DataSource.Dataset, SummaryFields);
     end;
 end;

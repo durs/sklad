@@ -258,7 +258,6 @@ object ProductForm: TProductForm
     Constraints.MinHeight = 85
     TabOrder = 2
     Visible = False
-    ExplicitWidth = 659
     object Label3: TLabel
       Left = 117
       Top = 129

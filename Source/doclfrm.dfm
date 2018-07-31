@@ -107,7 +107,6 @@ object DocListForm: TDocListForm
     OnCalcTitleImage = grdDocCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
-    ExplicitWidth = 493
   end
   object ControlBar: TControlBar
     Left = 0
@@ -124,7 +123,6 @@ object DocListForm: TDocListForm
     RowSize = 42
     RowSnap = False
     TabOrder = 1
-    ExplicitWidth = 629
     object barNavigator: TDBNavigator
       Left = 276
       Top = 2
@@ -385,7 +383,6 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -402,7 +399,6 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -425,6 +421,7 @@ object DocListForm: TDocListForm
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         ParentFont = False
         RoundRectBias = 25

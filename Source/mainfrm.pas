@@ -299,7 +299,7 @@ end;
 
 procedure TMainForm.FormActionExecute(Sender: TObject);
 begin
-    if not Data.check_connection then exit;
+    if (Sender<>actForum) and not Data.check_connection then exit;
     if (Sender=actClient) then begin
         load(TClientForm);
     end else if (Sender=actProduct) then begin

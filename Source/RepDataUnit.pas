@@ -102,6 +102,8 @@ type
     procedure PrintRep(rep: TfrxReport; params: integer; copies: integer);
     procedure PrintRepExcel(const filename: string; params: integer; copies: integer);
     procedure PrintRepWord(const filename: string; params: integer; copies: integer);
+    procedure DoWriteDoc(strm: TStream);
+
   public
     ListPrice: ListReport;
     ListDoc: ListReport;
@@ -112,8 +114,11 @@ type
     function InitMenu(parent: TMenuItem; index, category: integer; event: TNotifyEvent): boolean;
     function GetReport(id: integer): PReport;
 
-    procedure PrintDoc(repid:integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1);
+    procedure PrintDoc(repid:integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1; strm: TStream = nil);
     procedure PrintPrice(repid: integer; params: integer; clientid: integer = 0; qryOst_: TDataSet = nil);
+
+    procedure WriteDoc(strm: TStream; docid: integer);
+
   end;
 
 
@@ -133,6 +138,8 @@ type
 
 var
   RepData: TRepData;
+
+procedure xml_write_doc(strm: TStream; qryDoc, qryRec, qryCredit: TDataSet);
 
 implementation
 
@@ -472,7 +479,72 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TRepData.PrintDoc(repid: integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1);
+procedure xml_write_doc(strm: TStream; qryDoc, qryRec, qryCredit: TDataSet);
+var
+  fld: TField;
+  i: integer;
+
+  procedure write(str:string);
+  begin
+    strm.Write(PChar(str)^, Length(str));
+  end;
+
+begin
+  // write doc fields
+  write(#13#10'<doc ');
+  for i := 0 to qryDoc.FieldCount - 1 do begin
+    fld := qryDoc.Fields[i];
+    if not fld.IsNull then
+      write(fld.FieldName + '="' + xml_correct(fld.AsString) + '" ');
+  end;
+  if (qryCredit <> nil) and qryCredit.Active then begin
+    fld := qryCredit.FieldByName('DOCNO');
+    if (fld <> nil) and not fld.IsNull then
+      write('PDOCNO="' + xml_correct(fld.AsString) + '" ');
+  end;
+  Write('>');
+
+  // write records
+  if qryRec.Active then begin
+    qryRec.First;
+    while not qryRec.EOF do begin
+      // write rec fields
+      write(#13#10#9'<rec ');
+      for i := 0 to qryRec.FieldCount - 1 do begin
+        fld := qryRec.Fields[i];
+        if not fld.IsNull then
+          write(fld.FieldName + '="' + xml_correct(fld.AsString) + '" ');
+      end;
+      write('/>');
+
+      qryRec.Next;
+    end;
+  end;
+
+  write('</doc>');
+end;
+
+
+procedure TRepData.DoWriteDoc(strm: TStream);
+begin
+  qryDoc.Active := true;
+  if qryDoc.FieldByName('KIND').AsInteger = docProduct then begin
+    qryRec.Active := true;
+  end;
+  if not qryDoc.FieldByName('PDOCID').IsNull then begin
+    qryCredit.Active := true;
+  end; 
+  xml_write_doc(strm, qryDoc, qryRec, qryCredit);
+end;
+
+procedure TRepData.WriteDoc(strm: TStream; docid: integer);
+begin
+  PrintDoc(0, 0, docid, nil, nil, 1, strm);
+end;
+
+//------------------------------------------------------------------------------
+
+procedure TRepData.PrintDoc(repid: integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1; strm: TStream = nil);
 var
     rep: TfrxReport;
     repinfo: PReport;
@@ -482,7 +554,11 @@ begin
     try
         repinfo := nil;
 
-        if repid = 10 then begin
+        if (repid = 0) and (strm <> nil) then begin
+          // save as xml
+        end
+
+        else if repid = 10 then begin
             rep := repDoc10;
             InitRep(rep, 'Накладная внутр.fr3');
         end
@@ -553,9 +629,11 @@ begin
         fsrcOst.Enabled := false;
 
         srcRec.DataSet.DisableControls;
+
         if rep <> nil then PrintRep(rep, params, copies)
         else if (repinfo <> nil) and (repinfo.kind = 2) then PrintRepExcel(repinfo.filename, params, copies)
         else if (repinfo <> nil) and (repinfo.kind = 3) then PrintRepWord(repinfo.filename, params, copies)
+        else if (strm <> nil) then DoWriteDoc(strm)
         ;
 
         srcRec.DataSet.EnableControls;

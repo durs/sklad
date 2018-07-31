@@ -818,7 +818,7 @@ end;
 procedure TClientForm.PrintReport(Sender: TObject);
 begin
     if (Sender = miPrintFile) then begin
-        Data.save(grdClient, Caption);
+        Data.save(grdClient, Caption, 'clients', 0, 0, 0);
     end;
 end;
 

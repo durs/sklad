@@ -347,7 +347,7 @@ begin
         printCennik(2, SkladID, qryProd);
     end
     else if (Sender = miPrintFile) then begin
-        Data.save(grdRec, Caption + ' ' + edtSklad.Text + ' от ' + DateToStr(Now()));
+        Data.save(grdRec, Caption + ' ' + edtSklad.Text + ' от ' + DateToStr(Now()), 'ostatok', 0, 0, 0);
     end;
 end;
 

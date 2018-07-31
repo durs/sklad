@@ -1141,9 +1141,9 @@ begin
         end;
     end
     else if (Sender = miPrintFile) then begin
-        Data.save(grdRec, Caption + ' ' + edtClient1.Text + ' №' + edtNo.Text + ' от ' + edtDate1.Text + ' для ' + edtClient2.Text);
+      Data.save(grdRec, Caption + ' ' + edtClient1.Text + ' №' + edtNo.Text + ' от ' + edtDate1.Text + ' для ' + edtClient2.Text, 'doc', edtDate1.Date, edtDate2.Date, 0);
     end else begin
-         RepData.printDoc((Sender as TMenuItem).Tag, params, qryDocDOCID.Value, qryDoc, qryRec)
+      RepData.printDoc((Sender as TMenuItem).Tag, params, qryDocDOCID.Value, qryDoc, qryRec)
     end;
 end;
 
@@ -2827,34 +2827,14 @@ end;
 
 procedure TDocForm.SaveToFile(filename:string);
 var
-    fld: TField;
-    strm: TFileStream;
-    i: integer;
+  fld: TField;
+  strm: TFileStream;
+  i: integer;
 
-procedure write(str:string);
-begin
+  procedure write(str:string);
+  begin
     strm.Write(PChar(str)^, Length(str));
-end;
-
-function cor(str:string): string;
-var
-    i, pos: integer;
-    s: string;
-begin
-    pos := 1;
-    result := '';
-    for i := 1 to Length(str) do begin
-        case str[i] of
-        '"': s := '&quot;';
-        '>': s := '&gt;';
-        '<': s := '&lt;';
-        else continue;
-        end;
-        result := result + copy(str, pos, i - pos) + s;
-        pos := i + 1;
-    end;
-    result := result + copy(str, pos, Length(str));
-end;
+  end;
 
 begin
     if FileExists(filename) then DeleteFile(filename);
@@ -2862,14 +2842,16 @@ begin
     try
         Write('<?xml version="1.0" encoding="windows-1251"?>'#13#10);
 
+        xml_write_doc(strm, qryDoc, qryRec, qryCredit);
+        {
         // write doc fields
         Write('<doc ');
         for i := 0 to qryDoc.FieldCount - 1 do begin
             fld := qryDoc.Fields[i];
             if not fld.IsNull then
-                Write(fld.FieldName + '="' + cor(fld.AsString) + '" ');
+                Write(fld.FieldName + '="' + xml_correct(fld.AsString) + '" ');
         end;
-        if qryCredit.Active and not qryCreditDOCNO.IsNull then Write('PDOCNO="' + cor(qryCreditDOCNO.AsString) + '" ');
+        if qryCredit.Active and not qryCreditDOCNO.IsNull then Write('PDOCNO="' + xml_correct(qryCreditDOCNO.AsString) + '" ');
         Write('>'#13#10);
 
         // write records
@@ -2880,14 +2862,14 @@ begin
             for i := 0 to qryRec.FieldCount - 1 do begin
                 fld := qryRec.Fields[i];
                 if not fld.IsNull then
-                    Write(fld.FieldName + '="' + cor(fld.AsString) + '" ');
+                    Write(fld.FieldName + '="' + xml_correct(fld.AsString) + '" ');
             end;
             Write('/>'#13#10);
 
             qryRec.Next;
         end;
-
         Write('</doc>');
+        }
     finally
         strm.Destroy;
     end

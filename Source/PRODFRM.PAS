@@ -794,7 +794,7 @@ begin
         end;
     end
     else if (Sender = miPrintFile) then begin
-        Data.save(grdProduct, Caption);
+        Data.save(grdProduct, Caption, 'products', 0, 0, 0);
     end;
 end;
 

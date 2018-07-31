@@ -652,7 +652,7 @@ begin
             if edtDocDate2.Date<>0 then title:=title+' по '+edtDocDate2.Text;
         end;
         if Sender=miPrintDocList then printAuto(title,'',qry,'')
-        else Data.save(grdDoc, title);
+        else Data.save(grdDoc, title, 'documents', edtDocDate1.Date, edtDocDate2.Date, 1);
         exit;
     end;
     id := qry.FieldByName('DOCID').AsInteger;

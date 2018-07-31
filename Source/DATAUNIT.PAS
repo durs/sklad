@@ -290,7 +290,8 @@ type
     procedure setBlobValue(field:TBlobField; const value:string);
     function getDocNo(const keyfrm,keyno:string):variant;
     procedure lookupDatasetKey(DataSet: TDataSet; Field: TField; Key:Char);
-    procedure save(grid: TwwDBGrid; title: string);
+    procedure save(grid: TwwDBGrid; title, id: string; date1, date2: TDateTime; kind: integer);
+    procedure save_xml(qry: TIBQuery; filename, id: string; date1, date2: TDateTime; kind: integer);
 
     function IsDocReadonly(DocDate: TDateTime): boolean;
     function IsOstReadonly(): boolean;
@@ -331,7 +332,7 @@ function checkIB(): boolean;
 function getIBPath(name:string):string;
 
 implementation
-uses dyutils,dyobject,mainfrm,toolfrm, pswdfrm;
+uses dyutils,dyobject,mainfrm,toolfrm,pswdfrm,repdataunit;
 {$R *.DFM}
 
 function getIBPath(name:string):string;
@@ -449,12 +450,14 @@ begin
   AppTitle := Application.Title;
   lookup := TDyQuickLookup.Create;
   inUpdate := false;
+  dlgSave.FilterIndex := CurrentConfig.GetInteger('general.filterindex');
 end;
 
 procedure TData.DataModuleDestroy(Sender: TObject);
 begin
     if (not db.Connected) then DatabaseIndex := -1;
     CurrentConfig.SetInteger('general.databaseindex', DatabaseIndex);
+    CurrentConfig.SetInteger('general.filterindex', dlgSave.FilterIndex);
     lookup.Free;
 end;
 
@@ -1146,9 +1149,9 @@ begin
         then lookup.Lookup(DataSet, Field, Key);
 end;
 
-procedure TData.save(grid: TwwDBGrid; title: string);
+procedure TData.save(grid: TwwDBGrid; title, id: string; date1, date2: TDateTime; kind: integer);
 var
-    ext, str: string;
+    fn, ext, str: string;
     len, i: integer;
 begin
     str := title;
@@ -1161,22 +1164,89 @@ begin
 
     dlgSave.FileName := str;
     if not dlgSave.Execute then exit;
-    grid.ExportOptions.FileName := dlgSave.FileName;
+    fn := dlgSave.FileName;
 
     case dlgSave.FilterIndex of
-        1: begin ext := '.html'; grid.ExportOptions.ExportType := wwgetHTML; end;
-        2: begin ext := '.slk'; grid.ExportOptions.ExportType := wwgetSYLK; end;
-        else begin ext := '.txt'; grid.ExportOptions.ExportType := wwgetTXT; end;
+      1: begin ext := '.html'; grid.ExportOptions.ExportType := wwgetHTML; end;
+      2: begin ext := '.slk'; grid.ExportOptions.ExportType := wwgetSYLK; end;
+      3: begin ext := '.txt'; grid.ExportOptions.ExportType := wwgetTXT; end;
+      else ext := '.xml';
     end;
-    if ext <> AnsiLowerCase(ExtractFileExt(grid.ExportOptions.FileName)) then
-        grid.ExportOptions.FileName := grid.ExportOptions.FileName + ext;
+    if ext <> AnsiLowerCase(ExtractFileExt(fn)) then
+      fn := fn + ext;
 
-    grid.ExportOptions.Options := grid.ExportOptions.Options - [esoClipboard] + [esoShowHeader, esoShowFooter, esoShowTitle, esoDynamicColors, esoShowRecordNo];
-    grid.ExportOptions.TitleName := title;
-    grid.ExportOptions.Delimiter := #9;
-    grid.ExportOptions.Save;
+    if ext = '.xml' then begin
+      save_xml(grid.DataSource.DataSet as TIBQuery, fn, id, date1, date2,  kind);
+    end
+    else begin
+      grid.ExportOptions.FileName := fn;
+      grid.ExportOptions.Options := grid.ExportOptions.Options - [esoClipboard] + [esoShowHeader, esoShowFooter, esoShowTitle, esoDynamicColors, esoShowRecordNo];
+      grid.ExportOptions.TitleName := title;
+      grid.ExportOptions.Delimiter := #9;
+      grid.ExportOptions.Save;
+    end;
 end;
 
+procedure TData.save_xml(qry: TIBQuery; filename, id: string; date1, date2: TDateTime; kind: integer);
+var
+  fld: TField;
+  strm: TFileStream;
+  i: integer;
+  docs: boolean;
+  tag: string;
+
+  procedure write(str:string);
+  begin
+    strm.Write(PChar(str)^, Length(str));
+  end;
+
+begin
+  docs := id = 'documents';
+  if docs then tag := 'doc' else tag := 'rec';
+  
+  if FileExists(filename) then DeleteFile(filename);
+  strm := TFileStream.Create(filename, fmCreate);
+  qry.DisableControls;
+  try
+    write('<?xml version="1.0" encoding="windows-1251"?>');
+
+    write(#13#10'<sklad');
+    if date1 > 0 then write(' from="' + DateToStr(date1) + '"');
+    if date2 > 0 then write(' to="' + DateToStr(date2) + '"');
+    write('>');
+
+    write(#13#10'<' + id + '>');
+
+    // write records
+    qry.First;
+    while not qry.EOF do begin
+
+      // write document
+      if docs and (qry.FieldByName('KIND').AsInteger = docProduct) then begin
+        RepData.WriteDoc(strm, qry.FieldByName('DOCID').AsInteger);
+      end
+
+      // write record fields
+      else begin
+        write(#13#10'<' + tag + ' ');
+        for i := 0 to qry.FieldCount - 1 do begin
+          fld := qry.Fields[i];
+          if not fld.IsNull then
+            write(fld.FieldName + '="' + xml_correct(fld.AsString) + '" ');
+        end;
+        write('/>');
+      end;
+
+      qry.Next;
+    end;
+
+    write(#13#10'</' + id + '>');
+    write(#13#10'</sklad>');
+  finally
+    qry.EnableControls;
+    strm.Destroy;
+  end
+end;
 
 function TData.IsDocReadonly(DocDate: TDateTime): boolean;
 begin;

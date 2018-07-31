@@ -304,6 +304,10 @@ object ClientForm: TClientForm
       object tsClient: TTabSheet
         Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086' '#1082#1083#1080#1077#1085#1090#1077
         DragMode = dmAutomatic
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object ScrollBox1: TScrollBox
           Left = 0
           Top = 0
@@ -617,6 +621,10 @@ object ClientForm: TClientForm
       object tsSklad: TTabSheet
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1089#1082#1083#1072#1076#1072
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label6: TLabel
           Left = 32
           Top = 24
@@ -644,6 +652,10 @@ object ClientForm: TClientForm
           TabOrder = 0
           object tsOptions: TTabSheet
             Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object Label43: TLabel
               Left = 272
               Top = 60
@@ -1222,7 +1234,7 @@ object ClientForm: TClientForm
                 Height = 21
                 DataField = 'DOCPARAM2'
                 DataSource = srcSklad
-                ItemHeight = 0
+                ItemHeight = 13
                 Items.Strings = (
                   '-50 %'
                   '-25 %'
@@ -1265,7 +1277,7 @@ object ClientForm: TClientForm
                 Height = 21
                 DataField = 'DOCPARAM3'
                 DataSource = srcSklad
-                ItemHeight = 0
+                ItemHeight = 13
                 Items.Strings = (
                   '0 %'
                   '2 %'
@@ -1450,6 +1462,10 @@ object ClientForm: TClientForm
           object tsLogo: TTabSheet
             Caption = #1051#1086#1075#1086#1090#1080#1087
             ImageIndex = 3
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object pnlImage: TPanel
               Left = 0
               Top = 0
