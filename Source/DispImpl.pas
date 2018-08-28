@@ -269,6 +269,7 @@ begin
       if VarIsNumeric(Params[0]) then fld := DataSet.Fields.FieldByNumber(Params[0])
       else fld := DataSet.Fields.FieldByName(Params[0]);
       Ret := fld.Value;
+      if VarIsStr(Ret) then Ret := Trim(Ret);
     end else begin
       Ret := not DataSet.Eof;
     end;

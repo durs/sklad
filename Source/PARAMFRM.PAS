@@ -53,6 +53,8 @@ type
   private
   public
     Panels: set of(ppSklad, ppClient, ppDate, ppDate1, ppDate2, ppPercent, ppKassa, ppPreview, ppPrice);
+    procedure SetSkladID(clientid: integer);
+    procedure SetClientID(clientid: integer);
     procedure SetPriceInfo(priceinfo: integer);
     function GetPriceInfo: integer;
   end;
@@ -131,6 +133,23 @@ begin
   }
   end;
   
+end;
+
+procedure TParamForm.SetSkladID(clientid: integer);
+begin
+  edtSklad.KeyValue := clientid;
+end;
+
+procedure TParamForm.SetClientID(clientid: integer);
+var name:string;
+begin
+  if clientid <> 0 then begin
+    data.qryClient.Active := true;
+    name := data.qryClient.Lookup('CLIENTID', clientid, 'NAME');
+    edtClient.LookupValue:=IntToStr(clientid);
+    edtClient.Text:= name;
+    //edtClient.PerformSearch;
+  end;
 end;
 
 procedure TParamForm.SetPriceInfo(priceinfo:integer);

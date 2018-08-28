@@ -106,7 +106,7 @@ type
   end;
 
 implementation
-uses dataunit,config,dydbutil,print;
+uses dataunit,repdataunit,config,dydbutil,print,paramfrm;
 {$R *.DFM}
 
 constructor TDebitForm.Create(AOwner:TComponent);
@@ -297,31 +297,65 @@ begin
 end;
 
 procedure TDebitForm.mPrintPopup(Sender: TObject);
+var i: integer;
 begin
-    if btnDebit.Checked then miRepDebit.Caption:=btnDebit.Caption else miRepDebit.Caption:=btnCredit.Caption
+    if btnDebit.Checked then miRepDebit.Caption := btnDebit.Caption
+    else miRepDebit.Caption := btnCredit.Caption;
+
+    // Clear reports
+    with miRepSaldo.Parent do begin
+        for i := Count - 1 downto IndexOf(miRepSaldo) + 1 do
+            Items[i].Destroy;
+    end;
+
+    // Append reports
+    RepData.InitMenu(miRepSaldo.Parent, miRepSaldo.Parent.IndexOf(miRepSaldo) + 1, 3, mPrintClick);
 end;
 
 procedure TDebitForm.mPrintClick(Sender: TObject);
 var
-    qry1,qry2:TIBQuery;
-    debitkind,id:integer;
+    qry1, qry2: TIBQuery;
+    debitkind, clientid1, clientid2: integer;
+    params: integer;
+    options: TReportOptions;
 begin
-    if (Sender=miRepDebit) then begin
-        debitkind:=1;
+    qry1 := getQuery;
+    if (qry1 = nil) or not qry1.Active then clientid2 := 0 else clientid2 := qry1.FieldByName('CLIENTID').AsInteger;
+    clientid1 := SkladID;
+
+    if (Sender = miRepDebit) then begin
+        debitkind := 1;
         if btnSummary.Checked then qry1:=qryDebitSummary else qry1:=qryDebit;
-        qry2:=nil;
+        qry2 := nil;
         if (not btnDebit.Checked) then begin
-            debitkind:=2;
-            qry2:=qry1;
-            qry1:=nil;
+            debitkind := 2;
+            qry2 := qry1;
+            qry1 := nil;
         end;
         printDebit(btnSummary.Checked,debitkind,SkladID,edtClientKind.ItemIndex,qry1,qry2);
-    end else if (Sender=miRepDebitCredit) then begin
-        printDebit(btnSummary.Checked,3,SkladID,edtClientKind.ItemIndex);
-    end else if (Sender=miRepSaldo) then begin
-        qry1:=getQuery;
-        if qry1=nil then id:=0 else id:=qry1.FieldByName('CLIENTID').AsInteger;
-        printSaldo(SkladID,id);
+    end else if (Sender = miRepDebitCredit) then begin
+        printDebit(btnSummary.Checked, 3, SkladID, edtClientKind.ItemIndex);
+    end else if (Sender = miRepSaldo) then begin
+        printSaldo(clientid1, clientid2);
+    end else begin
+
+        if (ParamForm = nil) then ParamForm:=TParamForm.Create(Application);
+        ParamForm.Caption := (Sender as TMenuItem).Caption;
+        ParamForm.Panels := [ppSklad, ppClient, ppDate1, ppDate2, ppPreview];
+        ParamForm.SetSkladID(clientid1);
+        ParamForm.SetClientID(clientid2);
+        if ParamForm.ShowModal <> mrOk then exit;
+
+        clientid1:=ParamForm.edtSklad.KeyValue;
+        clientid2 := StrToIntDef(ParamForm.edtClient.LookupValue, 0);
+
+        options := CreateRepOptions();
+        options.skladid := clientid1;
+        options.clientid1 := clientid1;
+        options.clientid2 := clientid2;
+        options.date1 := ParamForm.edtDate1.Date;
+        options.date2 := ParamForm.edtDate2.Date;
+        RepData.print((Sender as TMenuItem).Tag, options);
     end;
 end;
 

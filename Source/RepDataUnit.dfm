@@ -88,6 +88,7 @@ object RepData: TRepData
     DataSource = srcDoc
     SQL.Strings = (
       'select client.*, '
+      'get_full_name(client.fullname,client.name) name2,'
       'sklad.BUGALTER, sklad.DIRECTOR, sklad.KLADOVCHIK,'
       'sklad.title, sklad.caption, sklad.logo,'
       'sklad.comment1,sklad.comment2,'
@@ -184,7 +185,8 @@ object RepData: TRepData
     CachedUpdates = True
     DataSource = srcDoc
     SQL.Strings = (
-      'select client.*'
+      'select client.*,'
+      'get_full_name(client.fullname,client.name) name2'
       'from client '
       'where client.clientid=:clientid2')
     Left = 256
@@ -594,5 +596,12 @@ object RepData: TRepData
     OnUserFunction = repUserFunction
     Left = 144
     Top = 16
+  end
+  object qryAny: TIBQuery
+    Database = Data.db
+    Transaction = Data.trDefault
+    BeforeOpen = qryAnyBeforeOpen
+    Left = 470
+    Top = 88
   end
 end

@@ -107,6 +107,7 @@ object DocListForm: TDocListForm
     OnCalcTitleImage = grdDocCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitLeft = 128
   end
   object ControlBar: TControlBar
     Left = 0
@@ -321,7 +322,8 @@ object DocListForm: TDocListForm
       object btnCreateQuery: TToolButton
         Left = 211
         Top = 0
-        Action = actCreateQuery
+        Action = actAction
+        DropdownMenu = mAction
       end
     end
     object pnlSklad: TPanel
@@ -383,6 +385,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -399,6 +402,7 @@ object DocListForm: TDocListForm
         Color = clBtnFace
         DitherColor = clWhite
         GroupIndex = 1
+        NumGlyphs = 0
         ParentClipping = True
         RoundRectBias = 25
         ShadeStyle = fbsHighlight
@@ -421,7 +425,6 @@ object DocListForm: TDocListForm
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         GroupIndex = 1
-        NumGlyphs = 0
         ParentClipping = True
         ParentFont = False
         RoundRectBias = 25
@@ -489,19 +492,19 @@ object DocListForm: TDocListForm
       ImageIndex = 11
       OnExecute = ActionExecute
     end
+    object actNew: TAction
+      Category = 'Data'
+      Caption = #1057#1086#1079#1076#1072#1090#1100
+      Hint = #1057#1086#1079#1076#1072#1090#1100'| '#1057#1086#1079#1076#1072#1090#1100' '#1085#1086#1074#1099#1081' '#1076#1086#1082#1091#1084#1077#1085#1090' (Ctrl+N)'
+      ImageIndex = 2
+      OnExecute = ActionExecute
+    end
     object actApply: TAction
       Category = 'Data'
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       Enabled = False
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100'| '#1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' '#1074' '#1073#1072#1079#1077' '#1076#1072#1085#1085#1099#1093' (Ctrl+Q)'
       ImageIndex = 1
-      OnExecute = ActionExecute
-    end
-    object actNew: TAction
-      Category = 'Data'
-      Caption = #1057#1086#1079#1076#1072#1090#1100
-      Hint = #1057#1086#1079#1076#1072#1090#1100'| '#1057#1086#1079#1076#1072#1090#1100' '#1085#1086#1074#1099#1081' '#1076#1086#1082#1091#1084#1077#1085#1090' (Ctrl+N)'
-      ImageIndex = 2
       OnExecute = ActionExecute
     end
     object actDelete: TAction
@@ -535,12 +538,12 @@ object DocListForm: TDocListForm
       ImageIndex = 6
       OnExecute = ActionExecute
     end
-    object actCreateQuery: TAction
+    object actAction: TAction
       Category = 'Data'
-      Caption = 'actCreateQuery'
-      Hint = #1057#1086#1079#1076#1072#1090#1100#13#10#1047#1072#1082#1072#1079'| '#1057#1086#1079#1076#1072#1090#1100' '#1079#1072#1082#1072#1079' '#1085#1072' '#1086#1089#1085#1086#1074#1077' '#1074#1093#1086#1076#1103#1097#1080#1093' '#1079#1072#1082#1072#1079#1086#1074
+      Caption = 'actAction'
+      Hint = #1044#1077#1081#1089#1090#1074#1080#1103'| '#1042#1099#1087#1086#1083#1085#1080#1090#1100' '#1076#1077#1081#1089#1090#1074#1080#1077' '#1085#1072#1076' '#1076#1086#1082#1091#1084#1077#1085#1090#1072#1084#1080
       ImageIndex = 9
-      OnExecute = ActionExecute
+      OnExecute = actActionExecute
     end
   end
   object mPrint: TPopupMenu
@@ -607,6 +610,7 @@ object DocListForm: TDocListForm
     end
   end
   object qryDoc: TIBQuery
+    Tag = 2
     Database = Data.db
     Transaction = Data.trDefault
     AfterOpen = qryDocAfterOpen
@@ -696,6 +700,7 @@ object DocListForm: TDocListForm
     end
   end
   object qryInDoc: TIBQuery
+    Tag = 2
     Database = Data.db
     Transaction = Data.trDefault
     AfterOpen = qryDocAfterOpen
@@ -1043,7 +1048,7 @@ object DocListForm: TDocListForm
     end
   end
   object qryInDocProd: TIBQuery
-    Tag = 1
+    Tag = 3
     Database = Data.db
     Transaction = Data.trDefault
     AfterOpen = qryDocAfterOpen
@@ -1508,5 +1513,24 @@ object DocListForm: TDocListForm
     DataSet = Data.qrySklad
     Left = 136
     Top = 288
+  end
+  object mAction: TPopupMenu
+    Left = 210
+    Top = 256
+    object miCreateQuery: TMenuItem
+      Caption = #1057#1086#1079#1076#1072#1090#1100' '#1079#1072#1082#1072#1079' '#1085#1072' '#1086#1089#1085#1086#1074#1077' '#1074#1093#1086#1076#1103#1097#1080#1093' '#1079#1072#1082#1072#1079#1086#1074
+      OnClick = ActionExecute
+    end
+    object miCreateQuerySep: TMenuItem
+      Caption = '-'
+    end
+    object miSave: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090#1099' '#1074' '#1092#1072#1081#1083' ...'
+      OnClick = miSaveClick
+    end
+    object miLoad: TMenuItem
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090#1099' '#1080#1079' '#1092#1072#1081#1083#1072' ...'
+      OnClick = miLoadClick
+    end
   end
 end

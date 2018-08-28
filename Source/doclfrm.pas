@@ -4,9 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Quickrpt, DataUnit,
+  Quickrpt, DataUnit, variants, msxml_tlb, comobj,
   basefrm, DyLook, IniFiles, Db,
-  IBCustomDataSet, IBQuery, Menus, ActnList, DBCtrls, ComCtrls, ToolWin,
+  IBDatabase, IBCustomDataSet, IBQuery, Menus, ActnList, DBCtrls, ComCtrls, ToolWin,
   wwdbedit, Wwdotdot, Wwdbcomb, Mask, StdCtrls, Buttons,
   ExtCtrls, Grids, DBGrids, Wwdbigrd, Wwdbgrid,
   wwdbdatetimepicker, fcCombo, fctreecombo, fcTreeView, IBStoredProc,
@@ -123,7 +123,7 @@ type
     qryOutDocCOMMENT: TBlobField;
     qryOutDocProdCOMMENT: TBlobField;
     qryOutDocQueryCOMMENT: TBlobField;
-    actCreateQuery: TAction;
+    actAction: TAction;
     btnCreateQuery: TToolButton;
     btnSep: TToolButton;
     procCreateQuery: TIBStoredProc;
@@ -192,6 +192,11 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     miPrintEnd: TMenuItem;
+    mAction: TPopupMenu;
+    miCreateQuerySep: TMenuItem;
+    miSave: TMenuItem;
+    miLoad: TMenuItem;
+    miCreateQuery: TMenuItem;
     procedure RefreshData(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ActionExecute(Sender: TObject);
@@ -232,6 +237,9 @@ type
       OldSelected, Selected: TfcButtonGroupItem);
     procedure treeDocChange(TreeView: TfcCustomTreeView;
       Node: TfcTreeNode);
+    procedure actActionExecute(Sender: TObject);
+    procedure miSaveClick(Sender: TObject);
+    procedure miLoadClick(Sender: TObject);
   private
     SkladID:integer;
     ClientName:string;
@@ -244,6 +252,9 @@ type
     procedure FilterRecords(Sender:TObject; const filter:string);
     procedure setQuery(qry:TIBQuery; qrysid:string=''; prm:integer=0);
     function getQuery:TIBQuery;
+    procedure LoadFromFile(filename:string; params:integer);
+    procedure LoadFromFileDoc(invoice: IXMLDOMElement; var info: string);
+    procedure LoadFromFileRec(item: IXMLDOMElement; sql: TStrings; qryprod: TIBQuery);
   protected
     procedure DestroyCancel; override;
   public
@@ -306,17 +317,17 @@ begin
     if v<>'' then try edtDocDate2.Date:=StrToDate(CurrentConfig.getString(key+'.date2')); except end;
 
     // set doc kind button
-    kind:=CurrentConfig.getInteger(key+'.doc_kind');
+    kind := CurrentConfig.getInteger(key+'.doc_kind');
     if (kind = 1) then btnDocIn.Down := true
     else if (kind = 2) then btnDocOut.Down := true
     else btnDoc.Down := true;
 
     // set active query item
-    v:=CurrentConfig.getString(key+'.query');
-    node:=treeDoc.Items.GetFirstNode;
-    while (node<>nil) do begin
-        if AnsiCompareText(node.StringData,v)=0 then break;
-        node:=node.GetNext;
+    v := CurrentConfig.getString(key+'.query');
+    node := treeDoc.Items.GetFirstNode;
+    while (node <> nil) do begin
+        if AnsiCompareText(node.StringData,v) = 0 then break;
+        node := node.GetNext;
     end;
     if node=nil then node:=treeDoc.Items.GetFirstNode;
     if node<>nil then node.MakeVisible;
@@ -379,7 +390,52 @@ begin
         appDocChange: DataSource.Tag:=1;
     end;
 end;
+
 //-----------------------------action routens---------------------------------
+
+procedure TDocListForm.miSaveClick(Sender: TObject);
+begin
+  PrintData(miPrintFile);
+end;
+
+procedure TDocListForm.miLoadClick(Sender: TObject);
+var
+  dlg: TOpenDialog;
+begin
+  dlg := TOpenDialog.Create(nil);
+  try
+    dlg.Filter := 'XML Документы (*.xml)|*.xml|Все файлы (*.*)|*.*';
+    if (dlg.Execute) then begin
+      loadFromFile(dlg.FileName, 0);
+    end;
+  finally
+    dlg.Destroy;
+  end;
+end;
+
+
+procedure TDocListForm.actActionExecute(Sender: TObject);
+var
+  frm:TForm;
+  id:integer;
+begin
+  try
+    msgStatus(msgWait);
+    procCreateQuery.ParamByName('CLIENTID').AsInteger:=SkladID;
+    procCreateQuery.ExecProc;
+    if Data.trApply.InTransaction then Data.trApply.Commit;
+    id:=procCreateQuery.ParamByName('DOCID').AsInteger;
+    if id>0 then begin
+      frm:=Load(TQueryDocForm);
+      if frm is TQueryDocForm then TQueryDocForm(frm).open(id);
+    end else begin
+      MessageBox(msgNotCreateDocQuery,msgInfo,MB_ICONEXCLAMATION or MB_OK);
+    end;
+  finally
+    msgStatus('');
+  end;
+end;
+
 procedure TDocListForm.ActionExecute(Sender: TObject);
 var
     qry:TIBQuery;
@@ -489,22 +545,6 @@ begin
             end;
         end;
         if qry=qryInDocProd then ;
-    end else if Sender=actCreateQuery then begin
-        try
-            msgStatus(msgWait);
-            procCreateQuery.ParamByName('CLIENTID').AsInteger:=SkladID;
-            procCreateQuery.ExecProc;
-            if Data.trApply.InTransaction then Data.trApply.Commit;
-            id:=procCreateQuery.ParamByName('DOCID').AsInteger;
-            if id>0 then begin
-                frm:=Load(TQueryDocForm);
-                if frm is TQueryDocForm then TQueryDocForm(frm).open(id);
-            end else begin
-                MessageBox(msgNotCreateDocQuery,msgInfo,MB_ICONEXCLAMATION or MB_OK);
-            end;
-        finally
-            msgStatus('');
-        end;
     end;
 end;
 
@@ -575,7 +615,9 @@ begin
         end;
     end;
     actNew.Enabled := (qry <> nil) and (qry.tag and 1 <> 0);
-    actCreateQuery.Visible := false; //qry=qryOutDocQuery;
+    miLoad.Enabled := (qry <> nil) and (qry.tag and 2 <> 0);
+    miCreateQuery.Visible := false; //qry=qryOutDocQuery;
+    miCreateQuerySep.Visible := miCreateQuery.Visible;
 end;
 
 function TDocListForm.getQuery:TIBQuery;
@@ -907,6 +949,252 @@ end;
 procedure TDocListForm.grdDocKeyPress(Sender: TObject; var Key: Char);
 begin
     Data.lookupDatasetKey(TwwDBGrid(Sender).DataSource.DataSet, TwwDBGrid(Sender).GetActiveField, Key);
+end;
+
+//------------------------------------------------------------------
+
+function StrToFloatCorr(str: string): Extended;
+var
+  index: integer;
+begin
+  if DecimalSeparator <> '.' then begin
+    index := Pos('.', str);
+    if index > 0 then str[index] := ',';
+  end;
+  result := StrToFloatDef(str, 0);
+end;
+
+function FloatToStrCorr(const v: Extended): string;
+var
+  index: integer;
+begin
+  result := FloatToStr(v);
+  if DecimalSeparator <> '.' then begin
+    index := Pos(',', result);
+    if index > 0 then result[index] := '.';
+  end;
+end;
+
+procedure TDocListForm.LoadFromFile(filename:string; params:integer);
+var
+    doc: IXMLDOMDocument;
+    root, elm: IXMLDOMElement;
+    list: IXMLDOMNodeList;
+    err: IXMLDOMParseError;
+    i, cnt: integer;
+    info: string;
+begin
+
+  // open xml
+  doc := CreateComObject(CLASS_DOMDocument) as IXMLDOMDocument;
+  if not doc.load(filename) then begin
+        err := doc.parseError;
+        text := err.srcText;
+        if (text <> '') then text := 'строка ' + IntToStr(err.line) + ' позиция ' + IntToStr(err.linepos) + ':'#13#10 + text;
+        text := err.url + #13#10 + err.reason + text;
+        raise Exception.Create(text);
+  end;
+  root := doc.documentElement;
+
+  // test for correct file
+  if (root.tagName <> 'invoices') then begin
+      raise Exception.Create('Неизвестный формат файла, не найдено <invoices>');
+  end;
+
+  // read rec fields
+  list := root.getElementsByTagName('invoice');
+  cnt := list.length;
+  for i := 0 to cnt - 1 do begin
+      elm := list.item[i] as IXMLDOMElement;
+      LoadFromFileDoc(elm, info);
+  end;
+
+  // refresh current query
+  if (cnt > 0) and (DataSource.DataSet <> nil) and DataSource.DataSet.Active then begin
+    DataSource.DataSet.Active := false;
+    DataSource.DataSet.Active := true;
+  end;
+
+  // show result message
+  info := 'Загружено ' + IntToStr(cnt) + ' документов';
+  Application.MessageBox(PChar(info), 'Сообщение', MB_OK + MB_ICONEXCLAMATION);
+end;
+
+procedure TDocListForm.LoadFromFileDoc(invoice: IXMLDOMElement; var info: string);
+var
+  i, j, cnt, reccnt: integer;
+  v: OleVariant;
+  node, recnode: IXMLDOMNode;
+  providerField: String;
+  name: WideString;
+  clientname, clientfullname: WideString;
+  tr: TIBTransaction;
+  qrydoc, qryrec, qryclient, qryprod: TIBQuery;
+  sql: TStrings;
+  docid, clientid: integer;
+  param: TParam;
+begin
+  clientid := 0;
+  tr := data.trApply;
+  qrydoc := TIBQuery.Create(nil);
+  qryrec := TIBQuery.Create(nil);
+  qryclient := TIBQuery.Create(nil);
+  qryprod := TIBQuery.Create(nil);
+  sql := TStringList.Create();
+  try
+    qrydoc.Database := data.db;
+    qrydoc.Transaction := tr;
+    qryrec.Database := data.db;
+    qryrec.Transaction := tr;
+    qryclient.Database := data.db;
+    qryclient.Transaction := tr;
+    qryprod.Database := data.db;
+    qryprod.Transaction := tr;
+
+    // Prepare product sql
+    qryprod.SQL.Text := 'SELECT PRODID FROM PRODUCT'
+    + ' LEFT JOIN PRODUSER ON PRODUCT.PRODUSERID = PRODUSER.PRODUSERID'
+    + ' LEFT JOIN CLASS ON PRODUCT.CLASSID = CLASS.CLASSID'
+    + ' WHERE (UPPER(PRODUCT.NAME)=UPPER(:PRODNAME))'
+    + ' AND (UPPER(PRODUSER.NAME)=UPPER(:PRODUSER) OR UPPER(PRODUSER.FULLNAME)=UPPER(:PRODUSER))'
+    + ' AND (UPPER(CLASS.NAME)=UPPER(:CLASSNAME) OR UPPER(CLASS.FULLNAME)=UPPER(:CLASSNAME))';
+
+    // Prepare doc sql
+    qrydoc.SQL.Text := 'INSERT INTO DOC (DOCID, KIND, SKIND, COMMENT, CLIENTID1, CLIENTID2, DATE1, DOCNO, SUM0, SUM1)'
+    + ' VALUES (:DOCID, :KIND, :SKIND, :COMMENT, :CLIENTID1, :CLIENTID2, :date, :number, :totalPrice, :totalTax)';
+    qrydoc.Params[1].AsInteger := docProduct;
+    qrydoc.Params[2].AsInteger := docBeznal;
+
+    // Write comment
+    v := invoice.getAttribute('id');
+    if VarIsStr(v) then begin
+      qrydoc.ParamByName('COMMENT').AsString := 'Invoice ' + v;
+    end;
+
+    // Prepare clients ids
+    providerField := 'CLIENTID1';
+    qrydoc.ParamByName('CLIENTID2').AsInteger := SkladID;
+
+    // Loop by child nodes
+    cnt := invoice.childNodes.length;
+    for i := 0 to cnt - 1 do begin
+      node := invoice.childNodes.item[i];
+      if node.nodeType <> NODE_ELEMENT then continue;
+      name := node.nodeName;
+      if name = 'items' then begin
+        reccnt := node.childNodes.length;
+        for j := 0 to reccnt - 1 do begin
+          recnode := node.childNodes.item[j];
+          if recnode.nodeType <> NODE_ELEMENT then continue;
+          LoadFromFileRec(recnode as IXMLDOMElement, sql, qryprod);
+        end;
+      end else if name = 'provider' then begin
+        clientfullname := node.text;
+        clientname := clientfullname;
+        if Length(clientname) > 30 then SetLength(clientname, 30);
+        qryclient.SQL.Text := 'SELECT CLIENTID FROM CLIENT WHERE UPPER(NAME)=UPPER(:NAME) OR UPPER(FULLNAME)=UPPER(:FULLNAME)';
+        qryclient.Params[0].AsString := clientname;
+        qryclient.Params[1].AsString := clientfullname;
+        qryclient.Active := true;
+        if not qryclient.Eof then begin
+          clientid := qryclient.Fields[0].AsInteger;
+        end;
+        qryclient.Active := false;
+      end else begin
+        param := qrydoc.Params.FindParam(name);
+        if param <> nil then param.AsString := node.text;
+      end;
+    end;
+
+    // Append new client
+    if (clientid = 0) and (Length(clientname) > 0) then begin
+      clientid := Data.GenID('GEN_CLIENTID');
+      qryclient.SQL.Text := 'INSERT INTO CLIENT (CLIENTID, NAME, FULLNAME) VALUES (:CLIENTID, :NAME, :FULLNAME)';
+      qryclient.Params[0].AsInteger := clientid;
+      qryclient.Params[1].AsString := clientname;
+      qryclient.Params[2].AsString := clientfullname;
+      qryclient.ExecSQL();
+    end;
+    if clientid <> 0 then begin
+      qrydoc.ParamByName(providerField).AsInteger := clientid;
+    end;
+
+    // Apply changes
+    docid := Data.GenID('GEN_DOCID');
+    qrydoc.Params[0].AsInteger := docid;
+    qrydoc.ExecSQL();
+    for i := 0 to sql.Count - 1 do begin
+      qryrec.SQL.Text := sql[i];
+      qryrec.Params[0].AsInteger := docid;
+      qryrec.Params[1].AsInteger := (i+1)*10;
+      qryrec.ExecSQL();
+    end;
+    tr.Commit();
+    
+  finally
+    qrydoc.Free();
+    qryrec.Free();
+    qryclient.Free();
+    qryprod.Free();
+    sql.Free();
+    if tr.InTransaction then begin
+      tr.Rollback();
+    end;
+  end;
+end;
+
+procedure TDocListForm.LoadFromFileRec(item: IXMLDOMElement; sql: TStrings; qryprod: TIBQuery);
+var
+  i, cnt: integer;
+  node: IXMLDOMNode;
+  name, prodname, produser, classname, measure: string;
+  count, price, tax, totalPrice: double;
+  prodid: integer;
+begin
+  count := 0;
+  price := 0;
+  tax := 0;
+  totalPrice := 0;
+
+  // Loop by child nodes
+  cnt := item.childNodes.length;
+  for i := 0 to cnt - 1 do begin
+      node := item.childNodes.item[i];
+      if node.nodeType <> NODE_ELEMENT then continue;
+      name := node.nodeName;
+      if name = 'name' then prodname := node.text
+      else if name = 'producer' then produser := node.text
+      else if name = 'type' then classname := node.text
+      else if name = 'measure' then measure := node.text
+      else if name = 'count' then count := StrToFloatCorr(node.text)
+      else if name = 'price' then price := StrToFloatCorr(node.text)
+      else if name = 'tax' then tax := StrToFloatCorr(node.text)
+      else if name = 'totalPrice' then totalPrice := StrToFloatCorr(node.text)
+  end;
+
+  // Search product
+  qryprod.ParamByName('PRODNAME').AsString := prodname;
+  qryprod.ParamByName('PRODUSER').AsString := produser;
+  qryprod.ParamByName('CLASSNAME').AsString := classname;
+  qryprod.Active := true;
+  if qryprod.Eof then raise Exception.Create(
+    'В списке товаров не найдено'
+    + #13#10'Наименование: ' + prodname
+    + #13#10'Производитель: ' + produser
+    + #13#10'Тип: ' + classname
+  );
+  prodid := qryprod.Fields[0].AsInteger;
+  qryprod.Active := false;
+
+  // Insert record
+  sql.Add('INSERT INTO DOC_PROD(DOCID, RECID, PRODID, UNIT, CNT, PRICE, NDSPRICE) VALUES (:DOCID, :RECID'
+    + ', ' + IntToStr(prodid)
+    + ', 1'
+    + ', ' + FloatToStrCorr(count)
+    + ', ' + FloatToStrCorr(totalPrice / count)
+    + ', ' + FloatToStrCorr(tax / count)
+    + ')');
+
 end;
 
 //------------------------------------------------------------------

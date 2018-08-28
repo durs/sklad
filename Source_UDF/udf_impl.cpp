@@ -321,7 +321,7 @@ IBUDF_API char *name_full(char *status, char *name, char *info)
 #define docQuery 	3
 #define docKindMask 	0xFF 
 #define docRezervMask 	0x100 //256
-#define docArchivMask 	ox200 //512
+#define docArchivMask 	0x200 //512
 
 #define docExport	-1
 #define docInner	0

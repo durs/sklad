@@ -58,7 +58,6 @@ object DebitForm: TDebitForm
     RowSize = 21
     RowSnap = False
     TabOrder = 0
-    ExplicitWidth = 591
     object barTool: TToolBar
       Left = 11
       Top = 2
@@ -308,7 +307,6 @@ object DebitForm: TDebitForm
     OnCalcTitleImage = grdRecCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
-    ExplicitWidth = 591
   end
   object DataSource: TDataSource
     Left = 24

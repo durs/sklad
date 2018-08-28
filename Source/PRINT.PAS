@@ -296,14 +296,8 @@ begin
     if (ParamForm=nil) then ParamForm:=TParamForm.Create(Application);
     ParamForm.Caption:='Обороты с клиентами';
     ParamForm.Panels:=[ppSklad,ppClient,ppDate1,ppDate2,ppPreview];
-    if clientid1<>0 then ParamForm.edtSklad.KeyValue:=clientid1;
-    if clientid2<>0 then begin
-      data.qryClient.Active := true;
-      name := data.qryClient.Lookup('CLIENTID', clientid2, 'NAME');
-      ParamForm.edtClient.LookupValue:=IntToStr(clientid2);
-      ParamForm.edtClient.Text:= name;
-      //ParamForm.edtClient.PerformSearch;
-    end;
+    if clientid1<>0 then ParamForm.SetSkladID(clientid1);
+    ParamForm.SetClientID(clientid2);
     if ParamForm.ShowModal<>mrOk then exit;
     clientid2 := StrToIntDef(ParamForm.edtClient.LookupValue, 0);
     if clientid2 <> 0 then

@@ -2911,7 +2911,9 @@ begin
     root := doc.documentElement;
 
     // test for correct file
-    if (root.tagName <> 'doc') then exit;
+    if (root.tagName <> 'doc') then begin
+      raise Exception.Create('Неизвестный формат файла, не найдено <doc>');
+    end;
 
     LoadLock := true;
     try

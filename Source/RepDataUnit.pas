@@ -23,6 +23,18 @@ const
     IID_IReport: TGUID = '{417FF2DF-83A9-41BB-A12B-1E7C9A18C362}';
 
 type
+  TReportOptions = record
+    skladid: integer;
+    clientid1: integer;
+    clientid2: integer;
+    date1, date2: TDateTime;
+    docid: integer;
+    params: integer;
+    qryDoc, qryRec: TDataSet;
+    copies: integer;
+    strm: TStream;
+  end;
+
   Report = record
     caption: string;
     filename: string;
@@ -85,6 +97,7 @@ type
     repPrice: TfrxReport;
     repDoc10: TfrxReport;
     repDoc: TfrxReport;
+    qryAny: TIBQuery;
     procedure DataModuleCreate(Sender: TObject);
     function scUserFunction(Instance: TObject; ClassType: TClass; const MethodName: String;
         var Params: Variant): Variant;
@@ -93,19 +106,20 @@ type
     procedure repBeforePrint(Sender: TfrxReportComponent);
     procedure repAfterPrint(Sender: TfrxReportComponent);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure qryAnyBeforeOpen(DataSet: TDataSet);
   private
-
     frxChartObject1: TfrxChartObject;
-
+    options: TReportOptions;
     disp: TDispatchRepDataImpl;
     procedure InitRep(rep: TfrxReport; const filename: string);
     procedure PrintRep(rep: TfrxReport; params: integer; copies: integer);
-    procedure PrintRepExcel(const filename: string; params: integer; copies: integer);
-    procedure PrintRepWord(const filename: string; params: integer; copies: integer);
+    procedure PrintRepExcel(const filename: string; var options: TReportOptions);
+    procedure PrintRepWord(const filename: string; var options: TReportOptions);
     procedure DoWriteDoc(strm: TStream);
 
   public
     ListPrice: ListReport;
+    ListDebit: ListReport;
     ListDoc: ListReport;
     ListDocProd: ListReport;
     ListDocCredit: ListReport;
@@ -113,12 +127,13 @@ type
 
     function InitMenu(parent: TMenuItem; index, category: integer; event: TNotifyEvent): boolean;
     function GetReport(id: integer): PReport;
+    function GetParam(id: string): Variant;
 
+    procedure Print(repid:integer; var options: TReportOptions);
     procedure PrintDoc(repid:integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1; strm: TStream = nil);
     procedure PrintPrice(repid: integer; params: integer; clientid: integer = 0; qryOst_: TDataSet = nil);
 
     procedure WriteDoc(strm: TStream; docid: integer);
-
   end;
 
 
@@ -128,6 +143,7 @@ type
     Sklad: TDispatchDataSetImpl;
     Client1, Client2: TDispatchDataSetImpl;
     Doc, DocRec: TDispatchDataSetImpl;
+    SQL: TDispatchDataSetImpl;
   protected
     function DoNameResolve(const Name: string): Integer; override;
     procedure DoInvoke(DispID: Integer; Flags: Word; var Params: TVariantArray; var Ret: OleVariant); override;
@@ -139,6 +155,7 @@ type
 var
   RepData: TRepData;
 
+function CreateRepOptions: TReportOptions;
 procedure xml_write_doc(strm: TStream; qryDoc, qryRec, qryCredit: TDataSet);
 
 implementation
@@ -146,18 +163,35 @@ implementation
 uses dyutils, variants, dataunit, Graphics, controls, frxVariables, basefrm, comobj;
 {$R *.dfm}
 
+function CreateRepOptions: TReportOptions;
+begin
+  result.skladid := 0;
+  result.clientid1 := 0;
+  result.clientid2 := 0;
+  result.date1 := 0;
+  result.date2 := 0;
+  result.docid := 0;
+  result.params := 0;
+  result.qryDoc := nil;
+  result.qryRec := nil;
+  result.copies := 1;
+  result.strm := nil;
+end;
+
 procedure InitDocList(var list: ListReport; path: string; category: integer);
 var
     F: TSearchRec;
     len: integer;
-    filter, ext: string;
+    fname, filter, ext: string;
     kind: integer;
 begin
     path := ExtractFilePath(Application.ExeName) + 'template\' + path;
     filter := path + '*.*';
     if FindFirst(filter, faAnyFile, F) = 0 then
     repeat
-        ext := ExtractFileExt(F.Name);
+        fname := F.Name;
+        if (Length(fname) = 0) or (fname[1] = '~') then continue;        
+        ext := ExtractFileExt(fname);
         if CompareText(ext, '.fr3') = 0 then kind := 1
         else if (CompareText(ext, '.xlt') = 0) or (CompareText(ext, '.xltm') = 0) or (CompareText(ext, '.xltx') = 0) then kind := 2
         else if (CompareText(ext, '.dot') = 0) or (CompareText(ext, '.dotm') = 0) or (CompareText(ext, '.dotx') = 0) then kind := 3
@@ -166,8 +200,8 @@ begin
         begin
           len := Length(list);
           SetLength(list, len + 1);
-          list[len].filename := path + F.Name;
-          list[len].caption := ChangeFileExt(F.Name, '');
+          list[len].filename := path + fname;
+          list[len].caption := ChangeFileExt(fname, '');
           list[len].kind := kind;
           list[len].rep := nil;
           list[len].id := len or (category shl 16);
@@ -203,6 +237,7 @@ begin
 
     // Init reports
     InitDocList(ListPrice, 'Прайсы\', 1);
+    InitDocList(ListDebit, 'Долги\', 1);
     InitDocList(ListDoc, 'Документы\', 20);
     ListDocProd := ListDoc;
     ListDocCredit := ListDoc;
@@ -239,6 +274,7 @@ begin
     else if (category = 21) then list := @ListDocProd
     else if (category = 22) then list := @ListDocCredit
     else if (category = 23) then list := @ListDocQuery
+    else if (category = 3) then list := @ListDebit
     else exit;
 
     len := Length(list^);
@@ -269,6 +305,7 @@ begin
     else if (category = 21) then list := @ListDocProd
     else if (category = 22) then list := @ListDocCredit
     else if (category = 23) then list := @ListDocQuery
+    else if (category = 3) then list := @ListDebit
     else exit;
 
     len := Length(list^);
@@ -544,7 +581,45 @@ end;
 
 //------------------------------------------------------------------------------
 
+function TRepData.GetParam(id: string): Variant;
+begin
+    if CompareText(id, 'docid') = 0 then result := options.docid
+    else if CompareText(id, 'skladid') = 0 then result := options.skladid
+    else if CompareText(id, 'clientid1') = 0 then result := options.clientid1
+    else if CompareText(id, 'clientid2') = 0 then result := options.clientid2
+    else if CompareText(id, 'date1') = 0 then result := options.date1
+    else if CompareText(id, 'date2') = 0 then result := options.date2
+end;
+
+
+procedure TRepData.qryAnyBeforeOpen(DataSet: TDataSet);
+var
+  i, cnt: integer;
+  p: TParam;
+begin
+  cnt := TIBQuery(DataSet).Params.Count;
+  for i := 0 to cnt - 1 do begin
+    p := TIBQuery(DataSet).Params[i];
+    p.Value := GetParam(p.Name);
+  end;
+end;
+
+
 procedure TRepData.PrintDoc(repid: integer; params: integer; docid: integer = 0; qryDoc_: TDataSet = nil; qryRec_: TDataSet = nil; copies: integer = 1; strm: TStream = nil);
+var
+  options: TReportOptions;
+begin
+  options := CreateRepOptions();
+  options.docid := docid;
+  options.params := params;
+  options.qryDoc := qryDoc_;
+  options.qryRec := qryRec_;
+  options.copies := copies;
+  options.strm := strm;
+  Print(repid, options)
+end;
+
+procedure TRepData.Print(repid:integer; var options: TReportOptions);
 var
     rep: TfrxReport;
     repinfo: PReport;
@@ -552,9 +627,10 @@ begin
     TBaseForm.msgStatus(MsgWaitPrint);
     Screen.Cursor := crHourGlass;
     try
+        self.options := options;
         repinfo := nil;
 
-        if (repid = 0) and (strm <> nil) then begin
+        if (repid = 0) and (options.strm <> nil) then begin
           // save as xml
         end
 
@@ -594,15 +670,15 @@ begin
         end;
 
         qryDoc.Active := false;
-        if (docid > 0) then qryDoc.Params[0].Value := docid;
-        if qryDoc_ <> nil then srcDoc.DataSet := qryDoc_ else srcDoc.DataSet := qryDoc;
+        qryDoc.Params[0].Value := options.docid;
+        if options.qryDoc <> nil then srcDoc.DataSet := options.qryDoc else srcDoc.DataSet := qryDoc;
         fsrcDoc.DataSource := srcDoc;
         fsrcDoc.Enabled := true;
         //fsrcDoc.Initialize1;
 
         self.qryRec.Active := false;
         //qryRec.Params[0].Value := docid;
-        if qryRec_ <> nil then srcRec.DataSet := qryRec_ else srcRec.DataSet := qryRec;
+        if options.qryRec <> nil then srcRec.DataSet := options.qryRec else srcRec.DataSet := qryRec;
         fsrcRec.DataSource := srcRec;
         fsrcRec.Enabled := true;
         //fsrcRec.Initialize1;
@@ -614,12 +690,24 @@ begin
         //if (docid < 0) then fsrcCredit.Initialize1;
 
         qryClient1.Active := false;
+        if options.clientid1 <> 0 then begin
+          qryClient1.DataSource := nil;
+          qryClient1.Params[0].Value := options.clientid1;
+        end else begin
+          qryClient1.DataSource := srcDoc;
+        end;
         srcClient1.DataSet := qryClient1;
         fsrcClient1.DataSource := srcClient1;
         fsrcClient1.Enabled := true;
         //if (docid < 0) then fsrcClient1.Initialize1;
 
         qryClient2.Active := false;
+        if options.clientid2 <> 0 then begin
+          qryClient2.DataSource := nil;
+          qryClient2.Params[0].Value := options.clientid2;
+        end else begin
+          qryClient2.DataSource := srcDoc;
+        end;
         srcClient2.DataSet := qryClient2;
         fsrcClient2.DataSource := srcClient2;
         fsrcClient2.Enabled := true;
@@ -630,10 +718,10 @@ begin
 
         srcRec.DataSet.DisableControls;
 
-        if rep <> nil then PrintRep(rep, params, copies)
-        else if (repinfo <> nil) and (repinfo.kind = 2) then PrintRepExcel(repinfo.filename, params, copies)
-        else if (repinfo <> nil) and (repinfo.kind = 3) then PrintRepWord(repinfo.filename, params, copies)
-        else if (strm <> nil) then DoWriteDoc(strm)
+        if rep <> nil then PrintRep(rep, options.params, options.copies)
+        else if (repinfo <> nil) and (repinfo.kind = 2) then PrintRepExcel(repinfo.filename, options)
+        else if (repinfo <> nil) and (repinfo.kind = 3) then PrintRepWord(repinfo.filename, options)
+        else if (options.strm <> nil) then DoWriteDoc(options.strm)
         ;
 
         srcRec.DataSet.EnableControls;
@@ -723,7 +811,7 @@ begin
   end;
 end;
 
-procedure TRepData.PrintRepExcel(const filename: string; params: integer; copies: integer);
+procedure TRepData.PrintRepExcel(const filename: string; var options: TReportOptions);
 var
 	rep, excel, wbk, wsh: Variant;
 begin
@@ -749,7 +837,7 @@ begin
     wbk := excel.Workbooks.Add(filename);
     wsh := wbk.Sheets[1];
 
-    if ((params and rpDesign) <> 0) then
+    if ((options.params and rpDesign) <> 0) then
     begin
         Screen.Cursor := crDefault;
         ShowExcel(excel);
@@ -787,7 +875,7 @@ begin
   end;
 end;
 
-procedure TRepData.PrintRepWord(const filename: string; params: integer; copies: integer);
+procedure TRepData.PrintRepWord(const filename: string; var options: TReportOptions);
 type
   FieldInfo = record
     bm: variant;
@@ -879,7 +967,7 @@ begin
 
     doc := word.Documents.Add(filename);
 
-    if ((params and rpDesign) <> 0) then
+    if ((options.params and rpDesign) <> 0) then
     begin
         Screen.Cursor := crDefault;
         ShowWord(word);
@@ -970,6 +1058,7 @@ begin
   Client2 := nil;
   Doc := nil;
   DocRec := nil;
+  SQL := nil;
 end;
 
 destructor TDispatchRepDataImpl.Destroy;
@@ -979,6 +1068,7 @@ begin
   Client2.Free;
   Doc.Free;
   DocRec.Free;
+  SQL.Free;
 end;
 
 function TDispatchRepDataImpl.DoNameResolve(const Name: string): Integer;
@@ -986,11 +1076,13 @@ begin
   Result := inherited DoNameResolve(Name);
   if Result <> DISPID_UNKNOWN then Exit;
   if CompareText(Name, 'Value') = 0 then Result := 100
+  else if CompareText(Name, 'Param') = 0 then Result := 110
   else if CompareText(Name, 'DataSet') = 0 then Result := 200
   else if CompareText(Name, 'Client1') = 0 then Result := 201
   else if CompareText(Name, 'Client2') = 0 then Result := 202
   else if CompareText(Name, 'Doc') = 0 then Result := 203
   else if CompareText(Name, 'DocRec') = 0 then Result := 204
+  else if CompareText(Name, 'SQL') = 0 then Result := 300
   else if CompareText(Name, 'IntToText') = 0 then Result := 501
   else if CompareText(Name, 'CurrToText') = 0 then Result := 502
 end;
@@ -1013,6 +1105,9 @@ begin
   end;
 
   case DispID of
+  110: begin
+    if cnt > 0 then Ret := Rep.GetParam(Params[0]) else Ret := Unassigned;
+    end;
   201: begin
     try Rep.srcDoc.DataSet.Active := true; except on e:Exception do ApplicationShowException(e); end;
     if Client1 = nil then Client1 := TDispatchDataSetImpl.Create(Rep.srcClient1.DataSet);
@@ -1031,6 +1126,11 @@ begin
     try Rep.srcDoc.DataSet.Active := true; except on e:Exception do ApplicationShowException(e); end;
     if DocRec = nil then DocRec := TDispatchDataSetImpl.Create(Rep.srcRec.DataSet);
     Ret := IDispatch(DocRec);
+    end;
+  300: begin
+    if SQL = nil then SQL := TDispatchDataSetImpl.Create(Rep.qryAny);
+    if cnt > 0 then Rep.qryAny.SQL.Text := Params[0];
+    Ret := IDispatch(SQL);
     end;
   501: begin
     if cnt > 0 then Ret := IntConvert(Params[0]) else Ret := null;

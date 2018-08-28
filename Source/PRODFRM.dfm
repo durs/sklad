@@ -69,7 +69,6 @@ object ProductForm: TProductForm
     RowSize = 21
     RowSnap = False
     TabOrder = 0
-    ExplicitWidth = 659
     object ToolBar: TToolBar
       Left = 11
       Top = 2
@@ -253,28 +252,27 @@ object ProductForm: TProductForm
     Top = 334
     Width = 780
     Height = 163
-    VertScrollBar.Position = 58
     Align = alBottom
     Constraints.MinHeight = 85
     TabOrder = 2
     Visible = False
     object Label3: TLabel
       Left = 117
-      Top = 129
+      Top = 187
       Width = 44
       Height = 13
       Caption = #1047#1072#1084#1077#1090#1082#1080
     end
     object Label1: TLabel
       Left = 81
-      Top = -48
+      Top = 10
       Width = 76
       Height = 13
       Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
     end
     object lbId: TDBText
       Left = 7
-      Top = -52
+      Top = 6
       Width = 17
       Height = 13
       AutoSize = True
@@ -289,14 +287,14 @@ object ProductForm: TProductForm
     end
     object Label17: TLabel
       Left = 100
-      Top = -21
+      Top = 37
       Width = 57
       Height = 13
       Caption = #1058#1080#1087' '#1090#1086#1074#1072#1088#1072
     end
     object btnClass: TSpeedButton
       Left = 447
-      Top = -23
+      Top = 35
       Width = 19
       Height = 19
       Hint = #1058#1080#1087#1099' '#1090#1086#1074#1072#1088#1086#1074'|'
@@ -314,14 +312,14 @@ object ProductForm: TProductForm
     end
     object Label2: TLabel
       Left = 78
-      Top = 1
+      Top = 59
       Width = 79
       Height = 13
       Caption = #1055#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1100
     end
     object btnProduser: TSpeedButton
       Left = 447
-      Top = -1
+      Top = 57
       Width = 19
       Height = 19
       Hint = #1058#1080#1087#1099' '#1090#1086#1074#1072#1088#1086#1074'|'
@@ -339,7 +337,7 @@ object ProductForm: TProductForm
     end
     object Label27: TLabel
       Left = 28
-      Top = 109
+      Top = 167
       Width = 133
       Height = 13
       Caption = #1057#1077#1088#1090#1080#1092#1080#1082#1072#1090' '#1089#1086#1086#1090#1074#1077#1090#1089#1090#1074#1080#1103
@@ -347,21 +345,21 @@ object ProductForm: TProductForm
     end
     object Label4: TLabel
       Left = 110
-      Top = 51
+      Top = 109
       Width = 47
       Height = 13
       Caption = #1060#1072#1089#1086#1074#1082#1072
     end
     object Label5: TLabel
       Left = 115
-      Top = 28
+      Top = 86
       Width = 42
       Height = 13
       Caption = #1045#1076' '#1080#1079#1084'. '
     end
     object Label6: TLabel
       Left = 300
-      Top = 31
+      Top = 89
       Width = 41
       Height = 13
       Alignment = taRightJustify
@@ -369,14 +367,14 @@ object ProductForm: TProductForm
     end
     object Label23: TLabel
       Left = 116
-      Top = 82
+      Top = 140
       Width = 41
       Height = 13
       Caption = #1053#1044#1057' (%)'
     end
     object Label7: TLabel
       Left = 284
-      Top = 51
+      Top = 109
       Width = 57
       Height = 13
       Alignment = taRightJustify
@@ -384,14 +382,14 @@ object ProductForm: TProductForm
     end
     object Label8: TLabel
       Left = 75
-      Top = 159
+      Top = 217
       Width = 86
       Height = 13
       Caption = #1052#1077#1089#1090#1086' '#1085#1072' '#1089#1082#1083#1072#1076#1077
     end
     object Label9: TLabel
       Left = 93
-      Top = 191
+      Top = 249
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -399,7 +397,7 @@ object ProductForm: TProductForm
     end
     object Label10: TLabel
       Left = 93
-      Top = 215
+      Top = 273
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -407,7 +405,7 @@ object ProductForm: TProductForm
     end
     object Label11: TLabel
       Left = 93
-      Top = 239
+      Top = 297
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -415,7 +413,7 @@ object ProductForm: TProductForm
     end
     object Label12: TLabel
       Left = 280
-      Top = 191
+      Top = 249
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -423,7 +421,7 @@ object ProductForm: TProductForm
     end
     object Label13: TLabel
       Left = 280
-      Top = 215
+      Top = 273
       Width = 68
       Height = 13
       Alignment = taRightJustify
@@ -431,7 +429,7 @@ object ProductForm: TProductForm
     end
     object Label14: TLabel
       Left = 469
-      Top = 51
+      Top = 109
       Width = 37
       Height = 13
       Alignment = taRightJustify
@@ -439,7 +437,7 @@ object ProductForm: TProductForm
     end
     object edtComment: TDBEdit
       Left = 168
-      Top = 126
+      Top = 184
       Width = 281
       Height = 21
       DataField = 'COMMENT'
@@ -450,7 +448,7 @@ object ProductForm: TProductForm
     end
     object edtName: TDBEdit
       Left = 168
-      Top = -51
+      Top = 7
       Width = 225
       Height = 21
       DataField = 'NAME'
@@ -461,7 +459,7 @@ object ProductForm: TProductForm
     end
     object edtClass: TwwDBLookupCombo
       Left = 168
-      Top = -24
+      Top = 34
       Width = 281
       Height = 21
       DropDownAlignment = taLeftJustify
@@ -485,7 +483,7 @@ object ProductForm: TProductForm
     end
     object edtProduser: TwwDBLookupCombo
       Left = 168
-      Top = -2
+      Top = 56
       Width = 281
       Height = 21
       DropDownAlignment = taLeftJustify
@@ -509,7 +507,7 @@ object ProductForm: TProductForm
     end
     object edtSert: TDBEdit
       Left = 168
-      Top = 104
+      Top = 162
       Width = 281
       Height = 21
       DataField = 'SERTIFICAT'
@@ -520,7 +518,7 @@ object ProductForm: TProductForm
     end
     object edtLen: TwwDBComboBox
       Left = 168
-      Top = 48
+      Top = 106
       Width = 97
       Height = 21
       ShowButton = True
@@ -546,7 +544,7 @@ object ProductForm: TProductForm
     end
     object edtDim: TwwDBComboBox
       Left = 168
-      Top = 26
+      Top = 84
       Width = 97
       Height = 21
       ShowButton = True
@@ -570,7 +568,7 @@ object ProductForm: TProductForm
     end
     object edtUnit: TDBEdit
       Left = 352
-      Top = 26
+      Top = 84
       Width = 97
       Height = 21
       DataField = 'UNIT'
@@ -581,7 +579,7 @@ object ProductForm: TProductForm
     end
     object edtNDS: TDBEdit
       Left = 168
-      Top = 76
+      Top = 134
       Width = 97
       Height = 21
       DataField = 'NDS'
@@ -592,7 +590,7 @@ object ProductForm: TProductForm
     end
     object edtWeight: TDBEdit
       Left = 352
-      Top = 48
+      Top = 106
       Width = 97
       Height = 21
       DataField = 'WEIGHT'
@@ -603,7 +601,7 @@ object ProductForm: TProductForm
     end
     object edtSpot: TDBEdit
       Left = 168
-      Top = 156
+      Top = 214
       Width = 281
       Height = 21
       DataField = 'SPOT'
@@ -614,7 +612,7 @@ object ProductForm: TProductForm
     end
     object edtPrice: TDBEdit
       Left = 168
-      Top = 188
+      Top = 246
       Width = 97
       Height = 21
       DataField = 'PRICE'
@@ -625,7 +623,7 @@ object ProductForm: TProductForm
     end
     object btnPrice: TDBCheckBox
       Left = 402
-      Top = -49
+      Top = 9
       Width = 62
       Height = 17
       Caption = #1042' '#1087#1088#1072#1081#1089
@@ -637,7 +635,7 @@ object ProductForm: TProductForm
     end
     object edtPrice2: TDBEdit
       Left = 168
-      Top = 212
+      Top = 270
       Width = 97
       Height = 21
       DataField = 'PRICE2'
@@ -648,7 +646,7 @@ object ProductForm: TProductForm
     end
     object edtPrice3: TDBEdit
       Left = 168
-      Top = 236
+      Top = 294
       Width = 97
       Height = 21
       DataField = 'PRICE3'
@@ -659,7 +657,7 @@ object ProductForm: TProductForm
     end
     object edtPrice4: TDBEdit
       Left = 352
-      Top = 188
+      Top = 246
       Width = 97
       Height = 21
       DataField = 'PRICE4'
@@ -670,7 +668,7 @@ object ProductForm: TProductForm
     end
     object edtPrice5: TDBEdit
       Left = 352
-      Top = 212
+      Top = 270
       Width = 97
       Height = 21
       DataField = 'PRICE5'
@@ -681,7 +679,7 @@ object ProductForm: TProductForm
     end
     object edtWeightCount: TDBEdit
       Left = 512
-      Top = 48
+      Top = 106
       Width = 73
       Height = 21
       DataField = 'WCNT'
@@ -734,6 +732,7 @@ object ProductForm: TProductForm
     OnCalcTitleImage = grdProductCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitTop = 87
   end
   object srcProduct: TDataSource
     DataSet = qryProduct
