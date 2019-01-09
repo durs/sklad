@@ -230,7 +230,7 @@ object DebitForm: TDebitForm
       end
       object btnSummary: TCheckBox
         Left = 440
-        Top = 8
+        Top = 10
         Width = 57
         Height = 17
         Alignment = taLeftJustify

@@ -269,21 +269,23 @@ uses
     docfrm,docqfrm,doccfrm;
 {$R *.DFM}
 
-const qry_filters: array [1..6] of string = (
+const qry_filters: array [1..7] of string = (
     'skind<>1 and sum0>0',
     'skind<>1 and sum0<=0',
     'skind=1',
     'skind=2 and sum0<=0',
     'skind=3',
-    'skind=2 and sum0>0'
+    'skind=2 and sum0>0',
+    'skind=6'
 );
-const qry_params: array [1..6] of string = (
+const qry_params: array [1..7] of string = (
     '2',   // docOrder
     '2;1', // docOrder;dpVozvrat
     '1',   // docCheck
     '2',   // docOrder
     '3',   // docBeznal
-    '2'    // docOrder
+    '2',   // docOrder
+    '6'    // docCard
 );
 
 

@@ -65,15 +65,16 @@ const
     docBeznal=3;
     docZachet=4;
     docBarter=5;
+    docCard=6;
 
     docSKindMin=-1;
-    docSKindMax=5;
+    docSKindMax=6;
     //for doc prod
-    docSKindName:array [docSKindMin..docSKindMax] of string =('Экспорт товара','Внутр.перемещение','Касс.чек','Касс.ордер','Безналично','Взаимозачёт','Бартер');
+    docSKindName:array [docSKindMin..docSKindMax] of string =('Экспорт товара','Внутр.перемещение','Касс.чек','Касс.ордер','Безналично','Взаимозачёт','Бартер','Платежная карта');
     //for credit doc if sum0>=0
-    docSKindName1:array [docSKindMin..docSKindMax] of string =('','Внутр.перем.','Касс.чек','Прих.касс.ордер','Плат.поруч.','','');
+    docSKindName1:array [docSKindMin..docSKindMax] of string =('','Внутр.перем.','Касс.чек','Прих.касс.ордер','Плат.поруч.','','','Пл.карта');
     //for credit doc if sum0<0
-    docSKindName2:array [docSKindMin..docSKindMax] of string =('','Внутр.перем.','Касс.чек','Расх.касс.ордер','Плат.поруч.','','');
+    docSKindName2:array [docSKindMin..docSKindMax] of string =('','Внутр.перем.','Касс.чек','Расх.касс.ордер','Плат.поруч.','','','Пл.карта');
 
     docSPriceName:array [1..5] of string =('Опт. цена','Опт.-розн. цена','Розн. цена','Розн. цена 2','Розн. цена 3');
 
@@ -148,7 +149,7 @@ const
 
 
 //doc product oplata
-const docProductOplataList =  [docCheck,docOrder,docBeznal];
+const docProductOplataList =  [docCheck,docOrder,docBeznal,docCard];
 var docProductOplataListDef: TIntegerSet = [docCheck,docOrder];
 
 type
