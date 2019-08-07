@@ -160,7 +160,7 @@ procedure xml_write_doc(strm: TStream; qryDoc, qryRec, qryCredit: TDataSet);
 
 implementation
 
-uses dyutils, variants, dataunit, Graphics, controls, frxVariables, basefrm, comobj;
+uses dyutils, tools, variants, dataunit, Graphics, controls, frxVariables, basefrm, comobj;
 {$R *.dfm}
 
 function CreateRepOptions: TReportOptions;
@@ -219,6 +219,7 @@ begin
     rep.AddFunction('Function AssignSkladStamp(Img:Pointer):Boolean', 'Склад', 'Установить изображение штампа текущего склада');
     rep.AddFunction('Function GetClient1Info:String', 'Склад', 'Получить текст с описанием реквизитов продавца');
     rep.AddFunction('Function AssignClient1Image(Img:Pointer):Boolean', 'Склад', 'Установить изображение логотипа продавца');
+    rep.AddFunction('Function AssignDocQRCode(Img:Pointer):Boolean', 'Склад', 'Установить изображение QR кода покупателя');
     if category in [2, 21, 22, 23] then rep.AddFunction('Function GetCreditInfo():String', 'Склад', 'Информация о плат.-расч. документе');
     rep.AddFunction('Function GetPriceName(No:Integer):String', 'Склад', 'Получить название прайса по индексу');
     rep.AddFunction('Function CalcTransportNDS(Curr:Extended):Extended', 'Склад', 'Извлечение НДС на транспортные услуги из суммы, согласно настройкам продавца');
@@ -332,9 +333,9 @@ end;
 function TRepData.repUserFunction(const MethodName: String;
   var Params: Variant): Variant;
 var
-    pcnt, no: integer;
+    p, n, pcnt, no: integer;
     img: TObject;
-    info, info2: string;
+    str, info, info2: string;
 begin
     result := Unassigned;
     pcnt := 0;
@@ -419,6 +420,74 @@ begin
             srcDoc.DataSet.Active := true;
             srcClient1.DataSet.Active := true;
             data.getBlobImage(srcClient1.DataSet.FieldByName('LOGO') as TBlobField, (img as TfrxPictureView).Picture);
+            result := ((img as TfrxPictureView).Picture.Graphic <> nil) and not (img as TfrxPictureView).Picture.Graphic.Empty;
+        end;
+    except
+        result := false;
+    end
+
+    else if CompareText(MethodName, 'AssignDocQRCode') = 0 then
+    try
+        result := false;
+        if (pcnt > 0) then img := TObject(Integer(Params[0])) else img := nil;
+        if ((img <> nil) and (img is TfrxPictureView)) then
+        begin
+            srcDoc.DataSet.Active := true;
+            srcClient1.DataSet.Active := true;
+            srcClient2.DataSet.Active := true;
+
+{
+ST00011
+NAME = ООО "ВИД-ИНВЕСТ"
+PERSONALACC = 40702810147000002236
+BANKNAME = ОРЛОВСКОЕ ОТДЕЛЕНИЕ № 8595 ПАО СБЕРБАНК
+BIC = 045402601
+CORRESPACC = 30101810300000000601
+PAYEEINN = 5753067620
+KPP = 575301001
+LASTNAME = ИВАНОВ
+FIRSTNAME = ИВАН
+MIDDLENAME = ИВАНОВИЧ
+PAYERADDRESS = Г. ОРЕЛ, УЛ. ЛЕНИНА, Д.15 КВ.16
+SUM = 1500
+}
+
+            info := 'ST00011'
+            + #13#10'NAME=' + srcClient1.DataSet.FieldByName('NAME2').AsString
+            + #13#10'PERSONALACC=' + srcClient1.DataSet.FieldByName('RS').AsString
+            + #13#10'BANKNAME=' + srcClient1.DataSet.FieldByName('BANK').AsString
+            + #13#10'BIC=' + srcClient1.DataSet.FieldByName('BIK').AsString
+            + #13#10'CORRESPACC=' + srcClient1.DataSet.FieldByName('KS').AsString;
+            info2 := srcClient1.DataSet.FieldByName('INN').AsString;
+            p := pos('/', info2);
+            if p > 0 then begin
+              info := info + #13#10'PAYEEINN=' + trim(copy(info2, 1, p - 1));
+              info := info + #13#10'KPP=' + trim(copy(info2, p + 1, length(info2) - p));
+            end else begin
+              info := info + #13#10'PAYEEINN=' + info2;
+            end;
+            info2 := srcClient2.DataSet.FieldByName('FULLNAME').AsString;
+            n := 0;
+            while (n < 3) and (length(info2) > 0) do begin
+              p := pos(' ', info2);
+              if p > 0 then begin
+                str := trim(copy(info2, 1, p - 1));
+                info2 := copy(info2, p + 1, length(info2) - p);
+              end else begin
+                str := trim(info2);
+              end;
+              if length(str) > 0 then begin
+                inc(n);
+                if n = 1 then info := info + #13#10'LASTNAME='
+                else if n = 2 then info := info + #13#10'FIRSTNAME='
+                else if n = 3 then info := info + #13#10'MIDDLENAME=';
+                info := info + str;
+              end;
+            end;
+            info := info + #13#10'PAYERADDRESS=' + srcClient1.DataSet.FieldByName('ADRESS').AsString;
+            info := info + #13#10'SUM=' + srcDoc.DataSet.FieldByName('SUM0').AsString;
+
+            CreateQRCode(info, (img as TfrxPictureView).Picture.Bitmap);
             result := ((img as TfrxPictureView).Picture.Graphic <> nil) and not (img as TfrxPictureView).Picture.Graphic.Empty;
         end;
     except

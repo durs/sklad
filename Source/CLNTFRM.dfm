@@ -281,6 +281,7 @@ object ClientForm: TClientForm
     OnCalcTitleImage = grdClientCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
+    ExplicitTop = 82
   end
   object pnlView: TPanel
     Left = 0
@@ -297,17 +298,13 @@ object ClientForm: TClientForm
       Top = 36
       Width = 626
       Height = 274
-      ActivePage = tsSklad
+      ActivePage = tsClient
       Align = alClient
       TabOrder = 1
       OnChange = pcClientChange
       object tsClient: TTabSheet
         Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086' '#1082#1083#1080#1077#1085#1090#1077
         DragMode = dmAutomatic
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object ScrollBox1: TScrollBox
           Left = 0
           Top = 0
@@ -440,8 +437,8 @@ object ClientForm: TClientForm
             WordWrap = True
           end
           object DBEdit11: TDBEdit
-            Left = 424
-            Top = 84
+            Left = 420
+            Top = 85
             Width = 134
             Height = 21
             DataField = 'INN'
@@ -495,8 +492,8 @@ object ClientForm: TClientForm
             OnKeyDown = FormKeyDown
           end
           object DBEdit15: TDBEdit
-            Left = 125
-            Top = 140
+            Left = 124
+            Top = 139
             Width = 140
             Height = 21
             DataField = 'RS'
@@ -507,7 +504,7 @@ object ClientForm: TClientForm
           end
           object DBEdit14: TDBEdit
             Left = 469
-            Top = 112
+            Top = 113
             Width = 89
             Height = 21
             DataField = 'BIK'
@@ -621,10 +618,6 @@ object ClientForm: TClientForm
       object tsSklad: TTabSheet
         Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1089#1082#1083#1072#1076#1072
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label6: TLabel
           Left = 32
           Top = 24
@@ -652,10 +645,6 @@ object ClientForm: TClientForm
           TabOrder = 0
           object tsOptions: TTabSheet
             Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object Label43: TLabel
               Left = 272
               Top = 60
@@ -779,10 +768,6 @@ object ClientForm: TClientForm
           object TabSheet1: TTabSheet
             Caption = #1053#1091#1084#1077#1088#1072#1094#1080#1103
             ImageIndex = 4
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object Label8: TLabel
               Left = 71
               Top = 37
@@ -931,10 +916,6 @@ object ClientForm: TClientForm
           object tsPrice: TTabSheet
             Caption = #1062#1077#1085#1099
             ImageIndex = 1
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object GroupBox2: TGroupBox
               Left = 8
               Top = 3
@@ -1312,10 +1293,6 @@ object ClientForm: TClientForm
           object tsReport: TTabSheet
             Caption = #1054#1090#1095#1077#1090#1099
             ImageIndex = 2
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object ScrollBox2: TScrollBox
               Left = 0
               Top = 0
@@ -1462,10 +1439,6 @@ object ClientForm: TClientForm
           object tsLogo: TTabSheet
             Caption = #1051#1086#1075#1086#1090#1080#1087
             ImageIndex = 3
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object pnlImage: TPanel
               Left = 0
               Top = 0
@@ -1480,10 +1453,6 @@ object ClientForm: TClientForm
           object tsStamp: TTabSheet
             Caption = #1064#1090#1072#1084#1087
             ImageIndex = 6
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object pnlStamp: TPanel
               Left = 0
               Top = 0
@@ -1498,10 +1467,6 @@ object ClientForm: TClientForm
           object tsOffice: TTabSheet
             Caption = #1060#1080#1083#1080#1072#1083
             ImageIndex = 5
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object Label21: TLabel
               Left = 39
               Top = 48

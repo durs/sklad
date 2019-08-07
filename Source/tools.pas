@@ -1,17 +1,17 @@
 unit tools;
 interface
 uses
-    Windows, Messages, SysUtils, Classes, Controls, Forms,
+    Windows, Messages, SysUtils, Classes, Controls, Forms, Graphics,
     IBCustomDataSet, IBQuery, IBStoredProc;
 
 procedure DebitCorrect;
 procedure OstatokCorrect;
 procedure OstatokChangePrice(clientid:integer);
-function OstatokCreateDoc(clientid:integer):integer;
-
+function OstatokCreateDoc(clientid:integer): integer;
+function CreateQRCode(const text: string; bmp: TBitmap = nil): TBitmap;
 
 implementation
-uses dataunit,paramfrm;
+uses dataunit, paramfrm, DelphiZXingQRCode;
 
 procedure DebitCorrect;
 begin
@@ -94,5 +94,37 @@ begin
         Destroy;
     end;
 end;
+
+function CreateQRCode(const text: string; bmp: TBitmap = nil): TBitmap;
+var
+  QRCode: TDelphiZXingQRCode;
+  Row, Column: Integer;
+begin
+  if bmp = nil then bmp := TBitmap.Create;
+  Result := bmp;
+  QRCode := TDelphiZXingQRCode.Create;
+  try
+    QRCode.Data := text;
+    QRCode.Encoding := qrAuto;
+    QRCode.QuietZone := 4;
+    bmp.SetSize(QRCode.Rows, QRCode.Columns);
+    for Row := 0 to QRCode.Rows - 1 do
+    begin
+      for Column := 0 to QRCode.Columns - 1 do
+      begin
+        if (QRCode.IsBlack[Row, Column]) then
+        begin
+          bmp.Canvas.Pixels[Column, Row] := clBlack;
+        end else
+        begin
+          bmp.Canvas.Pixels[Column, Row] := clWhite;
+        end;
+      end;
+    end;
+  finally
+    QRCode.Free;
+  end;
+end;
+
 
 end.
