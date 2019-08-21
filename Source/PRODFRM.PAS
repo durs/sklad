@@ -515,7 +515,7 @@ begin
         qryProductPRODID.AsInteger:=Data.GenID('GEN_PRODID');
         qryProductDIM.AsString:='רע';
         qryProductUNIT.AsFloat:=1;
-        qryProductNDS.AsFloat:=18;
+        qryProductNDS.AsFloat:=20;
         qryProductWCNT.AsInteger:=1;
         qryProductKIND.AsInteger:=1;
         qryProductSERTIFICAT.AsVariant:=null;

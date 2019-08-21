@@ -732,7 +732,6 @@ object ProductForm: TProductForm
     OnCalcTitleImage = grdProductCalcTitleImage
     TitleImageList = Data.imgTitle
     PadColumnStyle = pcsPlain
-    ExplicitTop = 87
   end
   object srcProduct: TDataSource
     DataSet = qryProduct
