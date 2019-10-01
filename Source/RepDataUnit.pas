@@ -332,10 +332,18 @@ end;
 
 function TRepData.repUserFunction(const MethodName: String;
   var Params: Variant): Variant;
+const
+  qr_enln = '|';
 var
     p, n, pcnt, no: integer;
     img: TObject;
     str, info, info2: string;
+
+function qr_corr(const tok: string): string;
+  begin
+    result := trim(StringReplace(tok, qr_enln, ' ', [rfReplaceAll]));
+  end;
+
 begin
     result := Unassigned;
     pcnt := 0;
@@ -453,18 +461,20 @@ SUM = 1500
 }
 
             info := 'ST00011'
-            + #13#10'NAME=' + srcClient1.DataSet.FieldByName('NAME2').AsString
-            + #13#10'PERSONALACC=' + srcClient1.DataSet.FieldByName('RS').AsString
-            + #13#10'BANKNAME=' + srcClient1.DataSet.FieldByName('BANK').AsString
-            + #13#10'BIC=' + srcClient1.DataSet.FieldByName('BIK').AsString
-            + #13#10'CORRESPACC=' + srcClient1.DataSet.FieldByName('KS').AsString;
+            + qr_enln + 'Name=' + qr_corr(srcClient1.DataSet.FieldByName('NAME2').AsString)
+            + qr_enln + 'PersonalAcc=' + qr_corr(srcClient1.DataSet.FieldByName('RS').AsString)
+            + qr_enln + 'BankName=' + qr_corr(srcClient1.DataSet.FieldByName('BANK').AsString)
+            + qr_enln + 'BIC=' + qr_corr(srcClient1.DataSet.FieldByName('BIK').AsString)
+            + qr_enln + 'CorrespAcc=' + qr_corr(srcClient1.DataSet.FieldByName('KS').AsString)
+            + qr_enln + 'Sum=' + qr_corr(srcDoc.DataSet.FieldByName('SUM0').AsString);
+
             info2 := srcClient1.DataSet.FieldByName('INN').AsString;
             p := pos('/', info2);
             if p > 0 then begin
-              info := info + #13#10'PAYEEINN=' + trim(copy(info2, 1, p - 1));
-              info := info + #13#10'KPP=' + trim(copy(info2, p + 1, length(info2) - p));
+              info := info + qr_enln + 'PayeeINN=' + qr_corr(copy(info2, 1, p - 1));
+              info := info + qr_enln + 'KPP=' + qr_corr(copy(info2, p + 1, length(info2) - p));
             end else begin
-              info := info + #13#10'PAYEEINN=' + info2;
+              info := info + qr_enln + 'PayeeINN=' + qr_corr(info2);
             end;
             info2 := srcClient2.DataSet.FieldByName('FULLNAME').AsString;
             n := 0;
@@ -478,15 +488,16 @@ SUM = 1500
               end;
               if length(str) > 0 then begin
                 inc(n);
-                if n = 1 then info := info + #13#10'LASTNAME='
-                else if n = 2 then info := info + #13#10'FIRSTNAME='
-                else if n = 3 then info := info + #13#10'MIDDLENAME=';
-                info := info + str;
+                if n = 1 then info := info + qr_enln + 'LastName='
+                else if n = 2 then info := info + qr_enln + 'FirstName='
+                else if n = 3 then info := info + qr_enln + 'MiddleName=';
+                info := info + qr_corr(str);
               end;
             end;
-            info := info + #13#10'PAYERADDRESS=' + srcClient1.DataSet.FieldByName('ADRESS').AsString;
-            info := info + #13#10'SUM=' + srcDoc.DataSet.FieldByName('SUM0').AsString;
-
+            str := srcClient1.DataSet.FieldByName('ADRESS').AsString;
+            if length(str) > 0 then begin
+              info := info + qr_enln + 'PayerAddress=' + qr_corr(str);
+            end;
             CreateQRCode(info, (img as TfrxPictureView).Picture.Bitmap);
             result := ((img as TfrxPictureView).Picture.Graphic <> nil) and not (img as TfrxPictureView).Picture.Graphic.Empty;
         end;

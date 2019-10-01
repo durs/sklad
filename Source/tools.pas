@@ -11,7 +11,7 @@ function OstatokCreateDoc(clientid:integer): integer;
 function CreateQRCode(const text: string; bmp: TBitmap = nil): TBitmap;
 
 implementation
-uses dataunit, paramfrm, DelphiZXingQRCode;
+uses dataunit, paramfrm, DelphiZXingQRCode, QR_Win1251;
 
 procedure DebitCorrect;
 begin
@@ -104,9 +104,10 @@ begin
   Result := bmp;
   QRCode := TDelphiZXingQRCode.Create;
   try
-    QRCode.Data := text;
-    QRCode.Encoding := qrAuto;
+    QRCode.RegisterEncoder(ENCODING_WIN1251, TWin1251Encoder);
+    QRCode.Encoding := ENCODING_WIN1251;
     QRCode.QuietZone := 4;
+    QRCode.Data := text;
     bmp.SetSize(QRCode.Rows, QRCode.Columns);
     for Row := 0 to QRCode.Rows - 1 do
     begin
