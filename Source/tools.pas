@@ -105,7 +105,7 @@ begin
   QRCode := TDelphiZXingQRCode.Create;
   try
     QRCode.RegisterEncoder(ENCODING_WIN1251, TWin1251Encoder);
-    QRCode.Encoding := ENCODING_WIN1251;
+    QRCode.Encoding := ENCODING_WIN1251; //ENCODING_UTF8_NOBOM;
     QRCode.QuietZone := 4;
     QRCode.Data := text;
     bmp.SetSize(QRCode.Rows, QRCode.Columns);

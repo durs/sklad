@@ -366,10 +366,10 @@ begin
     result := h <> 0;
     if (not result) then begin
         MessageBox(0,
-            'В системе не найден Interbase клиент! '+
-            'Пожалуйста установите Interbase/Firebird server 6.0 или выше'#13#10+
-            'При работе в сети достаточно установить Interbase клиент. '#13#10+
-            'Последние версии дистрибутивов и информацию можно найти на сайте "http:\\www.ibase.ru". ', msgInfo, MB_ICONEXCLAMATION + MB_OK);
+            'В системе не найдена библиотека Firebird клиента! '+
+            'Пожалуйста установите Firebird server 1.5.6 (другие версии не подходят)'#13#10+
+            'При работе с серверм в сети, достаточно установить Firebird клиент. '#13#10+
+            'Ссылку на дистрибутив можно поучить в разделе новостей". ', msgInfo, MB_ICONEXCLAMATION + MB_OK);
         exit;
     end;
     FreeLibrary(h);

@@ -444,29 +444,23 @@ begin
             srcClient1.DataSet.Active := true;
             srcClient2.DataSet.Active := true;
 
-{
-ST00011
-NAME = ООО "ВИД-ИНВЕСТ"
-PERSONALACC = 40702810147000002236
-BANKNAME = ОРЛОВСКОЕ ОТДЕЛЕНИЕ № 8595 ПАО СБЕРБАНК
-BIC = 045402601
-CORRESPACC = 30101810300000000601
-PAYEEINN = 5753067620
-KPP = 575301001
-LASTNAME = ИВАНОВ
-FIRSTNAME = ИВАН
-MIDDLENAME = ИВАНОВИЧ
-PAYERADDRESS = Г. ОРЕЛ, УЛ. ЛЕНИНА, Д.15 КВ.16
-SUM = 1500
-}
-
             info := 'ST00011'
             + qr_enln + 'Name=' + qr_corr(srcClient1.DataSet.FieldByName('NAME2').AsString)
             + qr_enln + 'PersonalAcc=' + qr_corr(srcClient1.DataSet.FieldByName('RS').AsString)
             + qr_enln + 'BankName=' + qr_corr(srcClient1.DataSet.FieldByName('BANK').AsString)
             + qr_enln + 'BIC=' + qr_corr(srcClient1.DataSet.FieldByName('BIK').AsString)
             + qr_enln + 'CorrespAcc=' + qr_corr(srcClient1.DataSet.FieldByName('KS').AsString)
-            + qr_enln + 'Sum=' + qr_corr(srcDoc.DataSet.FieldByName('SUM0').AsString);
+            + qr_enln + 'Sum=' + qr_corr(IntToStr(round(srcDoc.DataSet.FieldByName('SUM0').AsFloat * 100)))
+            ;
+
+            case srcDoc.DataSet.FieldByName('KIND').AsInteger of
+            docProduct: info := info + qr_enln + 'Purpose=Оплата по накладной №'
+              + srcDoc.DataSet.FieldByName('DOCNO').AsString
+              + ' от ' + srcDoc.DataSet.FieldByName('DATE1').AsString;
+            docQuery: info := info + qr_enln + 'Purpose=Оплата по счёту №'
+              + srcDoc.DataSet.FieldByName('DOCNO').AsString
+              + ' от ' + srcDoc.DataSet.FieldByName('DATE1').AsString;
+            end;
 
             info2 := srcClient1.DataSet.FieldByName('INN').AsString;
             p := pos('/', info2);
