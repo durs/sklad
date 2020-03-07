@@ -1,12 +1,15 @@
 /Archive
 /Source/__history
 /Source/Obj
+/Database/*
 *.dcu
 *.~*~
 *.local
 *.identcache
 *.drc
 *.map
+*.dsk
+*.~dsk
 Sklad.exe
 Sklad.cfg
 gds32.dll
