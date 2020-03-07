@@ -318,7 +318,8 @@ var
     FormatNum, FormatCur, FormatPer, FormatInt: string;
     FormatNum2: string = '#0.####';
     FormatEditCur: string = '#0.####';
-    UseColorSelection: boolean;
+    UseAnyPrice: boolean = false;
+    UseColorSelection: boolean = true;
     UseNalog: boolean = false;
     UseCachedUpdates: boolean = true;
     clNameField, clCountField, clPriceField,

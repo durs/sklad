@@ -7,3 +7,6 @@
 *.identcache
 *.drc
 *.map
+Sklad.exe
+Sklad.cfg
+gds32.dll

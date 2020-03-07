@@ -72,7 +72,6 @@ begin
     if y < 2014 then y:=2014;
     lbInfo.Caption := Format(
       'Yuri Dursin (C) 1998-%d Версия %s'#10#13+
-      'e-mail: dy@hotbox.ru   icq: 125021926'#10#13+
       'http://durs.github.io/sklad',
       [y, AppVersion])
   except

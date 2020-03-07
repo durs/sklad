@@ -4,8 +4,8 @@ object OptionsForm: TOptionsForm
   ActiveControl = Inspector
   BorderStyle = bsSizeToolWin
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072
-  ClientHeight = 326
-  ClientWidth = 495
+  ClientHeight = 423
+  ClientWidth = 749
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,13 +20,15 @@ object OptionsForm: TOptionsForm
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
-    Left = 388
+    Left = 642
     Top = 0
     Width = 107
-    Height = 326
+    Height = 423
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitLeft = 388
+    ExplicitHeight = 326
     object btnSave: TButton
       Left = 13
       Top = 112
@@ -78,8 +80,8 @@ object OptionsForm: TOptionsForm
   object Inspector: TwwDataInspector
     Left = 0
     Top = 0
-    Width = 388
-    Height = 326
+    Width = 642
+    Height = 423
     DisableThemes = False
     Align = alClient
     TabOrder = 1
@@ -91,7 +93,7 @@ object OptionsForm: TOptionsForm
         Items = <
           item
             Caption = #1041#1072#1079#1099' '#1076#1072#1085#1085#1099#1093
-            CellHeight = 48
+            CellHeight = 69
             CustomControl = edtMemo
             CustomControlAlwaysPaints = False
             Resizeable = True
@@ -135,6 +137,7 @@ object OptionsForm: TOptionsForm
           end>
         TagString = 'general'
         WordWrap = True
+        Enabled = False
       end
       item
         Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
@@ -146,18 +149,9 @@ object OptionsForm: TOptionsForm
             WordWrap = False
           end
           item
-            Caption = #1055#1088#1077#1076#1074#1072#1088#1080#1090#1077#1083#1100#1085#1099#1081' '#1087#1088#1086#1089#1084#1086#1090#1088' '#1086#1090#1095#1077#1090#1086#1074
-            PickList.Items.Strings = (
-              '1'
-              '0')
-            PickList.DisplayAsCheckbox = True
-            TagString = 'preview'
-            WordWrap = True
-          end
-          item
-            Caption = #1042#1088#1077#1084#1103' '#1093#1088#1072#1085#1077#1085#1080#1103' '#1092#1086#1088#1084' '#1074' '#1082#1077#1096#1077
-            TagString = 'destroytimeout'
-            WordWrap = True
+            Caption = #1052#1077#1089#1090#1086#1087#1086#1083#1086#1078#1077#1085#1080#1077' IB Console'
+            TagString = 'ibconsole'
+            WordWrap = False
           end
           item
             Caption = #1056#1072#1089#1096#1080#1088#1077#1085#1085#1099#1077' '#1092#1091#1085#1082#1094#1080#1080
@@ -169,31 +163,31 @@ object OptionsForm: TOptionsForm
             WordWrap = False
           end
           item
-            Caption = #1052#1077#1089#1090#1086#1087#1086#1083#1086#1078#1077#1085#1080#1077' IB Console'
-            TagString = 'ibconsole'
-            WordWrap = False
+            Caption = #1042#1088#1077#1084#1103' '#1093#1088#1072#1085#1077#1085#1080#1103' '#1092#1086#1088#1084' '#1074' '#1082#1077#1096#1077
+            TagString = 'destroytimeout'
+            WordWrap = True
           end
           item
-            Caption = #1057#1090#1072#1088#1099#1077' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081
+            Caption = #1055#1088#1077#1076#1074#1072#1088#1080#1090#1077#1083#1100#1085#1099#1081' '#1087#1088#1086#1089#1084#1086#1090#1088' '#1086#1090#1095#1077#1090#1086#1074
             PickList.Items.Strings = (
               '1'
               '0')
             PickList.DisplayAsCheckbox = True
-            TagString = 'transold'
-            WordWrap = False
+            TagString = 'preview'
+            WordWrap = True
           end
           item
-            Caption = #1050#1101#1096#1080#1088#1086#1074#1072#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
+            Caption = #1062#1077#1085#1072' '#1085#1080#1078#1077' '#1087#1088#1080#1093#1086#1076#1085#1086#1081
             PickList.Items.Strings = (
               '1'
               '0')
             PickList.DisplayAsCheckbox = True
-            Visible = False
-            TagString = 'cachedupdates'
+            TagString = 'anyprice'
             WordWrap = False
           end>
         TagString = 'options'
         WordWrap = True
+        Enabled = False
       end
       item
         Caption = #1054#1092#1086#1088#1084#1083#1077#1085#1080#1077
@@ -358,14 +352,40 @@ object OptionsForm: TOptionsForm
           end>
         TagString = 'view'
         WordWrap = True
+        Enabled = False
       end
       item
         Caption = #1060#1086#1088#1084#1099
         ReadOnly = True
         TagString = 'forms'
         WordWrap = True
+        Enabled = False
+      end
+      item
+        Caption = #1057#1090#1072#1088#1086#1077
+        Items = <
+          item
+            Caption = #1050#1101#1096#1080#1088#1086#1074#1072#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1103
+            PickList.Items.Strings = (
+              '1'
+              '0')
+            PickList.DisplayAsCheckbox = True
+            TagString = 'cachedupdates'
+            WordWrap = False
+          end
+          item
+            Caption = #1057#1090#1072#1088#1099#1077' '#1087#1072#1088#1072#1084#1077#1090#1088#1099' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081
+            PickList.Items.Strings = (
+              '1'
+              '0')
+            PickList.DisplayAsCheckbox = True
+            TagString = 'transold'
+            WordWrap = False
+          end>
+        Visible = False
+        WordWrap = False
       end>
-    CaptionWidth = 192
+    CaptionWidth = 244
     Options = [ovColumnResize, ovRowResize, ovEnterToTab, ovHighlightActiveRow, ovCenterCaptionVert]
     CaptionFont.Charset = DEFAULT_CHARSET
     CaptionFont.Color = clWindowText
@@ -373,7 +393,7 @@ object OptionsForm: TOptionsForm
     CaptionFont.Name = 'MS Sans Serif'
     CaptionFont.Style = []
     OnAfterSelectCell = InspectorAfterSelectCell
-    ExplicitLeft = 6
+    ExplicitHeight = 376
     object edtMemo: TwwDBRichEdit
       Left = 192
       Top = 16

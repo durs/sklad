@@ -200,6 +200,7 @@ begin
             PreviewReports:=CurrentConfig.getBoolean('options.preview');
             DestroyTime:=CurrentConfig.getInteger('options.destroytimeout', 0);
             UseCachedUpdates:=CurrentConfig.getBoolean('options.cachedupdates', true);
+            UseAnyPrice:=CurrentConfig.getBoolean('options.anyprice', false);
             //read formats
             FormatCur:=CurrentConfig.getString('view.format.cur');
             FormatNum:=CurrentConfig.getString('view.format.num');

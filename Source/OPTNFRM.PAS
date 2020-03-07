@@ -31,7 +31,7 @@ type
       ObjItem: TwwInspectorItem);
     procedure getColor(Sender: TwwDataInspector; Item: TwwInspectorItem);
   private
-    function getInspectorItem(id:string; Items:TwwInspectorCollection; append:boolean=true):TwwInspectorItem;
+    function getInspectorItem(id:string; Items:TwwInspectorCollection):TwwInspectorItem;
     procedure readInspectorItems(Items:TwwInspectorCollection);
     procedure writeInspectorItems(items:TwwInspectorCollection; id:string='');
   public
@@ -52,7 +52,7 @@ begin
         key:='queries.query'+IntToStr(i);
         text:=CurrentConfig.getString(key);
         if text='' then break;
-        with getInspectorItem(key+'.sql',Inspector.Items,true) do begin
+        with getInspectorItem(key+'.sql',Inspector.Items) do begin
             WordWrap:=false;
             CustomControlAlwaysPaints:=false;
             CustomControl:=edtMemo;
@@ -70,15 +70,19 @@ begin
   //
 end;
 
-function TOptionsForm.getInspectorItem(id:string; items:TwwInspectorCollection; append:boolean=true):TwwInspectorItem;
+function TOptionsForm.getInspectorItem(id:string; items:TwwInspectorCollection):TwwInspectorItem;
 var
   index,i:integer;
   str:pchar;
   key:string;
+  append:boolean;
+  first:boolean;
 begin
   index:=1;
   str:=pchar(id);
   result:=nil;
+  first:=true;
+  append:=false;
   while index>0 do begin
     index:=pos('.',str);
     if index>0 then begin
@@ -86,6 +90,10 @@ begin
       str:=@(str[index]);
     end else begin
       key:=str;
+    end;
+    if first then begin
+      first := false;
+      if key = 'forms' then append := true;
     end;
     if result<>nil then items:=result.items;
     result:=nil;
@@ -115,7 +123,10 @@ begin
   for i:=0 to CurrentConfig.Items.count-1 do begin
     id:=CurrentConfig.Items.Names[i];
     item:=getInspectorItem(id,Items);
-    if item.tag>0 then item.EditText:=CurrentConfig.getMem(id) else item.EditText:=CurrentConfig.getString(id);
+    if item<>nil then begin
+      if item.tag>0 then item.EditText:=CurrentConfig.getMem(id)
+      else item.EditText:=CurrentConfig.getString(id);
+    end;
   end;
 end;
 

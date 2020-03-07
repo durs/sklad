@@ -472,7 +472,7 @@ begin
     rec_status := TStringList.Create;
     inherited;
     SetIsQuery(false);
-    
+
     //init objects
     DBLookup := TDyDBLookup.Create(Data.QuoteChar);
     DBLookup.Style := DBLookup.Style + [lsSQLFilter];
@@ -2326,22 +2326,10 @@ begin
         end;
 
         // test price on grater in price (17.01.2002)
-        X := qryRecINPRICE.Value;
-        if (X <> 0) and (qryRecPRICE.Value < X) then qryRecPRICE.Value := X;
-
-        // calculate new price
-        {
-        X := qryRecPRICE.Value;
-        if (DocParams and dpVozvrat = 0) then begin
-            X := FloatAddPer(X, PricePercent);
-
-            // add nalog to price (17.01.2002)
-            if (NewParams and dpNalogInPrice <> 0) and (NewNalog <> 0) then X := FloatAddPer(X, NewNalog);
+        if not UseAnyPrice then begin
+          X := qryRecINPRICE.Value;
+          if (X <> 0) and (qryRecPRICE.Value < X) then qryRecPRICE.Value := X;
         end;
-        if (PriceParam = -1) then qryRecNEWPRICE.Clear
-        else if (PriceParam = 0) or ((PriceParam = 1) and (qryRecNEWPRICE.Value < qryRecPRICE.Value))
-        then qryRecNEWPRICE.Value := Ceil(X * PriceRoundKoef) / PriceRoundKoef;
-        }
 
         // calculate new price
         if (PriceParam = -1) then qryRecNEWPRICE.Clear
