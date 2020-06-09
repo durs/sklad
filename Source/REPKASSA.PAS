@@ -104,12 +104,20 @@ begin
     if VarIsNull(sum) then
     try
         date2 := Trunc(qry.Params.Items[1].AsFloat);
-        DecodeDate(date2, y, m, d);
-        date1 := EncodeDate(y, 1, 1);
 
         qrySum.Params.Items[0].Assign(qry.Params.Items[0]);
-        qrySum.Params.Items[1].AsDateTime := date1;
-        qrySum.Params.Items[2].AsDateTime := date2;
+        qrySum.Params.Items[1].AsDateTime := date2;
+
+        // ----------------------------------------------
+        // corrected 2020-06-09
+        // prev sql where contains: and date1 >= :date1
+        // ----------------------------------------------
+        // DecodeDate(date2, y, m, d);
+        // date1 := EncodeDate(y, 1, 1);
+        // qrySum.Params.Items[1].AsDateTime := date1;
+        // qrySum.Params.Items[2].AsDateTime := date2;
+        // ----------------------------------------------
+
         qrySum.Active := true;
         sum := -qrySum.Fields.Fields[0].AsFloat;
     finally
