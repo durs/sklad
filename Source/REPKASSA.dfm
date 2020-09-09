@@ -36,15 +36,28 @@ object ReportKassa: TReportKassa
     100.000000000000000000
     0.000000000000000000)
   PrinterSettings.Copies = 1
+  PrinterSettings.OutputBin = Auto
   PrinterSettings.Duplex = False
   PrinterSettings.FirstPage = 0
   PrinterSettings.LastPage = 0
-  PrinterSettings.OutputBin = Auto
+  PrinterSettings.UseStandardprinter = False
+  PrinterSettings.UseCustomBinCode = False
+  PrinterSettings.CustomBinCode = 0
+  PrinterSettings.ExtendedDuplex = 0
+  PrinterSettings.UseCustomPaperCode = False
+  PrinterSettings.CustomPaperCode = 0
+  PrinterSettings.PrintMetaFile = False
+  PrinterSettings.PrintQuality = 0
+  PrinterSettings.Collate = 0
+  PrinterSettings.ColorOption = 0
   PrintIfEmpty = True
   ReportTitle = #1054#1090#1095#1077#1090' '#1087#1086' '#1082#1072#1089#1089#1077
   SnapToGrid = True
   Units = MM
   Zoom = 100
+  PrevFormStyle = fsNormal
+  PreviewInitialState = wsNormal
+  PrevInitialZoom = qrZoomToFit
   object bandPageHeader: TQRBand
     Left = 38
     Top = 38
@@ -58,6 +71,7 @@ object ReportKassa: TReportKassa
     AlignToBottom = False
     BeforePrint = bandPageHeaderBeforePrint
     Color = clWhite
+    TransparentBand = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -69,6 +83,8 @@ object ReportKassa: TReportKassa
     Size.Values = (
       47.625000000000000000
       1899.708333333333000000)
+    PreCaluculateBandHeight = False
+    KeepOnOnePage = False
     BandType = rbPageHeader
     object lbPage: TQRExpr
       Left = 168
@@ -117,6 +133,7 @@ object ReportKassa: TReportKassa
     AlignToBottom = False
     BeforePrint = bandSubDetailBeforePrint
     Color = clWhite
+    TransparentBand = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -128,6 +145,8 @@ object ReportKassa: TReportKassa
     Size.Values = (
       44.979166666666670000
       1899.708333333333000000)
+    PreCaluculateBandHeight = False
+    KeepOnOnePage = False
     Master = Owner
     DataSet = qry
     FooterBand = bandFooter
@@ -151,6 +170,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape17: TQRShape
       Left = 426
@@ -169,6 +189,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape19: TQRShape
       Left = 492
@@ -187,6 +208,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape21: TQRShape
       Left = 605
@@ -205,6 +227,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape2: TQRShape
       Left = 23
@@ -223,6 +246,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRDBText1: TQRDBText
       Left = 29
@@ -395,6 +419,7 @@ object ReportKassa: TReportKassa
     AlignToBottom = False
     BeforePrint = bandHeaderBeforePrint
     Color = clWhite
+    TransparentBand = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -406,6 +431,8 @@ object ReportKassa: TReportKassa
     Size.Values = (
       298.979166666666700000
       1899.708333333333000000)
+    PreCaluculateBandHeight = False
+    KeepOnOnePage = False
     object imgLogo: TQRImage
       Left = 16
       Top = 2
@@ -499,7 +526,7 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        60.854166666666680000
+        60.854166666666670000
         1537.229166666667000000
         2.645833333333333000
         235.479166666666700000)
@@ -532,8 +559,8 @@ object ReportKassa: TReportKassa
       Size.Values = (
         37.041666666666670000
         1613.958333333333000000
-        68.791666666666680000
-        92.604166666666680000)
+        68.791666666666670000
+        92.604166666666670000)
       Alignment = taCenter
       AlignToBand = False
       AutoSize = True
@@ -561,8 +588,8 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
-        42.333333333333340000
+        42.333333333333330000
+        42.333333333333330000
         230.187500000000000000
         224.895833333333300000)
       Alignment = taLeftJustify
@@ -592,7 +619,7 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
+        42.333333333333330000
         635.000000000000000000
         230.187500000000000000
         113.770833333333300000)
@@ -626,6 +653,7 @@ object ReportKassa: TReportKassa
     AlignToBottom = False
     BeforePrint = bandFooterBeforePrint
     Color = clWhite
+    TransparentBand = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -637,6 +665,8 @@ object ReportKassa: TReportKassa
     Size.Values = (
       455.083333333333300000
       1899.708333333333000000)
+    PreCaluculateBandHeight = False
+    KeepOnOnePage = False
     BandType = rbGroupFooter
     object QRLabel18: TQRLabel
       Left = 16
@@ -649,9 +679,9 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
-        42.333333333333340000
-        18.520833333333340000
+        42.333333333333330000
+        42.333333333333330000
+        18.520833333333330000
         100.541666666666700000)
       Alignment = taLeftJustify
       AlignToBand = False
@@ -680,9 +710,9 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
-        42.333333333333340000
-        82.020833333333340000
+        42.333333333333330000
+        42.333333333333330000
+        82.020833333333330000
         224.895833333333300000)
       Alignment = taLeftJustify
       AlignToBand = False
@@ -711,9 +741,9 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
+        42.333333333333330000
         635.000000000000000000
-        82.020833333333340000
+        82.020833333333330000
         113.770833333333300000)
       Alignment = taLeftJustify
       AlignToBand = False
@@ -772,6 +802,7 @@ object ReportKassa: TReportKassa
         394.229166666667000000
         1505.479166666670000000)
       Shape = qrsHorLine
+      VertAdjust = 0
     end
     object QRLabel7: TQRLabel
       Left = 16
@@ -785,8 +816,8 @@ object ReportKassa: TReportKassa
       Frame.DrawRight = False
       Size.Values = (
         47.625000000000000000
-        42.333333333333340000
-        359.833333333333400000
+        42.333333333333330000
+        359.833333333333300000
         283.104166666666700000)
       Alignment = taRightJustify
       AlignToBand = False
@@ -839,6 +870,7 @@ object ReportKassa: TReportKassa
         243.416666666667000000
         1674.812500000000000000)
       Shape = qrsHorLine
+      VertAdjust = 0
     end
     object QRLabel5: TQRLabel
       Left = 16
@@ -852,7 +884,7 @@ object ReportKassa: TReportKassa
       Frame.DrawRight = False
       Size.Values = (
         47.625000000000000000
-        42.333333333333340000
+        42.333333333333330000
         209.020833333333300000
         108.479166666666700000)
       Alignment = taRightJustify
@@ -876,8 +908,8 @@ object ReportKassa: TReportKassa
       Frame.DrawLeft = False
       Frame.DrawRight = False
       Size.Values = (
-        42.333333333333340000
-        42.333333333333340000
+        42.333333333333330000
+        42.333333333333330000
         293.687500000000000000
         161.395833333333300000)
       Alignment = taLeftJustify
@@ -969,11 +1001,14 @@ object ReportKassa: TReportKassa
     Frame.DrawRight = True
     AlignToBottom = False
     Color = clWhite
+    TransparentBand = False
     ForceNewColumn = False
     ForceNewPage = False
     Size.Values = (
       105.833333333333300000
       1899.708333333333000000)
+    PreCaluculateBandHeight = False
+    KeepOnOnePage = False
     ParentBand = bandHeader
     object QRLabel1: TQRLabel
       Left = 3
@@ -1178,6 +1213,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape29: TQRShape
       Left = 492
@@ -1196,6 +1232,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape32: TQRShape
       Left = 426
@@ -1214,6 +1251,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape37: TQRShape
       Left = 239
@@ -1232,6 +1270,7 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
     object QRShape1: TQRShape
       Left = 23
@@ -1250,13 +1289,12 @@ object ReportKassa: TReportKassa
         13.229166666666700000)
       Brush.Color = clInfoBk
       Shape = qrsVertLine
+      VertAdjust = 0
     end
   end
   object qry: TIBQuery
     Database = Data.db
     Transaction = Data.trDefault
-    BufferChunks = 1000
-    CachedUpdates = False
     SQL.Strings = (
       'select '
       'doc.date1, 1 kind, doc.docno,'
@@ -1318,12 +1356,10 @@ object ReportKassa: TReportKassa
   object qrySum: TIBQuery
     Database = Data.db
     Transaction = Data.trDefault
-    BufferChunks = 1000
-    CachedUpdates = False
     SQL.Strings = (
       'select sum(sum0) from doc'
       'where doc.clientid1 = :clientid and kind = 2 and skind = 2 '
-      'and date1 >= :date1 and date1 < :date2'
+      'and date1 < :date2'
       '')
     Left = 56
     Top = 8
@@ -1331,11 +1367,6 @@ object ReportKassa: TReportKassa
       item
         DataType = ftUnknown
         Name = 'clientid'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftDateTime
-        Name = 'date1'
         ParamType = ptUnknown
       end
       item
