@@ -367,6 +367,8 @@
 			qry.unit, qry.cnt, qry.cnt * qry.unit allcnt, 
 			qry.inprice, qry.outprice,
 			qry.inprice * qry.unit * qry.cnt ostsum,
+            (qry.inprice * 100 / (100 + product.nds)) * qry.unit * qry.cnt ndsnosum,
+            product.nds,
 			get_doc_name(doc.kind, doc.skind, doc.docno, doc.date1, doc.sum0) doc
 			from query_ostatok2(:clientid, null, null, :date2) qry
 			left join doc on doc.docid = qry.indocid
@@ -390,6 +392,8 @@
 		<field name="INPRICE" label="Ïðèõîäíàÿ öåíà" width="15" format="0.00"/>
 		<field name="OUTPRICE" label="Öåíà ðåàëèçàöèè" width="15" format="0.00"/>
 		<field name="OSTSUM" label="Íà ñóììó" width="15" format="0.00"/>
+		<field name="NDSNOSUM" label="Ñóììà áåç ÍÄÑ" width="15" format="0.00"/>
+		<field name="NDS" label="Ñòàâêà ÍÄÑ" width="10" format="0.#"/>
 		<field name="DOC" label="Îñíîâàíèå" width="40"/>
 		<chart><![CDATA[TPF0TDBChartChart10Left\0Top–\0Width¼HeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightóTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Ð“Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¾Ðµ Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑƒÑ‚ÑÑ‚Ð²ÑƒÐµÑ‚\0AxisVisible\rFrame.VisibleView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
 </queries>
