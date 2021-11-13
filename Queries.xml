@@ -396,4 +396,40 @@
 		<field name="NDS" label="Ñòàâêà ÍÄÑ" width="10" format="0.#"/>
 		<field name="DOC" label="Îñíîâàíèå" width="40"/>
 		<chart><![CDATA[TPF0TDBChartChart10Left\0Top–\0Width¼HeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightóTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Ð“Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¾Ðµ Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑƒÑ‚ÑÑ‚Ð²ÑƒÐµÑ‚\0AxisVisible\rFrame.VisibleView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
+ 	<query label="Îñòàòîê òîâàðà (c ãðóïïèðîâêîé)" summary="ALLCNT;OSTSUM;">
+		<sql>
+			select 		
+			class.name class, produser.name produser, product.name,
+			get_product_name(product.name, class.smallname, produser.smallname, product.len) product,
+			qry.unit, sum(qry.cnt) cnt, sum(qry.cnt * qry.unit) allcnt, 
+			avg(qry.inprice) inprice, max(qry.outprice) outprice,
+			sum(qry.inprice * qry.unit * qry.cnt) ostsum,
+            sum((qry.inprice * 100 / (100 + product.nds)) * qry.unit * qry.cnt) ndsnosum,
+            max(product.nds) nds
+			from query_ostatok2(:clientid, null, null, :date2) qry
+			left join doc on doc.docid = qry.indocid
+			left join product on product.prodid = qry.prodid
+			left join class on class.classid = product.classid
+			left join produser on produser.produserid = product.produserid
+			where (cnt &lt; -0.00001 OR cnt &gt; 0.00001)
+			/*$if clientid1*/ and doc.clientid1=:clientid1 /*$endif*/
+			/*$if prodid*/ and qry.prodid=:prodid /*$endif*/
+			/*$if classid*/ and product.classid=:classid /*$endif*/
+			/*$if produserid*/ and product.produserid=:produserid /*$endif*/
+            group by 1, 2, 3, 4, 5
+			order by 1, 2, 3
+		</sql>
+		<field name="NAME" visible="0"/>
+		<field name="CLASS" visible="0"/>
+		<field name="PRODUSER" visible="0"/>
+		<field name="PRODUCT" label="Íàèìåíîâàíèå òîâàðà" width="40"/>
+		<field name="UNIT" label="Â ìåñòå" width="8" format="0.00"/>
+		<field name="CNT" label="Êîë.-âî" width="8" format="0.00"/>
+		<field name="ALLCNT" label="Âñåãî (êã/øò)" width="8" format="0.00"/>
+		<field name="INPRICE" label="Ïðèõîäíàÿ öåíà" width="15" format="0.00"/>
+		<field name="OUTPRICE" label="Öåíà ðåàëèçàöèè" width="15" format="0.00"/>
+		<field name="OSTSUM" label="Íà ñóììó" width="15" format="0.00"/>
+		<field name="NDSNOSUM" label="Ñóììà áåç ÍÄÑ" width="15" format="0.00"/>
+		<field name="NDS" label="Ñòàâêà ÍÄÑ" width="10" format="0.#"/>
+		<chart><![CDATA[TPF0TDBChartChart10Left\0Top–\0Width¼HeightBackWall.Brush.ColorclWhiteBackWall.Brush.StylebsClearBackWall.Pen.VisibleTitle.Font.CharsetDEFAULT_CHARSETTitle.Font.ColorclBlueTitle.Font.HeightóTitle.Font.NameArialTitle.Font.StylefsBold\0Title.Text.StringsH\0\0\0Ð“Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¾Ðµ Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑƒÑ‚ÑÑ‚Ð²ÑƒÐµÑ‚\0AxisVisible\rFrame.VisibleView3DWallsAlignalClient\nBevelOuterbvNoneTabOrder\0\0]]></chart></query>
 </queries>
